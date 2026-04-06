@@ -529,12 +529,10 @@ body::before {
   grid-template-columns: repeat(4, 1fr);
   gap: var(--s-2);
   width: 100%;
-  max-width: 720px;
 }
-@media (max-width: 500px) {
+@media (max-width: 480px) {
   .menu-grid {
     grid-template-columns: repeat(2, 1fr);
-    max-width: 320px;
   }
 }
 .menu-item {
