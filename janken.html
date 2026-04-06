@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>じゃんけん｜レッドとあそぼう</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="janken">
+  <a href="index.html#menu" class="back-link">← もどる</a>
+
+  <div class="container">
+
+    <!-- キャラクター＋横の吹き<ruby>出<rt>で</rt></ruby>し -->
+    <div class="janken-stage" id="stage">
+      <div class="character floating" id="char-wrap">
+        <img src="images/normal.png" alt="しぶレッド" id="char-img">
+      </div>
+      <div class="bubble side" id="bubble">
+        <span id="bubble-text"></span><span class="next-cue hidden" id="next-cue">▼</span>
+      </div>
+    </div>
+
+    <!-- 掛け声表示 -->
+    <div class="call-text" id="call-text"></div>
+
+    <!-- <ruby>手<rt>て</rt></ruby>ボタン -->
+    <div class="hand-buttons" id="hand-buttons">
+      <button type="button" class="hand-btn gu disabled" data-hand="gu">
+        <div class="hand-emoji">✊</div>
+        <div class="hand-name">グー</div>
+      </button>
+      <button type="button" class="hand-btn choki disabled" data-hand="choki">
+        <div class="hand-emoji">✌️</div>
+        <div class="hand-name">チョキ</div>
+      </button>
+      <button type="button" class="hand-btn pa disabled" data-hand="pa">
+        <div class="hand-emoji">✋</div>
+        <div class="hand-name">パー</div>
+      </button>
+    </div>
+
+    <!-- 結果ラベル＋もういっかい -->
+    <div class="result hidden" id="result">
+      <div class="result-label" id="result-label"></div>
+      <div style="display:flex; gap:12px; margin-top:10px; justify-content:center; flex-wrap:wrap;">
+        <button type="button" class="btn small" id="again-btn">もういっかい</button>
+        <button type="button" class="btn small" id="end-btn" style="background:var(--sage); color:#fff;">おしまい</button>
+      </div>
+    </div>
+
+    <!-- スコア -->
+    <div class="score">
+      かった <span class="num" id="score-win">0</span>　・
+      まけた <span class="num" id="score-lose">0</span>　・
+      あいこ <span class="num" id="score-draw">0</span>
+    </div>
+
+  </div>
+
+<script>
+/* ===== セリフデータ ===== */
+const INTRO_BRAG = [
+  "レッドはな、<br>じゃんけんの プロやねん。<br>しらんけど。",
+  "レッド、じゃんけん<br>100<ruby>連勝中<rt>れんしょうちゅう</rt></ruby>やねん。<br>…たぶん、きっと、しらんけど。",
+  "じつはレッドな、<br>じゃんけん <ruby>世界<rt>せかい</rt></ruby>ランキング 3<ruby>位<rt>い</rt></ruby>やねん。<br><ruby>自己申告<rt>じこしんこく</rt></ruby>やけど。",
+  "レッド、<ruby>子<rt>こ</rt></ruby>どものころから<br>じゃんけんで <ruby>負<rt>ま</rt></ruby>け<ruby>知<rt>し</rt></ruby>らずやねん。<br>ウソやけど。",
+  "レッドの じゃんけん、<br><ruby>読<rt>よ</rt></ruby>みが するどいで〜。<br>…する…どいはず、しらんけど。",
+  "レッドな、じゃんけんの とき<br><ruby>未来<rt>みらい</rt></ruby>が <ruby>見<rt>み</rt></ruby>えるねん。<br>たまにやけど。",
+  "じゃんけんやったら まかせとき〜！<br>レッド、この<ruby>道<rt>みち</rt></ruby> 20<ruby>年<rt>ねん</rt></ruby>や。<br><ruby>今<rt>いま</rt></ruby> <ruby>考<rt>かんが</rt></ruby>えたけど。",
+  "レッドの<ruby>手<rt>て</rt></ruby>、あの<ruby>伝説<rt>でんせつ</rt></ruby>の<br>じゃんけん<ruby>名人<rt>めいじん</rt></ruby>から <ruby>習<rt>なら</rt></ruby>ろたやつやねん。<br>うそや。",
+  "レッド、じゃんけんで ごはん<br><ruby>食<rt>た</rt></ruby>べとるみたいなもんやねん。<br>ちゃうけど。",
+  "じつはレッド、<br>じゃんけん<ruby>五段<rt>ごだん</rt></ruby> <ruby>持<rt>も</rt></ruby>ってるねん。<br>そんな<ruby>段位<rt>だんい</rt></ruby> ないけどな〜",
+  "レッドな、じゃんけんで<br><ruby>負<rt>ま</rt></ruby>けたこと ないねん。<br>…<ruby>記憶<rt>きおく</rt></ruby>にないだけやけど。",
+  "レッドのグー、<br><ruby>岩<rt>いわ</rt></ruby>より<ruby>硬<rt>かた</rt></ruby>いって<ruby>有名<rt>ゆうめい</rt></ruby>やねん。<br>レッドの<ruby>中<rt>なか</rt></ruby>だけで。",
+  "じゃんけん<ruby>研究<rt>けんきゅう</rt></ruby><ruby>歴<rt>れき</rt></ruby> 15<ruby>年<rt>ねん</rt></ruby>やで。<br>まあ、<ruby>研究<rt>けんきゅう</rt></ruby>っていうか<br>あそんでただけやけどな〜",
+  "レッドな、じゃんけんのとき<br><ruby>相手<rt>あいて</rt></ruby>の<ruby>心<rt>こころ</rt></ruby>が<ruby>読<rt>よ</rt></ruby>めるねん。<br>…<ruby>読<rt>よ</rt></ruby>めてたら<ruby>負<rt>ま</rt></ruby>けへんか。",
+  "レッドのパー、<br>ぺらっぺらに<ruby>薄<rt>うす</rt></ruby>いから<br>どんなグーも つつめるで〜。しらんけど。",
+  "じゃんけんの<ruby>神様<rt>かみさま</rt></ruby>が<br>レッドに ほほえんどるわ〜。<br>たぶん あくびしとるだけやけど。",
+  "レッドのチョキ、<br><ruby>切<rt>き</rt></ruby>れ<ruby>味<rt>あじ</rt></ruby>バツグンやねん。<br>ハサミ<ruby>代<rt>か</rt></ruby>わりになるで。ならんけど。",
+  "じつはレッド、<br>じゃんけんの<ruby>特許<rt>とっきょ</rt></ruby> もっとるねん。<br>もってへんけど。",
+  "レッドがじゃんけんすると<br>まわりに<ruby>風<rt>かぜ</rt></ruby>が <ruby>吹<rt>ふ</rt></ruby>くらしいで。<br>エアコンやったけど。",
+  "レッドのじゃんけん、<br>テレビ<ruby>出演<rt>しゅつえん</rt></ruby> オファー<ruby>来<rt>き</rt></ruby>とるねん。<br><ruby>来<rt>き</rt></ruby>てへんけど。"
+];
+const INTRO = [
+  "レッドとじゃんけん あそぼうや〜！",
+  INTRO_BRAG[Math.floor(Math.random() * INTRO_BRAG.length)],
+  "ほな いくで〜！"
+];
+
+const RED_WIN = [
+  "よっしゃ〜！レッドの<ruby>勝<rt>か</rt></ruby>ちや〜！<br>{name}、まあ <ruby>次<rt>つぎ</rt></ruby> がんばりや〜！",
+  "わっはっは〜！<ruby>勝<rt>か</rt></ruby>ったで{name}〜！<br>レッド、<ruby>今<rt>いま</rt></ruby> ちょっと<br><ruby>調子<rt>ちょうし</rt></ruby>ええねん、ごめんな〜！",
+  "やった〜レッドの<ruby>勝<rt>か</rt></ruby>ち！<br>{name}、レッドの<ruby>読<rt>よ</rt></ruby>み、<br><ruby>冴<rt>さ</rt></ruby>えわたっとるわ〜ふふん！",
+  "レッドの<ruby>勝<rt>か</rt></ruby>ち〜！<br>{name}、<ruby>今<rt>いま</rt></ruby>のは たまたまや、<br>たまたまやで、ほんまに！",
+  "<ruby>勝<rt>か</rt></ruby>った〜！{name}、レッドな、<br>じつは <ruby>天才<rt>てんさい</rt></ruby>ちゃうかな〜って、<br>ちょっと<ruby>思<rt>おも</rt></ruby>ってもうた！",
+  "イエ〜イ！{name}、<br>レッド <ruby>今<rt>いま</rt></ruby> めっちゃ ドヤ<ruby>顔<rt>かお</rt></ruby>しとるで〜、<br><ruby>見<rt>み</rt></ruby>てみ〜！",
+  "レッドの<ruby>勝<rt>か</rt></ruby>ちぃ〜！<br>{name}、まあまあ、<br><ruby>人生<rt>じんせい</rt></ruby> こんな<ruby>日<rt>ひ</rt></ruby>も あるわな〜！",
+  "やったった〜！{name}、<br>レッドの<ruby>運<rt>うん</rt></ruby>、<ruby>今日<rt>きょう</rt></ruby><br>カンストしとるかもしれん！",
+  "<ruby>勝<rt>か</rt></ruby>ったで{name}！<br>レッド、この<ruby>勢<rt>いきお</rt></ruby>いで<br><ruby>宝<rt>たから</rt></ruby>くじも <ruby>当<rt>あ</rt></ruby>てにいくわ、うそやけど！",
+  "ふっ、レッドの<ruby>勝<rt>か</rt></ruby>ちやな{name}〜。<br>…え、もっかいやる？<br>ええよええよ、<ruby>何回<rt>なんかい</rt></ruby>でも〜！",
+  "よっしゃ〜！{name}、<br>レッド <ruby>今<rt>いま</rt></ruby> <ruby>背中<rt>せなか</rt></ruby>に<ruby>羽<rt>はね</rt></ruby> はえた<ruby>気分<rt>きぶん</rt></ruby>やわ〜<br>パタパタ〜！",
+  "<ruby>勝<rt>か</rt></ruby>ち〜！{name}ごめんな〜、<br>レッドの<ruby>手<rt>て</rt></ruby>が <ruby>勝手<rt>かって</rt></ruby>に<br><ruby>動<rt>うご</rt></ruby>いてしもたわ〜すごいやろ！",
+  "やった〜！{name}、<br>レッド いま <ruby>鼻<rt>はな</rt></ruby>の<ruby>穴<rt>あな</rt></ruby><br>ひろがっとると<ruby>思<rt>おも</rt></ruby>うわ〜ふんふん！",
+  "レッドの<ruby>勝<rt>か</rt></ruby>ち〜！<br>{name}、くやしい<ruby>顔<rt>かお</rt></ruby>も かわいいで〜<br>…あ、ごめん ちょっとドヤった！",
+  "<ruby>勝<rt>か</rt></ruby>ったで〜！{name}、<br>レッド この<ruby>喜<rt>よろこ</rt></ruby>びを<br>だれかに<ruby>伝<rt>つた</rt></ruby>えたいわ〜！あ、{name}に<ruby>伝<rt>つた</rt></ruby>えてるか！",
+  "よっしゃぁ{name}！<br>レッド、うれしすぎて<br>ちょっと スキップしてくるわ〜たったっ！",
+  "レッドの<ruby>勝<rt>か</rt></ruby>ちやで{name}！<br>この<ruby>調子<rt>ちょうし</rt></ruby>で <ruby>世界征服<rt>せかいせいふく</rt></ruby>も<br>いけるんちゃう？…いけへんか。",
+  "やった〜{name}！<br>レッドな、<ruby>勝<rt>か</rt></ruby>った<ruby>日<rt>ひ</rt></ruby>は<br>ごはん おかわり3<ruby>杯<rt>ばい</rt></ruby>するねん〜！",
+  "<ruby>勝<rt>か</rt></ruby>ったで{name}〜！<br>でもな、<ruby>次<rt>つぎ</rt></ruby>は {name}が<ruby>勝<rt>か</rt></ruby>つかもな〜<br>…いや、レッドが<ruby>勝<rt>か</rt></ruby>つけどな！",
+  "イエ〜イ{name}！<br>レッド、<ruby>勝<rt>か</rt></ruby>った<ruby>記念<rt>きねん</rt></ruby>に<br><ruby>今日<rt>きょう</rt></ruby>を「レッド<ruby>記念日<rt>きねんび</rt></ruby>」にするわ〜！"
+];
+const RED_LOSE = [
+  "あ〜！まけた〜！{name}、つよ！<br>レッド、さっきから<br><ruby>手<rt>て</rt></ruby>ぇ <ruby>震<rt>ふる</rt></ruby>えとるわ〜",
+  "ぐぬぬ〜{name}に やられた〜！<br>レッド、<ruby>今日<rt>きょう</rt></ruby>の <ruby>晩<rt>ばん</rt></ruby>ごはん<br><ruby>味<rt>あじ</rt></ruby> せえへんかも〜",
+  "まけた〜！{name}、<br>その<ruby>読<rt>よ</rt></ruby>み どこで <ruby>習<rt>なら</rt></ruby>ろてきたん〜？<br>レッドに <ruby>教<rt>おし</rt></ruby>えて〜！",
+  "うっ、{name}、つよすぎやろ〜！<br>レッド、ちょっと<br><ruby>反省会<rt>はんせいかい</rt></ruby> ひらくわ、ひとりで。",
+  "やられた〜{name}！<br>レッドの<ruby>必殺技<rt>ひっさつわざ</rt></ruby>、<br>あっさり <ruby>見破<rt>みやぶ</rt></ruby>られたわ〜さすがや〜",
+  "あ〜ん、まけたまけた〜！<br>{name}、もしかして<br>じゃんけん<ruby>名人<rt>めいじん</rt></ruby>なんちゃう？",
+  "ぐおお〜{name}に<ruby>負<rt>ま</rt></ruby>けた〜！<br>レッド、<ruby>今<rt>いま</rt></ruby>から ちょっと<br><ruby>部屋<rt>へや</rt></ruby>のすみで <ruby>体育座<rt>たいいくずわ</rt></ruby>りするわ〜",
+  "まけた〜！{name}、<br>ちょっと <ruby>強<rt>つよ</rt></ruby>すぎひん？<br>レッドの ライバル <ruby>出現<rt>しゅつげん</rt></ruby>やな〜！",
+  "あっちゃ〜！{name}、やるやん〜！<br>レッド、<ruby>次<rt>つぎ</rt></ruby>は <ruby>絶対<rt>ぜったい</rt></ruby> <ruby>勝<rt>か</rt></ruby>つで〜<br>たぶん！",
+  "ぐぬ〜{name}、<ruby>見事<rt>みごと</rt></ruby>や〜！<br>レッド、<ruby>今日<rt>きょう</rt></ruby>は{name}の<br><ruby>手<rt>て</rt></ruby>のひらで <ruby>踊<rt>おど</rt></ruby>らされたわ〜！",
+  "うわ〜ん{name}に<ruby>負<rt>ま</rt></ruby>けた〜！<br>レッド、ちょっと<br>おやつ<ruby>食<rt>た</rt></ruby>べて <ruby>元気<rt>げんき</rt></ruby><ruby>出<rt>だ</rt></ruby>すわ〜",
+  "まけた〜！{name}、<br>レッドの<ruby>弱点<rt>じゃくてん</rt></ruby><br>バレてもうたんかな〜こわ〜！",
+  "ぐはっ！{name}つよ！<br>レッド、<ruby>心<rt>こころ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>で<br>ちょっぴり<ruby>泣<rt>な</rt></ruby>いとるわ〜えーん",
+  "まけたまけた〜！<br>{name}、レッドのプライド<br>ぺしゃんこやで〜ぺしゃ〜",
+  "あちゃ〜{name}に<ruby>負<rt>ま</rt></ruby>けた！<br>レッド、<ruby>今<rt>いま</rt></ruby> <ruby>地面<rt>じめん</rt></ruby>に<br>「の」の<ruby>字<rt>じ</rt></ruby> <ruby>書<rt>か</rt></ruby>いとるわ〜くるくる",
+  "{name}、やるやん〜！<br>レッド もう<ruby>白旗<rt>しろはた</rt></ruby>や〜<br>…いや、<ruby>次<rt>つぎ</rt></ruby>は<ruby>負<rt>ま</rt></ruby>けへんで！",
+  "まけた〜！{name}、<br><ruby>今<rt>いま</rt></ruby>のレッド<ruby>見<rt>み</rt></ruby>た？<br>めっちゃ ええ<ruby>顔<rt>かお</rt></ruby>で<ruby>負<rt>ま</rt></ruby>けたやろ〜",
+  "ぐぬぬ{name}〜！<br>レッドの<ruby>作戦<rt>さくせん</rt></ruby>、<br>ぜんぶ はずれたわ〜ポンコツや〜",
+  "あ〜<ruby>負<rt>ま</rt></ruby>けてもうた！<br>{name}、つぎ<ruby>勝<rt>か</rt></ruby>ったら<br>おごってな〜。なにをやろ〜",
+  "まけた〜{name}！<br>でもな、レッドは<br><ruby>負<rt>ま</rt></ruby>けても{name}と あそべて<ruby>楽<rt>たの</rt></ruby>しいねん！"
+];
+const DRAW = [
+  "お〜っと あいこや〜！<br>{name}、レッドと<br><ruby>気<rt>き</rt></ruby>ぃ <ruby>合<rt>あ</rt></ruby>うやん〜ふふふ！",
+  "{name}、あいこやで〜！<br>もしかして レッドと<br><ruby>心<rt>こころ</rt></ruby> つながっとる？ぞくぞくっ！",
+  "あいこ〜！{name}、<br>レッドと <ruby>同<rt>おな</rt></ruby>じ<ruby>手<rt>て</rt></ruby> <ruby>出<rt>で</rt></ruby>すとか、<br><ruby>運命<rt>うんめい</rt></ruby><ruby>感<rt>かん</rt></ruby>じるわ〜！",
+  "えっ、また あいこ？<br>{name}、レッドの<br><ruby>頭<rt>あたま</rt></ruby>の<ruby>中<rt>なか</rt></ruby> のぞいたやろ〜！",
+  "あいこや{name}〜！<br>レッドと{name}、<ruby>息<rt>いき</rt></ruby>ぴったりやん〜！<br>これは もう コンビ<ruby>結成<rt>けっせい</rt></ruby>か〜！",
+  "お〜あいこ！{name}、<br>レッドの<ruby>考<rt>かんが</rt></ruby>え よめとるな〜<br>こわ〜！（ほめとるで）",
+  "{name}、あいこやで〜！<br>これはもう <ruby>友情<rt>ゆうじょう</rt></ruby>パワーが<br><ruby>強<rt>つよ</rt></ruby>すぎる<ruby>証拠<rt>しょうこ</rt></ruby>やな〜！",
+  "あいこ〜！{name}、<br>レッドと テレパシー<br><ruby>開通<rt>かいつう</rt></ruby>したんちゃう？ピピピ〜",
+  "またまた あいこやん{name}！<br>レッド、ちょっと<br><ruby>感動<rt>かんどう</rt></ruby>して うるっときたで〜",
+  "{name}、あいこ〜！<br>もう <ruby>仲良<rt>なかよ</rt></ruby>すぎて<br><ruby>手<rt>て</rt></ruby>まで そっくりになってもうたわ〜！",
+  "あいこや〜！{name}、<br>レッドと おそろいやん〜<br>ペアルックみたいやな！",
+  "お〜{name}、また あいこ！<br>これ もう<ruby>双子<rt>ふたご</rt></ruby>なんちゃう？<br>レッド<ruby>双子<rt>ふたご</rt></ruby> <ruby>欲<rt>ほ</rt></ruby>しかってん〜",
+  "あいこやん{name}！<br>レッド、{name}と<ruby>同<rt>おな</rt></ruby>じ<ruby>手<rt>て</rt></ruby><ruby>出<rt>だ</rt></ruby>せて<br>ちょっと うれしいねん〜ふふ",
+  "{name}、あいこ〜！<br>レッドの<ruby>脳<rt>のう</rt></ruby>みそ<br>スキャンしたやろ〜ぴぴぴっ！",
+  "あいこや{name}！<br><ruby>今<rt>いま</rt></ruby> ふたりの<ruby>間<rt>あいだ</rt></ruby>に<br><ruby>見<rt>み</rt></ruby>えない<ruby>糸<rt>いと</rt></ruby> つながったで〜びよ〜ん！",
+  "おおっ あいこ！{name}、<br>シンクロ<ruby>率<rt>りつ</rt></ruby> 100%やん！<br>もはや レッドは{name}で、{name}はレッドや！",
+  "あいこ〜！{name}、<br>レッドと <ruby>波長<rt>はちょう</rt></ruby> <ruby>合<rt>あ</rt></ruby>いすぎて<br>ラジオ <ruby>受信<rt>じゅしん</rt></ruby>できそうやわ〜",
+  "{name}、あいこやで！<br>こんだけ<ruby>気<rt>き</rt></ruby>が<ruby>合<rt>あ</rt></ruby>うと、<br>いっしょに コント できるな〜！",
+  "あいこや{name}〜！<br>レッド、もう びっくりして<br>まばたき <ruby>忘<rt>わす</rt></ruby>れてたわ〜ぱちぱち",
+  "お〜あいこ〜！<br>{name}とレッド、<br><ruby>前世<rt>ぜんせ</rt></ruby>は きょうだいやったんかもな〜ふふ"
+];
+
+const BYE = [
+  "{name}、<ruby>今日<rt>きょう</rt></ruby>は あそんでくれて<br>おおきに〜！<br>また いつでも <ruby>来<rt>き</rt></ruby>てな〜！",
+  "たのしかった〜{name}！<br>レッド、いつでも ここで<br><ruby>待<rt>ま</rt></ruby>っとるからな〜！",
+  "{name}、ありがとな〜！<br>さみしなるけど、<br>また あそぼな〜！",
+  "バイバイ{name}！<br>レッド、{name}が<ruby>来<rt>く</rt></ruby>るの<br>いつも たのしみにしてるで〜！",
+  "{name}〜！おつかれさま！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに あそべて<br>レッド、しあわせやったわ〜",
+  "またな〜{name}！<br>レッド、いつでも<br>スタンバイOKやで〜！",
+  "{name}、おおきに！<br>いつ <ruby>来<rt>き</rt></ruby>ても ええからな〜<br>レッドは ずっと ここにおるで！",
+  "じゃあね{name}！<br>レッド、{name}のこと<br><ruby>忘<rt>わす</rt></ruby>れへんで〜、ぜったいな！",
+  "バイバイ〜！<br>{name}が また <ruby>来<rt>き</rt></ruby>てくれる<ruby>日<rt>ひ</rt></ruby>を<br>レッド、<ruby>指折<rt>ゆびお</rt></ruby>り<ruby>数<rt>かぞ</rt></ruby>えて<ruby>待<rt>ま</rt></ruby>っとくわ〜",
+  "{name}！<ruby>今日<rt>きょう</rt></ruby>は ほんまに<br>たのしかった〜！<br>また いつでも あそびにおいで〜",
+  "おつかれ{name}！<br>しんどい<ruby>日<rt>ひ</rt></ruby>も、<ruby>元気<rt>げんき</rt></ruby>な<ruby>日<rt>ひ</rt></ruby>も、<br>いつ <ruby>来<rt>き</rt></ruby>ても ええからな〜",
+  "{name}〜ありがとう！<br>レッド、{name}と あそぶ<ruby>時間<rt>じかん</rt></ruby>が<br>いっちばん <ruby>好<rt>す</rt></ruby>きやねん〜",
+  "またおいで〜{name}！<br>ちょっとだけでも、<br>ながーくでも、だいかんげいやで！",
+  "バイバイ{name}！<br>むりせんと、<br>マイペースで また <ruby>来<rt>き</rt></ruby>てな〜！",
+  "{name}、おおきに！<br>ええ<ruby>日<rt>ひ</rt></ruby>も、そうでもない<ruby>日<rt>ひ</rt></ruby>も、<br>レッドは いつでも ここにおるで",
+  "じゃあね〜{name}！<br>レッドな、<ruby>今日<rt>きょう</rt></ruby> {name}と<br>あそべて めっちゃ うれしかってん！",
+  "またな{name}〜！<br>レッド、{name}のこと<br>いつも おうえんしてるで〜！",
+  "{name}、バイバイ〜！<br>つぎ <ruby>来<rt>き</rt></ruby>たときは<br>もっと おもしろいこと しよな〜！",
+  "おおきに{name}！<br>レッドの<ruby>前<rt>まえ</rt></ruby>では、<br>いつでも そのままで おってな〜",
+  "{name}！またあそぼ〜！<br>レッド、ここで<br>ず〜っと <ruby>待<rt>ま</rt></ruby>っとるからな〜！"
+];
+
+function fillName(str, name, h) { return str.replace(/\{name\}/g, name + (h || "")); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+const name  = localStorage.getItem('red_name')  || 'きみ';
+const honor = localStorage.getItem('red_honor') || '';
+
+/* ===== Elements ===== */
+const charWrap   = document.getElementById('char-wrap');
+const charImg    = document.getElementById('char-img');
+const bubble     = document.getElementById('bubble');
+const bubbleText = document.getElementById('bubble-text');
+const nextCue    = document.getElementById('next-cue');
+const callText   = document.getElementById('call-text');
+const handBtns   = document.querySelectorAll('.hand-btn');
+const result     = document.getElementById('result');
+const resultLabel= document.getElementById('result-label');
+const againBtn   = document.getElementById('again-btn');
+const endBtn     = document.getElementById('end-btn');
+const scoreWin   = document.getElementById('score-win');
+const scoreLose  = document.getElementById('score-lose');
+const scoreDraw  = document.getElementById('score-draw');
+
+let score = { win: 0, lose: 0, draw: 0 };
+let phase = 'idle';        // idle | intro | call | wait | result
+let introStep = 0;
+let typing = false;
+let typeTimer = null;
+let currentFullText = '';
+
+/* ===== タイプライター（ruby対応） ===== */
+function tokenizeRuby(html) {
+  const tokens = [];
+  let i = 0;
+  while (i < html.length) {
+    if (html.startsWith('<ruby>', i)) {
+      const end = html.indexOf('</ruby>', i) + 7;
+      tokens.push(html.slice(i, end));
+      i = end;
+    } else if (html.startsWith('<br>', i)) {
+      tokens.push('<br>');
+      i += 4;
+    } else {
+      tokens.push(html[i]);
+      i++;
+    }
+  }
+  return tokens;
+}
+function typeWrite(text, speed = 55, onComplete) {
+  if (typeTimer) clearInterval(typeTimer);
+  const tokens = tokenizeRuby(text);
+  bubbleText.innerHTML = '';
+  nextCue.classList.add('hidden');
+  currentFullText = text;
+  typing = true;
+  let i = 0;
+  typeTimer = setInterval(() => {
+    if (i < tokens.length) {
+      i++;
+      bubbleText.innerHTML = tokens.slice(0, i).join('');
+    } else {
+      clearInterval(typeTimer);
+      typing = false;
+      if (onComplete) onComplete();
+    }
+  }, speed);
+}
+function completeTyping() {
+  if (!typing) return;
+  clearInterval(typeTimer);
+  bubbleText.innerHTML = currentFullText;
+  typing = false;
+}
+
+/* ===== キャラ状態切替 ===== */
+function setChar(pose, animClass) {
+  charImg.src = `images/${pose}.png`;
+  charWrap.className = 'character ' + (animClass || 'floating');
+}
+
+/* ===== <ruby>手<rt>て</rt></ruby>ボタン状態 ===== */
+function setHandButtonsState(state) {
+  // state: 'disabled' | 'ready'
+  handBtns.forEach(b => {
+    b.classList.remove('disabled', 'ready');
+    b.classList.add(state);
+  });
+}
+
+/* ===== イントロ進行 ===== */
+let introTimer = null;
+function showIntro(step) {
+  introStep = step;
+  setChar('normal', 'floating');
+  bubble.classList.remove('hidden');
+  callText.textContent = '';
+  result.classList.add('hidden');
+  setHandButtonsState('disabled');
+  nextCue.classList.add('hidden');
+  typeWrite(INTRO[step], 60, () => {
+    // タイプ完了後、少し間を置いて自動で<ruby>次<rt>つぎ</rt></ruby>へ
+    if (introTimer) clearTimeout(introTimer);
+    introTimer = setTimeout(() => {
+      if (introStep < INTRO.length - 1) {
+        showIntro(introStep + 1);
+      } else {
+        startCall();
+      }
+    }, 1600);
+  });
+}
+
+/* ===== じゃ〜ん け〜ん フェーズ ===== */
+function startCall() {
+  phase = 'call';
+  setChar('tame', 'hopping');
+  bubble.classList.add('hidden');
+  nextCue.classList.add('hidden');
+  result.classList.add('hidden');
+
+  callText.innerHTML = '';
+  setTimeout(() => {
+    callText.innerHTML = '<span>じゃ〜ん</span>';
+  }, 300);
+  setTimeout(() => {
+    callText.innerHTML = '<span>じゃ〜ん</span> <span>け〜ん</span>';
+    setHandButtonsState('ready');
+    phase = 'wait';
+  }, 1100);
+}
+
+/* ===== ユーザーが<ruby>手<rt>て</rt></ruby>を選んだ瞬間 ===== */
+handBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (phase !== 'wait') return;
+    const player = btn.dataset.hand;
+    const hands = ['gu','choki','pa'];
+    const cpu = hands[Math.floor(Math.random() * 3)];
+
+    setHandButtonsState('disabled');
+    phase = 'pon';
+
+    // ぽん！＋レッドの<ruby>手<rt>て</rt></ruby>公開
+    callText.innerHTML = '<span style="font-size:1.3em">ぽん！</span>';
+    setChar(cpu, 'hopping');
+
+    // <ruby>勝<rt>か</rt></ruby>敗判定
+    let outcome;
+    if (player === cpu) outcome = 'draw';
+    else if (
+      (player === 'gu' && cpu === 'choki') ||
+      (player === 'choki' && cpu === 'pa') ||
+      (player === 'pa' && cpu === 'gu')
+    ) outcome = 'win';
+    else outcome = 'lose';
+
+    setTimeout(() => showResult(outcome), 900);
+  });
+});
+
+/* ===== 結果表示 ===== */
+function showResult(outcome) {
+  phase = 'result';
+  callText.innerHTML = '';
+
+  let labelText, labelClass, line, pose, animClass;
+  if (outcome === 'win') {
+    labelText = 'きみの かち〜！';
+    labelClass = 'win';
+    line  = pick(RED_LOSE);
+    pose  = 'oshii';
+    animClass = 'slumping';
+    score.win++;
+  } else if (outcome === 'lose') {
+    labelText = 'きみの まけ〜';
+    labelClass = 'lose';
+    line  = pick(RED_WIN);
+    pose  = Math.random() < 0.5 ? 'hai' : 'hai2';
+    animClass = 'joyful';
+    score.lose++;
+  } else {
+    labelText = 'あいこ〜！';
+    labelClass = 'draw';
+    line  = pick(DRAW);
+    pose  = 'wakaru';
+    animClass = 'tilting';
+    score.draw++;
+  }
+
+  setChar(pose, animClass);
+  bubble.classList.remove('hidden');
+  typeWrite(fillName(line, name, honor), 45);
+
+  resultLabel.textContent = labelText;
+  resultLabel.className = 'result-label ' + labelClass;
+  result.classList.remove('hidden');
+
+  scoreWin.textContent = score.win;
+  scoreLose.textContent = score.lose;
+  scoreDraw.textContent = score.draw;
+}
+
+
+/* ===== もういっかい ===== */
+againBtn.addEventListener('click', () => {
+  result.classList.add('hidden');
+  startCall();
+});
+
+/* ===== おしまい ===== */
+endBtn.addEventListener('click', () => {
+  phase = 'bye';
+  result.classList.add('hidden');
+  callText.innerHTML = '';
+  setHandButtonsState('disabled');
+  document.querySelector('.score').style.display = 'none';
+  document.getElementById('hand-buttons').style.display = 'none';
+
+  setChar('bye', 'wiggling');
+  bubble.classList.remove('hidden');
+  const byeMsg = fillName(pick(BYE), name, honor);
+  typeWrite(byeMsg, 55, () => {
+    setTimeout(() => {
+      window.location.href = 'index.html#menu';
+    }, 3500);
+  });
+});
+
+/* ===== 初回スタート ===== */
+phase = 'intro';
+showIntro(0);
+</script>
+</body>
+</html>
