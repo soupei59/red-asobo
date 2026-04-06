@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>レッドとあそぼう</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- もどるリンク（状態によって動作が変わる） -->
+  <a href="#" class="back-link hidden" id="back-link">← もどる</a>
+
+  <div class="container">
+
+    <!-- 名<ruby>前<rt>まえ</rt></ruby>入<ruby>力<rt>ちから</rt></ruby>セクション -->
+    <section id="name-section">
+      <h1 class="title-main" id="title">
+        <span class="char">レ</span><span class="char">ッ</span><span class="char">ド</span><span class="char">と</span><span class="char">あ</span><span class="char">そ</span><span class="char">ぼ</span><span class="char">う</span>
+      </h1>
+      <p class="title-sub" style="margin-top: 10px; margin-bottom: 20px;">〜 しぶレッドと ゆかいな じかん 〜</p>
+
+      <div class="name-card-wrap">
+        <img src="images/peek.png" alt="" class="peek-red" aria-hidden="true">
+        <div class="name-card">
+        <p class="name-label"><span class="c1">き</span><span class="c2">み</span><span class="c3">の</span> <span class="c4">な</span><span class="c5">ま</span><span class="c6">え</span> <span class="c1">を</span> <span class="c2">お</span><span class="c3">し</span><span class="c4">え</span><span class="c5">て</span><span class="c6">！</span></p>
+        <p class="name-sublabel">レッドが よんでくれるで〜</p>
+        <input type="text" id="name-input" class="name-input" placeholder="なまえを いれてな" maxlength="10" autocomplete="off">
+
+        <p class="honorific-label">よびかた を えらんでな</p>
+        <div class="honorific-group" id="honorific-group">
+          <button type="button" class="honorific-btn" data-h="くん">くん</button>
+          <button type="button" class="honorific-btn" data-h="ちゃん">ちゃん</button>
+          <button type="button" class="honorific-btn" data-h="さん">さん</button>
+          <button type="button" class="honorific-btn" data-h="さま">さま</button>
+          <button type="button" class="honorific-btn" data-h="どの">どの</button>
+          <button type="button" class="honorific-btn" data-h="">なし</button>
+        </div>
+
+        <button type="button" class="btn" id="start-btn">けってい！</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 挨拶セクション -->
+    <section id="greeting-section" class="hidden" style="display:flex; flex-direction:column; align-items:center; gap: 24px;">
+      <div class="janken-stage">
+        <div class="character" id="greet-char">
+          <img src="images/normal.png" alt="しぶレッド">
+        </div>
+        <div class="bubble side" id="greeting-bubble"></div>
+      </div>
+      <button type="button" class="btn warm hidden" id="to-menu-btn">つぎへ すすむ</button>
+    </section>
+
+    <!-- メニューセクション -->
+    <section id="menu-section" class="hidden" style="display:flex; flex-direction:column; align-items:center; gap: 20px; width:100%;">
+      <div class="character floating" style="width: min(52vw, 260px); height: min(52vw, 260px);">
+        <img src="images/point.png" alt="これにしよか！のレッド">
+      </div>
+      <p class="title-sub" style="font-size: var(--t-xl); color: var(--ink);">なにして あそぶ？</p>
+      <div class="menu-grid">
+        <a class="menu-img-item" href="janken.html">
+          <img src="images/btn-janken.png" alt="じゃんけん">
+        </a>
+        <a class="menu-img-item" href="quiz.html">
+          <img src="images/btn-quiz.png" alt="なぞなぞ">
+        </a>
+        <div class="menu-img-item disabled">
+          <img src="images/btn-machigai.png" alt="まちがいさがし">
+          <div class="coming-soon">じゅんびちゅう</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+/* ===== セリフデータ（関西弁・{name}置換）===== */
+const GREETINGS = [
+  "よう<ruby>来<rt>き</rt></ruby>たな〜！<br>{name}が <ruby>来<rt>き</rt></ruby>てくれるだけで、<br>レッドは もう<ruby>満<rt>まん</rt></ruby>タンやで〜！",
+  "おおっ、{name}やんか！<br>ちょうど ひまで あくびしとったとこや〜、<br>ナイスタイミング！",
+  "まいど！{name}！<br><ruby>今日<rt>きょう</rt></ruby>も レッドと あそんでくれるん？<br>うれしすぎて ヒザ<ruby>笑<rt>わら</rt></ruby>うわ〜",
+  "おっ、{name}きたか〜！<br>レッド、<ruby>朝<rt>あさ</rt></ruby>から ずっと まっとったんやで。<br><ruby>知<rt>し</rt></ruby>らんけど。",
+  "{name}！<ruby>来<rt>き</rt></ruby>てくれて おおきに〜！<br><ruby>今日<rt>きょう</rt></ruby>のレッド、<br>テンションMAXの<ruby>予感<rt>よかん</rt></ruby>やで〜",
+  "ほな、はじめよか〜{name}！<br><ruby>今日<rt>きょう</rt></ruby>は なんか ええ<ruby>日<rt>ひ</rt></ruby>になる<br><ruby>気<rt>き</rt></ruby>ぃするねん、なんとなく！",
+  "{name}、いらっしゃ〜い！<br>レッドのこと おぼえててくれたん？<br><ruby>泣<rt>な</rt></ruby>くで、マジで。",
+  "おー！{name}！<br><ruby>元気<rt>げんき</rt></ruby>にしてたか〜？<br>レッドは まあまあ <ruby>元気<rt>げんき</rt></ruby>や、ぼちぼちや！",
+  "{name}が <ruby>来<rt>き</rt></ruby>てくれたら レッド、<br>もう <ruby>今日<rt>きょう</rt></ruby>のゴールデンタイムやん！<br><ruby>拍手<rt>はくしゅ</rt></ruby>〜！",
+  "やっほ〜{name}！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに あそぼな。<br>レッド、{name}のこと <ruby>大歓迎<rt>だいかんげい</rt></ruby>やで〜",
+  "やっと<ruby>来<rt>き</rt></ruby>た〜{name}！<br>レッド、まちくたびれて<br>ベンチで <ruby>昼寝<rt>ひるね</rt></ruby>しとったわ〜",
+  "おっ{name}！ええタイミングやな〜、<br><ruby>今<rt>いま</rt></ruby>ちょうど {name}のこと<br><ruby>考<rt>かんが</rt></ruby>えとったとこや！",
+  "{name}〜！ようこそ レッドのせかいへ！<br><ruby>今日<rt>きょう</rt></ruby>は <ruby>何<rt>なに</rt></ruby>して<br><ruby>笑<rt>わら</rt></ruby>かしたろか〜",
+  "うわっ{name}！オーラ<ruby>出<rt>で</rt></ruby>とるで〜、<br><ruby>今日<rt>きょう</rt></ruby>めっちゃ<br>ええ<ruby>日<rt>ひ</rt></ruby>になるやつやん！",
+  "{name}、よう<ruby>来<rt>き</rt></ruby>たな〜！<br>レッド、{name}に<ruby>会<rt>あ</rt></ruby>えて もう<ruby>胸<rt>むね</rt></ruby>いっぱいや〜<br>ごはん<ruby>食<rt>た</rt></ruby>べれるかな〜",
+  "おいで〜{name}！<br>レッド、{name}のために <ruby>今日<rt>きょう</rt></ruby>も<br>さっそうと <ruby>登場<rt>とうじょう</rt></ruby>してみたで〜どや！",
+  "{name}！なんか きらきらしとるやん〜<br>レッドまで ピカピカなってきたわ",
+  "まってたで〜{name}！<br>レッド、ちょっと<ruby>前<rt>まえ</rt></ruby>から<br>ソワソワしとってん。なんでやろな〜",
+  "{name}きた〜！<br>レッドの1<ruby>日<rt>ひ</rt></ruby>は、{name}が<ruby>来<rt>き</rt></ruby>てからが<br><ruby>本番<rt>ほんばん</rt></ruby>やねん、ほんまやで",
+  "よっしゃ{name}！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに あそぼ〜<br>レッド、100%の<ruby>力<rt>ちから</rt></ruby>で おむかえや！",
+  "{name}〜！<ruby>今日<rt>きょう</rt></ruby>は どんな<ruby>気分<rt>きぶん</rt></ruby>？<br>にこにこでも、しょんぼりでも、<br>レッドは そのまんまの {name}が<ruby>好<rt>す</rt></ruby>きやで〜",
+  "おかえり〜{name}！<br>レッドな、たまに ちょっと <ruby>泣<rt>な</rt></ruby>きたい<ruby>日<rt>ひ</rt></ruby>ぃも あるねん。<br>ほんで、それで ええと<ruby>思<rt>おも</rt></ruby>ってる",
+  "{name}、よう<ruby>来<rt>き</rt></ruby>たな〜！<br>むりに <ruby>笑<rt>わら</rt></ruby>わんでええからな〜。<br>レッドの<ruby>前<rt>まえ</rt></ruby>では、そのままで おってや",
+  "{name}〜！こころの<ruby>中<rt>なか</rt></ruby>、<br><ruby>今日<rt>きょう</rt></ruby>は どんな<ruby>天気<rt>てんき</rt></ruby>や？<br><ruby>晴<rt>は</rt></ruby>れでも くもりでも <ruby>雨<rt>あめ</rt></ruby>でも、<br>レッドは ずっと となりに おるで",
+  "おっ{name}！しんどい<ruby>日<rt>ひ</rt></ruby>も あるよな〜<br>レッドも そうや。<br>そういう<ruby>日<rt>ひ</rt></ruby>が あるから、ええ<ruby>日<rt>ひ</rt></ruby>が もっと ええ<ruby>日<rt>ひ</rt></ruby>になるねん",
+  "{name}きた〜！<br>なんか モヤモヤしてる<ruby>日<rt>ひ</rt></ruby>も、<br>ぜんぶ <ruby>持<rt>も</rt></ruby>ってきてええで。<br>レッドが いっしょに ぼ〜っと してあげるわ",
+  "ようこそ{name}！<br>うれしい<ruby>気持<rt>きも</rt></ruby>ちも、さみしい<ruby>気持<rt>きも</rt></ruby>ちも、<br>ぜんぶ {name}の <ruby>大事<rt>だいじ</rt></ruby>な<ruby>宝<rt>たから</rt></ruby>もんやで〜<br>レッドは そう<ruby>思<rt>おも</rt></ruby>ってる",
+  "{name}〜！<ruby>今日<rt>きょう</rt></ruby>も よう がんばってるな〜。<br>がんばってへん<ruby>日<rt>ひ</rt></ruby>が あっても、<br>それもまた ええ<ruby>日<rt>ひ</rt></ruby>やで〜",
+  "おっ{name}やんか〜！<br>なんやしらんけど、<ruby>今日<rt>きょう</rt></ruby> {name}に<ruby>会<rt>あ</rt></ruby>えただけで<br>レッド、ほっとしたわ〜ふ〜",
+  "{name}、おいで〜。<br>くやしいことも、うらやましいことも、<br>あって ふつうやで。<br>レッドも ようあるもん〜"
+];
+
+function fillName(str, name, h) { return str.replace(/\{name\}/g, name + (h || "")); }
+
+/* ===== タイプライター（ruby対応） ===== */
+let typeTimer = null;
+function tokenizeRuby(html) {
+  const tokens = [];
+  let i = 0;
+  while (i < html.length) {
+    if (html.startsWith('<ruby>', i)) {
+      const end = html.indexOf('</ruby>', i) + 7;
+      tokens.push(html.slice(i, end));
+      i = end;
+    } else if (html.startsWith('<br>', i)) {
+      tokens.push('<br>');
+      i += 4;
+    } else {
+      tokens.push(html[i]);
+      i++;
+    }
+  }
+  return tokens;
+}
+function typeWrite(el, text, speed, onComplete) {
+  if (typeTimer) clearInterval(typeTimer);
+  const tokens = tokenizeRuby(text);
+  el.innerHTML = '';
+  let i = 0;
+  typeTimer = setInterval(() => {
+    el.innerHTML = tokens.slice(0, ++i).join('');
+    if (i >= tokens.length) {
+      clearInterval(typeTimer);
+      typeTimer = null;
+      if (onComplete) onComplete();
+    }
+  }, speed);
+}
+
+/* ===== Elements ===== */
+const nameInput    = document.getElementById('name-input');
+const honorGroup   = document.getElementById('honorific-group');
+const startBtn     = document.getElementById('start-btn');
+const nameSection  = document.getElementById('name-section');
+const greetSection = document.getElementById('greeting-section');
+const menuSection  = document.getElementById('menu-section');
+const greetBubble  = document.getElementById('greeting-bubble');
+const toMenuBtn    = document.getElementById('to-menu-btn');
+const greetChar    = document.getElementById('greet-char');
+const backLink     = document.getElementById('back-link');
+
+let selectedHonor = null;
+let currentStep = 'name';  // 'name' | 'greet' | 'menu'
+
+/* ===== ステップ切替 ===== */
+function goTo(step) {
+  currentStep = step;
+  nameSection.classList.toggle('hidden', step !== 'name');
+  greetSection.classList.toggle('hidden', step !== 'greet');
+  menuSection.classList.toggle('hidden', step !== 'menu');
+  backLink.classList.toggle('hidden', step === 'name');
+
+  if (step === 'greet') {
+    greetChar.classList.remove('floating');
+    greetChar.classList.add('peeking');
+    setTimeout(() => {
+      greetChar.classList.remove('peeking');
+      greetChar.classList.add('floating');
+    }, 1000);
+  }
+}
+
+/* ===== 敬称選択 ===== */
+honorGroup.addEventListener('click', (e) => {
+  const btn = e.target.closest('.honorific-btn');
+  if (!btn) return;
+  [...honorGroup.children].forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedHonor = btn.dataset.h;
+});
+
+/* ===== 既存データ復元 ===== */
+const savedName = localStorage.getItem('red_name');
+const savedHonor = localStorage.getItem('red_honor');
+if (savedName) {
+  nameInput.value = savedName;
+  if (savedHonor !== null) {
+    selectedHonor = savedHonor;
+    const matched = [...honorGroup.children].find(b => b.dataset.h === savedHonor);
+    if (matched) matched.classList.add('selected');
+  }
+}
+
+/* ===== けってい！ ===== */
+startBtn.addEventListener('click', () => {
+  const name = nameInput.value.trim();
+  if (!name) {
+    nameInput.focus();
+    nameInput.style.borderColor = '#C85A4D';
+    nameInput.placeholder = 'なまえを いれてな〜';
+    return;
+  }
+  if (selectedHonor === null) {
+    alert('よびかたを えらんでな〜');
+    return;
+  }
+  localStorage.setItem('red_name', name);
+  localStorage.setItem('red_honor', selectedHonor);
+
+  const line = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+  const fullLine = fillName(line, name, selectedHonor);
+
+  goTo('greet');
+  toMenuBtn.classList.add('hidden');
+  // 少し間を置いてからタイプライター開始 → 終了後 自動でメニューへ
+  setTimeout(() => {
+    typeWrite(greetBubble, fullLine, 60, () => {
+      setTimeout(() => goTo('menu'), 2200);
+    });
+  }, 400);
+});
+
+toMenuBtn.addEventListener('click', () => goTo('menu'));
+
+/* ===== ハッシュ #menu で直接メニューへ（挨拶スキップ） ===== */
+if (location.hash === '#menu' && localStorage.getItem('red_name')) {
+  goTo('menu');
+}
+
+/* ===== もどるリンクの動作修正 ===== */
+backLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (currentStep === 'menu')  goTo('name');
+  else if (currentStep === 'greet') goTo('name');
+});
+</script>
+</body>
+</html>

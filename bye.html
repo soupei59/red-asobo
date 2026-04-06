@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>またね｜レッドとあそぼう</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- キャラクター＋横の吹き出し -->
+    <div class="janken-stage" id="stage">
+      <div class="character wiggling" id="char-wrap">
+        <img src="images/bye.png" alt="バイバイのレッド" id="char-img">
+      </div>
+      <div class="bubble side" id="bubble">
+        <span id="bubble-text"></span>
+      </div>
+    </div>
+
+    <!-- TOPへもどるボタン（最初は非表示） -->
+    <button type="button" class="btn warm hidden" id="top-btn">TOPへ もどる</button>
+
+  </div>
+
+<script>
+/* ===== ユーティリティ ===== */
+function fillName(str, n, h) { return str.replace(/\{name\}/g, n + (h || "")); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+const name  = localStorage.getItem('red_name')  || 'きみ';
+const honor = localStorage.getItem('red_honor') || '';
+
+/* ===== タイプライター（ruby + br 対応） ===== */
+let typeTimer = null;
+let typing = false;
+let currentFullText = '';
+const bubbleText = document.getElementById('bubble-text');
+
+function tokenizeRuby(html) {
+  const tokens = [];
+  let i = 0;
+  while (i < html.length) {
+    if (html.startsWith('<ruby>', i)) {
+      const end = html.indexOf('</ruby>', i) + 7;
+      tokens.push(html.slice(i, end));
+      i = end;
+    } else if (html.startsWith('<br>', i)) {
+      tokens.push('<br>');
+      i += 4;
+    } else {
+      tokens.push(html[i]);
+      i++;
+    }
+  }
+  return tokens;
+}
+function typeWrite(text, speed, onComplete) {
+  if (typeTimer) clearInterval(typeTimer);
+  const tokens = tokenizeRuby(text);
+  bubbleText.innerHTML = '';
+  currentFullText = text;
+  typing = true;
+  let i = 0;
+  typeTimer = setInterval(() => {
+    if (i < tokens.length) {
+      i++;
+      bubbleText.innerHTML = tokens.slice(0, i).join('');
+    } else {
+      clearInterval(typeTimer);
+      typing = false;
+      if (onComplete) onComplete();
+    }
+  }, speed);
+}
+function completeTyping() {
+  if (!typing) return;
+  clearInterval(typeTimer);
+  bubbleText.innerHTML = currentFullText;
+  typing = false;
+}
+
+/* ===== バブルタップで早送り ===== */
+document.getElementById('bubble').addEventListener('click', () => {
+  if (typing) completeTyping();
+});
+
+/* ===== BYEセリフ ===== */
+const BYE = [
+  "{name}、<ruby>今日<rt>きょう</rt></ruby>は あそんでくれて<br>おおきに〜！<br>レッドの<ruby>扉<rt>とびら</rt></ruby>は いつでも<ruby>開<rt>あ</rt></ruby>いてるで〜<br>また いつでも <ruby>来<rt>き</rt></ruby>てな〜！",
+  "たのしかった〜{name}！<br>レッドの<ruby>扉<rt>とびら</rt></ruby>は ずっと<ruby>開<rt>あ</rt></ruby>けとくからな。<br>いつでも ここに<br><ruby>待<rt>ま</rt></ruby>っとるで〜！",
+  "{name}、ありがとな〜！<br>さみしなるけど、<ruby>扉<rt>とびら</rt></ruby>はいつでも<ruby>開<rt>あ</rt></ruby>けとくから<br>また あそびにおいで〜！",
+  "バイバイ{name}！<br>レッドのところの<ruby>扉<rt>とびら</rt></ruby>は<br>いつでも あいてるで〜<br>{name}が<ruby>来<rt>く</rt></ruby>るの いつも<ruby>楽<rt>たの</rt></ruby>しみにしてるわ！",
+  "{name}〜！おつかれさま！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに あそべて<br>しあわせやったわ〜<br>いつでも<ruby>扉<rt>とびら</rt></ruby><ruby>開<rt>あ</rt></ruby>けて<ruby>待<rt>ま</rt></ruby>ってるで！",
+  "またな〜{name}！<br>レッドは いつでも ここで<br><ruby>扉<rt>とびら</rt></ruby><ruby>開<rt>あ</rt></ruby>けて<ruby>待<rt>ま</rt></ruby>ってるからな〜<br>スタンバイOKやで！",
+  "{name}、おおきに！<br>いつ <ruby>来<rt>き</rt></ruby>ても ええからな〜<br>レッドの<ruby>扉<rt>とびら</rt></ruby>は ぜったい<ruby>閉<rt>し</rt></ruby>めへんで！",
+  "じゃあね{name}！<br>レッドの<ruby>扉<rt>とびら</rt></ruby>は いつでも<ruby>開<rt>あ</rt></ruby>いてるから、<br>{name}のこと<ruby>忘<rt>わす</rt></ruby>れへんで〜<br>ぜったいな！",
+  "バイバイ〜！<br>{name}が また <ruby>来<rt>き</rt></ruby>てくれる<ruby>日<rt>ひ</rt></ruby>を<br>レッド、<ruby>扉<rt>とびら</rt></ruby><ruby>開<rt>あ</rt></ruby>けて<br><ruby>指折<rt>ゆびお</rt></ruby>り<ruby>数<rt>かぞ</rt></ruby>えて<ruby>待<rt>ま</rt></ruby>っとくわ〜",
+  "{name}！<ruby>今日<rt>きょう</rt></ruby>は ほんまに<br>たのしかった〜！<br>レッドの<ruby>扉<rt>とびら</rt></ruby>は いつでも<ruby>開<rt>あ</rt></ruby>いてるから<br>また いつでも あそびにおいで〜"
+];
+
+/* ===== メッセージ表示 ===== */
+const topBtn = document.getElementById('top-btn');
+const byeMsg = fillName(pick(BYE), name, honor);
+
+typeWrite(byeMsg, 55, () => {
+  setTimeout(() => {
+    topBtn.classList.remove('hidden');
+  }, 800);
+});
+
+/* ===== TOPへもどる ===== */
+topBtn.addEventListener('click', () => {
+  window.location.href = 'index.html#menu';
+});
+</script>
+</body>
+</html>
