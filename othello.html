@@ -425,8 +425,8 @@ const OPPONENTS = {
     aiLevel: 4,
     boardTheme: 'theme-black',
     images: {
-      normal: 'black-pose', happy: 'black-fight', happy2: 'black-fly', sad: 'black-umm',
-      think: 'black-think', point: 'black-make', cheer: 'black1'
+      normal: 'black-pose', happy: 'black-fight', happy2: 'black1', sad: 'black-umm',
+      think: 'black-think', point: 'black-make', cheer: 'black-fly'
     },
     comments: {
       intro: [
@@ -563,7 +563,7 @@ const OPPONENTS = {
     boardTheme: 'theme-spartan',
     images: {
       normal: 'spartan', happy: 'spartan-fight', happy2: 'spartan-agree', sad: 'spartan-lose',
-      think: 'spartan-think', point: 'spartan-fight', cheer: 'spartan-agree'
+      think: 'spartan-think', point: 'spartan-agree', cheer: 'spartan-fight'
     },
     comments: {
       intro: [
@@ -969,12 +969,12 @@ function playerMove(r,c){
     animateFlips(flips,B,()=>{
       renderBoard();
       const{b,w}=countStones();
-      if(flips.length>=3){
+      if(flips.length>=3||corners.some(([cr,cc])=>cr===r&&cc===c)){
         setChar('sad','slumping');
         oppSay('playerGood',70,()=>afterPlayerMove());
-      } else if(corners.some(([cr,cc])=>cr===r&&cc===c)){
-        setChar('sad','slumping');
-        oppSay('playerGood',70,()=>afterPlayerMove());
+      } else if(flips.length===1&&Math.random()<0.4){
+        setChar(Math.random()<0.5?'point':'cheer','floating');
+        oppSay('playerBad',70,()=>afterPlayerMove());
       } else {
         afterPlayerMove();
       }
@@ -997,7 +997,7 @@ function afterPlayerMove(){
     });
     return;
   }
-  setChar('think','tilting');
+  setChar(Math.random()<0.6?'think':'normal','tilting');
   oppSay('aiTurn',70,()=>{
     setTimeout(()=>doAiMove(),600);
   });
@@ -1028,19 +1028,24 @@ function doAiMove(){
         return;
       }
       const{b,w}=countStones();
-      if(flips.length>=3){
-        setChar(Math.random()<0.5?'happy':'happy2','joyful');
+      if(flips.length>=3||corners.some(([cr,cc])=>cr===r&&cc===c)){
+        const poses=['happy','happy2','point','cheer'];
+        setChar(pick(poses),'joyful');
         oppSay('aiGood',70,()=>{
           setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
         });
       }else if(b>w+3){
-        setChar('sad','slumping');
-        oppSay('playerLeading',70,()=>{renderBoard();});
+        setChar(Math.random()<0.5?'sad':'think','slumping');
+        oppSay('playerLeading',70,()=>{
+          setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
+        });
       }else if(w>b+3){
-        setChar('happy','joyful');
-        oppSay('aiLeading',70,()=>{renderBoard();});
+        setChar(pick(['happy','happy2','point']),'joyful');
+        oppSay('aiLeading',70,()=>{
+          setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
+        });
       }else{
-        setChar('normal','floating');
+        setChar(pick(['normal','point','cheer']),'floating');
         oppSay('yourTurn',70);
         renderBoard();
       }
@@ -1061,13 +1066,13 @@ function endGame(){
   const{b,w}=countStones();
   renderBoard();
   if(b>w){
-    setChar('sad','slumping');
+    setChar(Math.random()<0.5?'sad':'think','slumping');
     oppSay('winPlayer',70,()=>showEndButtons());
   }else if(w>b){
-    setChar('happy2','joyful');
+    setChar(pick(['happy','happy2','point','cheer']),'joyful');
     oppSay('winAI',70,()=>showEndButtons());
   }else{
-    setChar('normal','wiggling');
+    setChar(pick(['normal','happy2','cheer']),'wiggling');
     oppSay('draw',70,()=>showEndButtons());
   }
 }
