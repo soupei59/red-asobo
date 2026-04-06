@@ -57,13 +57,16 @@
       <div class="character floating" style="width: min(52vw, 260px); height: min(52vw, 260px);">
         <img src="images/point.png" alt="これにしよか！のレッド">
       </div>
-      <p class="title-sub" style="font-size: var(--t-xl); color: var(--ink);">なにして あそぶ？</p>
+      <p class="title-sub" style="font-size: var(--t-xl); color: var(--ink); font-weight: 900;">なにして あそぶ？</p>
       <div class="menu-grid">
         <a class="menu-img-item" href="janken.html">
           <img src="images/btn-janken.png" alt="じゃんけん">
         </a>
         <a class="menu-img-item" href="quiz.html">
           <img src="images/btn-quiz.png" alt="なぞなぞ">
+        </a>
+        <a class="menu-img-item" href="othello.html">
+          <img src="images/btn-osero.png" alt="オセロ">
         </a>
         <div class="menu-img-item disabled">
           <img src="images/btn-machigai.png" alt="まちがいさがし">
@@ -221,10 +224,15 @@ startBtn.addEventListener('click', () => {
 
   goTo('greet');
   toMenuBtn.classList.add('hidden');
-  // 少し間を置いてからタイプライター開始 → 終了後 自動でメニューへ
+  // 自己紹介 → 挨拶 → メニュー
+  const introLine = 'オレはしぶレンジャー・レッド！<br>レッドって<ruby>呼<rt>よ</rt></ruby>んでな〜！';
   setTimeout(() => {
-    typeWrite(greetBubble, fullLine, 60, () => {
-      setTimeout(() => goTo('menu'), 2200);
+    typeWrite(greetBubble, introLine, 70, () => {
+      setTimeout(() => {
+        typeWrite(greetBubble, fullLine, 70, () => {
+          setTimeout(() => goTo('menu'), 2200);
+        });
+      }, 1200);
     });
   }, 400);
 });

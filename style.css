@@ -526,8 +526,8 @@ body::before {
 /* ========== Menu Grid ========== */
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--s-4);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-2);
   width: 100%;
   max-width: 640px;
 }
@@ -606,7 +606,7 @@ body::before {
   transition: filter 0.25s ease;
 }
 .menu-img-item:hover {
-  transform: translateY(-6px) scale(1.03);
+  transform: translateY(-4px) scale(1.05);
 }
 .menu-img-item:hover img {
   filter: drop-shadow(0 8px 20px rgba(45, 40, 35, 0.25));
@@ -621,12 +621,12 @@ body::before {
 }
 .menu-img-item .coming-soon {
   font-family: 'Yomogi', sans-serif;
-  font-size: var(--t-base);
+  font-size: var(--t-xs);
   color: var(--ink-soft);
   font-weight: 700;
   text-align: center;
-  margin-top: var(--s-3);
-  letter-spacing: 0.1em;
+  margin-top: var(--s-1);
+  letter-spacing: 0.08em;
 }
 
 /* ========== Janken ========== */

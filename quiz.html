@@ -427,7 +427,7 @@ function tokenizeRuby(html) {
   }
   return tokens;
 }
-function typeWrite(text, speed = 55, onComplete) {
+function typeWrite(text, speed = 70, onComplete) {
   if (typeTimer) clearInterval(typeTimer);
   const tokens = tokenizeRuby(text);
   bubbleText.innerHTML = '';
@@ -588,7 +588,7 @@ function startGame() {
   reactionButtons.classList.add('hidden');
 
   const intro = fillName(pick(INTROS), name, honor);
-  typeWrite(intro, 55, () => {
+  typeWrite(intro, 70, () => {
     setTimeout(() => showQuestion(), 2000);
   });
 }
@@ -608,7 +608,7 @@ function showQuestion() {
   answerBtn.style.display = '';
 
   const qText = "もんだい！<br><br>" + riddle.q;
-  typeWrite(qText, 50);
+  typeWrite(qText, 70);
 }
 
 /* ===== ヒント ===== */
@@ -620,7 +620,7 @@ hintBtn.addEventListener('click', () => {
   hintBtn.style.display = 'none';
 
   const hintText = "ヒントやで〜！<br><br>" + riddle.hint;
-  typeWrite(hintText, 50);
+  typeWrite(hintText, 70);
 });
 
 /* ===== こたえ ===== */
@@ -631,7 +631,7 @@ answerBtn.addEventListener('click', () => {
 
   setChar(Math.random() < 0.5 ? 'hai' : 'hai2', 'joyful');
 
-  typeWrite(riddle.explain, 40, () => {
+  typeWrite(riddle.explain, 60, () => {
     /* 解説が終わったら感想ボタンを表示 */
     setTimeout(() => {
       reactionButtons.classList.remove('hidden');
@@ -644,7 +644,7 @@ function handleReaction(lines) {
   reactionButtons.classList.add('hidden');
   setChar('normal', 'floating');
   const msg = fillName(pick(lines), name, honor);
-  typeWrite(msg, 45, () => {
+  typeWrite(msg, 70, () => {
     setTimeout(() => {
       nextButtons.classList.remove('hidden');
       if (currentQ >= NUM_QUESTIONS) {

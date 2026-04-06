@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>オセロ｜レッドとあそぼう</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== オセロ専用スタイル ===== */
+
+/* キャラ選択 */
+.char-select-title {
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: var(--t-xl);
+  font-weight: 900;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: var(--s-2);
+}
+.char-select {
+  display: flex;
+  gap: var(--s-3);
+  justify-content: center;
+  align-items: flex-end;
+}
+.char-select-btn {
+  background: none;
+  border: 3px solid transparent;
+  border-radius: 16px;
+  padding: 8px 6px 6px;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-soft);
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.char-select-btn img {
+  width: min(28vw, 200px);
+  height: min(28vw, 200px);
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(45,40,35,0.18));
+  transition: all 0.25s var(--ease-soft);
+}
+.char-select-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: var(--border-mid);
+  background: rgba(255,255,255,0.4);
+}
+.char-select-btn:hover img {
+  filter: drop-shadow(0 6px 12px rgba(45,40,35,0.25));
+}
+.char-select-btn:active { transform: translateY(0) scale(0.97); }
+.char-select-label {
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: var(--t-lg);
+  font-weight: 900;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.3;
+}
+.char-select-level {
+  font-size: var(--t-base);
+  font-weight: 700;
+  color: var(--ink-mute);
+  display: block;
+}
+
+/* 盤面 */
+.othello-board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0;
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  padding: 0;
+  width: min(84vw, 360px);
+  aspect-ratio: 1;
+  box-shadow: 4px 4px 0 rgba(45,40,35,0.15);
+  position: relative;
+  filter: url(#hand-drawn-filter);
+  transition: background 0.3s;
+}
+.othello-board-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.othello-board-wrap svg { position: absolute; width: 0; height: 0; }
+
+/* 盤面カラーテーマ */
+.othello-board.theme-red      { background: #c9d4a9; }
+.othello-board.theme-red .othello-cell { background: #c9d4a9; border-color: rgba(45,40,35,0.35); }
+.othello-board.theme-red .othello-cell:hover { background: #d4deb8; }
+
+.othello-board.theme-black    { background: #8b9cad; }
+.othello-board.theme-black .othello-cell { background: #8b9cad; border-color: rgba(20,30,50,0.35); }
+.othello-board.theme-black .othello-cell:hover { background: #9daebe; }
+
+.othello-board.theme-spartan  { background: #c4a96a; }
+.othello-board.theme-spartan .othello-cell { background: #c4a96a; border-color: rgba(80,55,20,0.35); }
+.othello-board.theme-spartan .othello-cell:hover { background: #d0b87a; }
+
+.othello-cell {
+  border: 1.5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease;
+}
+.othello-cell.disabled { cursor: not-allowed; }
+.othello-cell.hint { }
+
+.othello-stone {
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  transition: transform 0.4s var(--ease-spring);
+}
+.othello-stone.black {
+  background: radial-gradient(circle at 38% 36%, #666, #2a2a2a);
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.4), inset 0 2px 3px rgba(255,255,255,0.08), 2px 2px 4px rgba(0,0,0,0.3);
+}
+.othello-stone.white {
+  background: radial-gradient(circle at 38% 36%, #fff, #e8e0d4);
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.1), inset 0 2px 3px rgba(255,255,255,0.6), 2px 2px 4px rgba(0,0,0,0.2);
+  border: 1.5px solid rgba(180,170,155,0.4);
+}
+
+@keyframes stone-flip {
+  0%   { transform: scaleX(1); }
+  50%  { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+.othello-stone.flipping { animation: stone-flip 0.4s ease-in-out; }
+@keyframes stone-place {
+  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.12) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.othello-stone.placing { animation: stone-place 0.35s var(--ease-spring); }
+
+/* スコアバー */
+.othello-score {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--linen-soft);
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 2px dashed var(--border-mid);
+}
+.score-dot {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.score-dot.black {
+  background: radial-gradient(circle at 38% 36%, #555, #1a1a1a);
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+.score-dot.white {
+  background: radial-gradient(circle at 38% 36%, #fff, #e8e0d4);
+  border: 1.5px solid rgba(180,170,155,0.5);
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+}
+</style>
+</head>
+<body class="janken">
+  <a href="index.html#menu" class="back-link">← もどる</a>
+
+  <div class="container">
+
+    <div class="janken-stage" id="stage">
+      <div class="character floating" id="char-wrap">
+        <img src="images/relax.png" alt="キャラクター" id="char-img">
+      </div>
+      <div class="bubble side" id="bubble">
+        <span id="bubble-text"></span>
+      </div>
+    </div>
+
+    <!-- キャラ選択 -->
+    <div id="level-select">
+      <p class="char-select-title">レベルを<ruby>選<rt>えら</rt></ruby>んでね</p>
+      <div class="char-select">
+        <button type="button" class="char-select-btn" data-opponent="red">
+          <img src="images/normal.png" alt="レッド">
+          <span class="char-select-label">レッド<span class="char-select-level">レベル10</span></span>
+        </button>
+        <button type="button" class="char-select-btn" data-opponent="black">
+          <img src="images/black1.png" alt="ブラック">
+          <span class="char-select-label">ブラック<span class="char-select-level">レベル100</span></span>
+        </button>
+        <button type="button" class="char-select-btn" data-opponent="spartan">
+          <img src="images/スパルタン-？.png" alt="？？？">
+          <span class="char-select-label">？？？<span class="char-select-level">レベル10000</span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 盤面 -->
+    <div class="othello-board-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <filter id="hand-drawn-filter">
+          <feTurbulence type="turbulence" baseFrequency="0.015" numOctaves="3" result="noise" seed="2"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </svg>
+      <div class="othello-board hidden" id="board"></div>
+    </div>
+
+    <!-- スコア -->
+    <div class="othello-score hidden" id="score-bar">
+      <span><span class="score-dot black"></span><span id="score-black">2</span></span>
+      <span>−</span>
+      <span><span class="score-dot white"></span><span id="score-white">2</span></span>
+    </div>
+
+    <!-- ゲーム中やめるボタン -->
+    <div class="quiz-buttons hidden" id="quit-area">
+      <button type="button" class="btn small" id="quit-btn" style="background:var(--border-mid); color:var(--ink);">やめる</button>
+    </div>
+
+    <!-- 終了後ボタン -->
+    <div class="quiz-buttons hidden" id="end-buttons">
+      <button type="button" class="btn small" id="retry-btn">もういちどやる</button>
+      <button type="button" class="btn small" id="change-btn" style="background:var(--honey); color:var(--ink);">たいせんあいてを<ruby>変<rt>か</rt></ruby>える</button>
+      <button type="button" class="btn small" id="finish-btn" style="background:var(--sage); color:#fff;">おしまい</button>
+    </div>
+
+    <!-- やめた後ボタン -->
+    <div class="quiz-buttons hidden" id="quit-end-buttons">
+      <a href="index.html#menu" class="btn small" style="background:var(--sage); color:#fff; text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">TOPにもどる</a>
+    </div>
+
+  </div>
+
+<script>
+/* ===== ユーティリティ ===== */
+function fillName(s,n,h){return s.replace(/\{name\}/g,n+(h||''));}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+const name  = localStorage.getItem('red_name')  || 'きみ';
+const honor = localStorage.getItem('red_honor') || '';
+
+/* ===== タイプライター ===== */
+let typeTimer=null,typing=false,currentFullText='';
+const bubbleText=document.getElementById('bubble-text');
+function tokenizeRuby(html){const t=[];let i=0;while(i<html.length){if(html.startsWith('<ruby>',i)){const e=html.indexOf('</ruby>',i)+7;t.push(html.slice(i,e));i=e;}else if(html.startsWith('<br>',i)){t.push('<br>');i+=4;}else{t.push(html[i]);i++;}}return t;}
+function typeWrite(text,speed,cb){if(typeTimer)clearInterval(typeTimer);const tk=tokenizeRuby(text);bubbleText.innerHTML='';currentFullText=text;typing=true;let i=0;typeTimer=setInterval(()=>{if(i<tk.length){i++;bubbleText.innerHTML=tk.slice(0,i).join('');}else{clearInterval(typeTimer);typing=false;if(cb)cb();}},speed);}
+function completeTyping(){if(!typing)return;clearInterval(typeTimer);bubbleText.innerHTML=currentFullText;typing=false;}
+document.getElementById('bubble').addEventListener('click',()=>{if(typing)completeTyping();});
+
+/* ===== Elements ===== */
+const charWrap=document.getElementById('char-wrap');
+const charImg=document.getElementById('char-img');
+const boardEl=document.getElementById('board');
+const scoreBar=document.getElementById('score-bar');
+const scoreBlack=document.getElementById('score-black');
+const scoreWhite=document.getElementById('score-white');
+const levelSelect=document.getElementById('level-select');
+const endButtons=document.getElementById('end-buttons');
+const retryBtn=document.getElementById('retry-btn');
+const changeBtn=document.getElementById('change-btn');
+const finishBtn=document.getElementById('finish-btn');
+const quitArea=document.getElementById('quit-area');
+const quitBtn=document.getElementById('quit-btn');
+const quitEndButtons=document.getElementById('quit-end-buttons');
+const backLink=document.querySelector('.back-link');
+
+/* ===== 対戦相手システム ===== */
+let currentOpponent = 'red';
+
+/* プレイヤー＝黒(B・先手)、AI＝白(W) */
+const OPPONENTS = {
+  red: {
+    aiLevel: 1,
+    boardTheme: 'theme-red',
+    images: {
+      normal: 'normal', happy: 'hai', happy2: 'hai2', sad: 'oshii',
+      think: 'wakaru', point: 'point', cheer: 'clap'
+    },
+    comments: {
+      intro: [
+        "オセロやろ〜{name}！",
+        "{name}！オセロ<ruby>対決<rt>たいけつ</rt></ruby>や！",
+        "よっしゃ{name}！<br>レッドとオセロ<ruby>勝負<rt>しょうぶ</rt></ruby>やで〜！",
+        "{name}きた〜！<br>レッド<ruby>待<rt>ま</rt></ruby>っとったで！",
+        "おっ{name}！<br>いっちょやったろか〜！",
+        "{name}！<br>レッドとオセロ、<ruby>楽<rt>たの</rt></ruby>しもな〜！"
+      ],
+      colorExplain: [
+        "{name}が<ruby>黒<rt>くろ</rt></ruby>で、<br>レッドが<ruby>白<rt>しろ</rt></ruby>やで！<br><ruby>黒<rt>くろ</rt></ruby>が<ruby>先<rt>さき</rt></ruby>やから、<br>{name}からやで〜！"
+      ],
+      yourTurn: [
+        "{name}の<ruby>番<rt>ばん</rt></ruby>やで〜！<br>どこに<ruby>置<rt>お</rt></ruby>く？",
+        "ほな{name}、いってみよか！",
+        "{name}、じっくり<ruby>考<rt>かんが</rt></ruby>えてな〜！",
+        "つぎは{name}やで！<br>ええとこ<ruby>狙<rt>ねら</rt></ruby>ってな〜！",
+        "{name}のターンや！<br>レッド、<ruby>見守<rt>みまも</rt></ruby>っとるで〜",
+        "{name}！どこにする〜？<br>レッドドキドキや！",
+        "さあ{name}の<ruby>番<rt>ばん</rt></ruby>や！<br>ゆっくりでええからな〜",
+        "おっ、{name}のターンやで！<br>どんな<ruby>手<rt>て</rt></ruby>がくるかな〜？",
+        "{name}、<ruby>好<rt>す</rt></ruby>きなとこ<ruby>置<rt>お</rt></ruby>き〜！",
+        "{name}〜どこいく？<br>レッド<ruby>楽<rt>たの</rt></ruby>しみやわ〜"
+      ],
+      aiTurn: [
+        "レッドの<ruby>番<rt>ばん</rt></ruby>や〜！<br>ちょっと<ruby>待<rt>ま</rt></ruby>っててな…",
+        "ふむふむ…<br>レッド<ruby>考<rt>かんが</rt></ruby>え<ruby>中<rt>ちゅう</rt></ruby>やで〜",
+        "え〜っと…ここかな〜？",
+        "レッドのターン！<br>まかせとき〜！",
+        "よっしゃ、レッドいくで〜！",
+        "レッドの<ruby>番<rt>ばん</rt></ruby>やで！<br>う〜んどこにしよ…",
+        "ほな、レッドいくわ〜！<br>ちょっと<ruby>待<rt>ま</rt></ruby>っててな！",
+        "レッドの<ruby>出番<rt>でばん</rt></ruby>や！<br>えへへ〜！",
+        "ここかな〜？<br>あっちかな〜？<br>う〜ん…",
+        "レッドも<ruby>考<rt>かんが</rt></ruby>えるで〜！<br>ちょっとだけ<ruby>待<rt>ま</rt></ruby>ってな！"
+      ],
+      playerGood: [
+        "おっ！{name}うまいやん！",
+        "ええとこ<ruby>置<rt>お</rt></ruby>いたな〜{name}！",
+        "さすが{name}！やるやん〜！",
+        "{name}、ナイス！<br>レッドちょっとあせるわ〜！",
+        "おお〜！{name}かっこええ！",
+        "えっ、すご！{name}<ruby>天才<rt>てんさい</rt></ruby>ちゃう？",
+        "うわ〜{name}、<br>それはレッド<ruby>困<rt>こま</rt></ruby>るわ〜！",
+        "{name}！ナイスナイス！<br>レッドびっくりやで！",
+        "おっと〜{name}、<br>そこくるか〜！やるな〜！",
+        "すごいすごい！<br>{name}めっちゃ<ruby>上手<rt>じょうず</rt></ruby>やん！"
+      ],
+      playerBad: [
+        "あれ〜{name}、<br>そこでええの？ふふふ",
+        "レッド、ちょっと<ruby>嬉<rt>うれ</rt></ruby>しいかも〜！",
+        "ほほ〜、{name}、<br>レッドにチャンスくれるん？",
+        "{name}、おもしろいとこ<ruby>置<rt>お</rt></ruby>くな〜！",
+        "ありがと{name}！<br>レッドもらうで〜",
+        "えへへ〜{name}、<br>そこはレッドにありがたいわ〜",
+        "あら〜{name}！<br>レッド<ruby>助<rt>たす</rt></ruby>かるわ〜ふふ",
+        "{name}、<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>？<br>でもレッドはうれしいで〜",
+        "おっと〜{name}！<br>レッドにプレゼントか〜？",
+        "わ〜い{name}ありがとう！<br>…って、ええんか？"
+      ],
+      aiGood: [
+        "えへへ〜レッド<ruby>会心<rt>かいしん</rt></ruby>の<ruby>一手<rt>いって</rt></ruby>！",
+        "レッド、なかなかやるやろ〜？",
+        "ここや！<br>レッドの<ruby>狙<rt>ねら</rt></ruby>いどおりやで！",
+        "いっぱいひっくりかえったで〜！",
+        "よっしゃ〜！<br>レッド<ruby>好調<rt>こうちょう</rt></ruby>や！",
+        "レッドもがんばっとるんやで〜！<br>えへへ！",
+        "おっ、いい<ruby>感<rt>かん</rt></ruby>じや！<br>レッドのってきたで〜！",
+        "やった〜！<br>レッド<ruby>最高<rt>さいこう</rt></ruby>の<ruby>一手<rt>いって</rt></ruby>や！",
+        "ふふ〜ん♪<br>レッドもやるときはやるんやで〜",
+        "ここぞ！って<ruby>感<rt>かん</rt></ruby>じや！<br>レッドいけいけ〜！"
+      ],
+      playerLeading: [
+        "{name}、つよいな〜！<br>レッドがんばらな！",
+        "うわ〜{name}<ruby>優勢<rt>ゆうせい</rt></ruby>やん！",
+        "{name}リードしてる！<br>レッドピンチや〜！",
+        "え〜！{name}つよ！<br>レッドどうしよ〜！",
+        "{name}がいっぱいや〜！<br>レッド<ruby>巻<rt>ま</rt></ruby>きかえすで！",
+        "うう〜{name}<ruby>強<rt>つよ</rt></ruby>すぎ〜！<br>でもレッドあきらめへん！"
+      ],
+      aiLeading: [
+        "レッドちょっとリードかな〜<br>でも{name}ならいけるで！",
+        "レッド<ruby>調子<rt>ちょうし</rt></ruby>ええで〜<br>でも{name}もつよい！",
+        "レッドリードや！<br>でも<ruby>油断<rt>ゆだん</rt></ruby>したらあかんな〜",
+        "おっ、レッドがんばってるやろ？<br>でも{name}こわいわ〜",
+        "レッドいい<ruby>感<rt>かん</rt></ruby>じやけど<br>{name}のこと<ruby>油断<rt>ゆだん</rt></ruby>でけへんわ〜",
+        "ちょっとリードや！<br>でも{name}はあなどれへんで〜"
+      ],
+      pass: [
+        "{name}、<ruby>置<rt>お</rt></ruby>けるとこないわ〜<br>パスやで！",
+        "あれ〜<ruby>置<rt>お</rt></ruby>けへん！<br>パスや〜",
+        "{name}、パスや〜！<br>でも<ruby>次<rt>つぎ</rt></ruby>がんばろな！",
+        "おっと〜{name}<ruby>置<rt>お</rt></ruby>けへんか〜<br>しゃあない、パスやで！"
+      ],
+      aiPass: [
+        "レッド<ruby>置<rt>お</rt></ruby>けへん！<br>パスするわ〜くやし！",
+        "えっ！レッド<ruby>置<rt>お</rt></ruby>けへんの！？<br>パスや〜！",
+        "うそ〜ん！<br>レッドどこにも<ruby>置<rt>お</rt></ruby>けへん！<br>パスや〜！",
+        "くっ…レッドパスや！<br>{name}つよいわ〜！"
+      ],
+      winPlayer: [
+        "{name}の<ruby>勝<rt>か</rt></ruby>ち〜！<br>すごいやん！<br>レッド<ruby>完敗<rt>かんぱい</rt></ruby>やわ〜！",
+        "まけた〜！{name}つよすぎ！<br>レッド<ruby>悔<rt>くや</rt></ruby>しいけど<br>すごいわ！",
+        "やられた〜！<br>{name}、めっちゃかっこええ！<br>つぎこそレッドが<ruby>勝<rt>か</rt></ruby>つで！",
+        "{name}の<ruby>圧勝<rt>あっしょう</rt></ruby>や！<br>レッド<ruby>脱帽<rt>だつぼう</rt></ruby>やで〜！<br>またやろな！",
+        "うわ〜ん<ruby>負<rt>ま</rt></ruby>けた〜！<br>でも{name}が<ruby>強<rt>つよ</rt></ruby>いんやから<br>しゃあないな〜！",
+        "{name}すごすぎるわ〜！<br>レッド<ruby>感動<rt>かんどう</rt></ruby>してもうたで！<br>つぎもやろな！"
+      ],
+      winAI: [
+        "やった〜レッドの<ruby>勝<rt>か</rt></ruby>ち！<br>でも{name}もがんばったで！<br>またやろな！",
+        "レッド<ruby>勝<rt>か</rt></ruby>っちゃった〜！<br>{name}のあの<ruby>一手<rt>いって</rt></ruby>はよかったで〜",
+        "レッドがんばった〜！<br>{name}もナイスファイトやったで！",
+        "えへへ〜レッドの<ruby>勝<rt>か</rt></ruby>ち！<br>でもな、{name}もつよかったで！<br>いい<ruby>勝負<rt>しょうぶ</rt></ruby>やったわ〜！",
+        "レッドの<ruby>勝<rt>か</rt></ruby>ちや〜！<br>でも{name}にはドキドキしたわ〜<br>リベンジ<ruby>待<rt>ま</rt></ruby>ってるで！",
+        "やった〜！<br>でも{name}のあの<ruby>攻<rt>せ</rt></ruby>めはこわかった〜<br>つぎはもっとすごい<ruby>勝負<rt>しょうぶ</rt></ruby>になるで！"
+      ],
+      draw: [
+        "ひきわけ〜！<br>{name}とレッド<ruby>互角<rt>ごかく</rt></ruby>やん！",
+        "おんなじ<ruby>数<rt>かず</rt></ruby>！？<br>すごい{name}！<ruby>運命<rt>うんめい</rt></ruby>やん！",
+        "ドロー！{name}もレッドもがんばったな〜！",
+        "ぴったり<ruby>同<rt>おな</rt></ruby>じ！？<br>すごいな〜！<br>{name}とレッドは<ruby>最高<rt>さいこう</rt></ruby>のライバルやで！",
+        "ひきわけか〜！<br>ええ<ruby>勝負<rt>しょうぶ</rt></ruby>やったなあ！<br>つぎこそ<ruby>決着<rt>けっちゃく</rt></ruby>つけよ！"
+      ],
+      bye: [
+        "ばいばい{name}！<br>またいつでもおいで〜！<br>レッド<ruby>待<rt>ま</rt></ruby>っとるで！",
+        "おつかれ{name}！<br>いつでも<ruby>遊<rt>あそ</rt></ruby>びにきてな〜！<br>レッドここにおるで！",
+        "{name}、ばいば〜い！<br>またオセロやろな〜！<br>レッド<ruby>楽<rt>たの</rt></ruby>しみにしてるわ！",
+        "またな〜{name}！<br>いつでも<ruby>待<rt>ま</rt></ruby>ってるで〜！<br>レッドより！"
+      ]
+    }
+  },
+  black: {
+    aiLevel: 4,
+    boardTheme: 'theme-black',
+    images: {
+      normal: 'black-pose', happy: 'black-fight', happy2: 'black-fly', sad: 'black-umm',
+      think: 'black-think', point: 'black-make', cheer: 'black1'
+    },
+    comments: {
+      intro: [
+        "しぶレンジャーブラック。<br>よろしくね、{name}。<br><ruby>覚悟<rt>かくご</rt></ruby>はいいかい？<br>…なんてね。<ruby>楽<rt>たの</rt></ruby>しくやろう！",
+        "ボクはしぶレンジャーブラック。<br>よく<ruby>来<rt>き</rt></ruby>たね{name}。<br>オセロ<ruby>勝負<rt>しょうぶ</rt></ruby>しよう。<br><ruby>手加減<rt>てかげん</rt></ruby>は…ちょっとだけね。",
+        "しぶレンジャーブラックだ。<br>{name}か。いいね。<br><ruby>本気<rt>ほんき</rt></ruby>で<ruby>相手<rt>あいて</rt></ruby>するよ。…たぶん。",
+        "ボクはブラック。<br>{name}とオセロ、<ruby>楽<rt>たの</rt></ruby>しみだな。<br>さあ、はじめよう。",
+        "しぶレンジャーブラック、<ruby>参上<rt>さんじょう</rt></ruby>。<br>{name}、<ruby>準備<rt>じゅんび</rt></ruby>はいいかい？",
+        "ブラックだよ。<br>{name}と<ruby>対決<rt>たいけつ</rt></ruby>できてうれしいな。<br>さあ、<ruby>勝負<rt>しょうぶ</rt></ruby>しよう。"
+      ],
+      colorExplain: [
+        "{name}が<ruby>黒<rt>くろ</rt></ruby>、ボクが<ruby>白<rt>しろ</rt></ruby>だよ。<br><ruby>黒<rt>くろ</rt></ruby>が<ruby>先手<rt>せんて</rt></ruby>だから、<br>{name}からどうぞ。"
+      ],
+      yourTurn: [
+        "{name}の<ruby>番<rt>ばん</rt></ruby>だよ。<br>じっくりいこう。",
+        "さあ{name}、<ruby>次<rt>つぎ</rt></ruby>の<ruby>一手<rt>いって</rt></ruby>は？",
+        "{name}のターンだ。<br>ボクは<ruby>待<rt>ま</rt></ruby>ってるよ。",
+        "どこに<ruby>置<rt>お</rt></ruby>く？{name}。<br><ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>いてね。",
+        "{name}、いい<ruby>手<rt>て</rt></ruby>を<ruby>見<rt>み</rt></ruby>せてくれ。",
+        "{name}の<ruby>番<rt>ばん</rt></ruby>だね。<br>どう<ruby>出<rt>で</rt></ruby>るか<ruby>楽<rt>たの</rt></ruby>しみだよ。",
+        "さあ{name}、キミの<ruby>番<rt>ばん</rt></ruby>だ。<br>ゆっくり<ruby>考<rt>かんが</rt></ruby>えていいよ。",
+        "{name}のターンだね。<br>ボク、ちょっとドキドキしてる。",
+        "<ruby>次<rt>つぎ</rt></ruby>は{name}だよ。<br>いい<ruby>手<rt>て</rt></ruby>を<ruby>期待<rt>きたい</rt></ruby>してる。",
+        "{name}、どこに<ruby>置<rt>お</rt></ruby>くか<ruby>決<rt>き</rt></ruby>まった？<br>ボクは<ruby>待<rt>ま</rt></ruby>ってるよ。"
+      ],
+      aiTurn: [
+        "ブラックのターンだ。<br>ちょっと<ruby>待<rt>ま</rt></ruby>ってね…",
+        "ふむ…ここかな。<br>ブラック、<ruby>考<rt>かんが</rt></ruby>え<ruby>中<rt>ちゅう</rt></ruby>。",
+        "なるほどね…<br>ブラック、いくよ。",
+        "ボクの<ruby>番<rt>ばん</rt></ruby>だね。<br>ちょっと<ruby>考<rt>かんが</rt></ruby>えさせて。",
+        "さて…どこにしようかな。",
+        "ブラック、いくよ。<br>ちょっと<ruby>待<rt>ま</rt></ruby>ってね。",
+        "ふむ…なるほど。<br>ここしかないね。",
+        "ボクのターンだ。<br><ruby>見<rt>み</rt></ruby>ててね{name}。",
+        "ここだね…たぶん。<br>いや、きっとここだ。",
+        "ブラック、<ruby>考<rt>かんが</rt></ruby>え<ruby>中<rt>ちゅう</rt></ruby>…<br>よし、<ruby>決<rt>き</rt></ruby>めた。"
+      ],
+      playerGood: [
+        "おっ、{name}やるね。<br>ちょっと<ruby>驚<rt>おどろ</rt></ruby>いたよ。",
+        "いい<ruby>手<rt>て</rt></ruby>だ{name}。<br>ボクも<ruby>気<rt>き</rt></ruby>を<ruby>引<rt>ひ</rt></ruby>き<ruby>締<rt>し</rt></ruby>めないと。",
+        "さすがだね{name}。<br>なかなかやるじゃないか。",
+        "ほう…{name}、<br>それはいい<ruby>一手<rt>いって</rt></ruby>だ。",
+        "{name}、うまいなあ。<br>ブラック、ちょっとあせってる。",
+        "おっと…{name}、<br>それはいいところを<ruby>突<rt>つ</rt></ruby>いてきたね。",
+        "さすが{name}。<br>ボクの<ruby>予想<rt>よそう</rt></ruby>を<ruby>超<rt>こ</rt></ruby>えてきた。",
+        "{name}、その<ruby>手<rt>て</rt></ruby>は<ruby>見事<rt>みごと</rt></ruby>だよ。<br><ruby>正直<rt>しょうじき</rt></ruby>ドキッとした。",
+        "なるほどね{name}…<br>キミ、<ruby>才能<rt>さいのう</rt></ruby>あるよ。",
+        "{name}、ナイスだ。<br>ブラック、<ruby>本気<rt>ほんき</rt></ruby><ruby>出<rt>だ</rt></ruby>さないとまずいな。"
+      ],
+      playerBad: [
+        "あれ{name}、<br>そこでいいの？…ふふ。",
+        "ブラック、<br>ちょっとうれしいかも。",
+        "{name}、ありがとう。<br>もらっちゃうよ？",
+        "おや…{name}、<br>ボクにチャンスをくれるんだね。",
+        "ふふ、{name}。<br>ボクに<ruby>優<rt>やさ</rt></ruby>しいね。",
+        "{name}、<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>？<br>でも…ありがたいよ。",
+        "おや{name}、<br>そこはボクにとって<ruby>都合<rt>つごう</rt></ruby>がいいな。",
+        "ふむ…{name}、<br>ボクのことが<ruby>好<rt>す</rt></ruby>きなのかい？<br>…なんてね。",
+        "{name}、ドンマイ。<br>でもボクはもらうよ？",
+        "あっ、{name}…<br>それはちょっと<ruby>助<rt>たす</rt></ruby>かるかな。ふふ。"
+      ],
+      aiGood: [
+        "ブラック<ruby>会心<rt>かいしん</rt></ruby>の<ruby>一手<rt>いって</rt></ruby>。<br>どうだい？",
+        "ここだ。<br>ブラックの<ruby>読<rt>よ</rt></ruby>みどおり。",
+        "いい<ruby>感<rt>かん</rt></ruby>じだね。<br>ブラック、<ruby>好調<rt>こうちょう</rt></ruby>だよ。",
+        "たくさんひっくりかえったね。<br>…ごめんね？",
+        "ブラック、なかなかでしょ？<br>ふふ。",
+        "ここしかないと<ruby>思<rt>おも</rt></ruby>ったんだ。<br>どうかな？",
+        "ブラックの<ruby>狙<rt>ねら</rt></ruby>いどおりだ。<br>ふふ、<ruby>気持<rt>きも</rt></ruby>ちいいね。",
+        "おっ、いい<ruby>手<rt>て</rt></ruby>だったね。<br>ブラック、のってきたよ。",
+        "いっぱい<ruby>返<rt>かえ</rt></ruby>せた。<br>ごめんね{name}、でもこれが<ruby>勝負<rt>しょうぶ</rt></ruby>だ。",
+        "よし、ブラックいい<ruby>感<rt>かん</rt></ruby>じだ。<br>でも<ruby>油断<rt>ゆだん</rt></ruby>しないよ。"
+      ],
+      playerLeading: [
+        "{name}、<ruby>強<rt>つよ</rt></ruby>いね…<br>ブラック、がんばらないと。",
+        "うーん{name}<ruby>優勢<rt>ゆうせい</rt></ruby>か。<br>でもまだわからないよ。",
+        "{name}リードだね。<br>ブラック、ここからだ。",
+        "{name}がリードしてる…<br>でもボクはあきらめないよ。",
+        "ちょっとまずいかな…<br>でも{name}、<ruby>最後<rt>さいご</rt></ruby>までわからないよ？",
+        "{name}つよいなあ…<br>ブラック、<ruby>本気<rt>ほんき</rt></ruby><ruby>出<rt>だ</rt></ruby>すよ。"
+      ],
+      aiLeading: [
+        "ブラック、少しリードかな。<br>でも{name}はあなどれない。",
+        "いい<ruby>調子<rt>ちょうし</rt></ruby>だけど…<br>{name}のことだから<ruby>油断<rt>ゆだん</rt></ruby>できないな。",
+        "ブラックリードだ。<br>でも<ruby>最後<rt>さいご</rt></ruby>までわからないよ。",
+        "ちょっとリードしてるけど…<br>{name}のことだから<ruby>怖<rt>こわ</rt></ruby>いんだよね。",
+        "ブラックいい<ruby>感<rt>かん</rt></ruby>じだ。<br>でも{name}が<ruby>逆転<rt>ぎゃくてん</rt></ruby>するかも。",
+        "リードしてるけど…<br>{name}、ボクは<ruby>油断<rt>ゆだん</rt></ruby>しないよ。"
+      ],
+      pass: [
+        "{name}、<ruby>置<rt>お</rt></ruby>ける<ruby>場所<rt>ばしょ</rt></ruby>がないみたいだ。<br>パスだね。",
+        "あ、{name}<ruby>置<rt>お</rt></ruby>けないね。<br>パスだ。<ruby>次<rt>つぎ</rt></ruby>がんばろう。",
+        "{name}、パスだね。<br>ドンマイ。<ruby>次<rt>つぎ</rt></ruby>のチャンスを<ruby>待<rt>ま</rt></ruby>とう。",
+        "おっと{name}、パスか。<br>でもすぐまたキミの<ruby>番<rt>ばん</rt></ruby>がくるよ。"
+      ],
+      aiPass: [
+        "ブラック、<ruby>置<rt>お</rt></ruby>けない…！<br>パスだ。くやしいな。",
+        "えっ、ボク<ruby>置<rt>お</rt></ruby>ける<ruby>場所<rt>ばしょ</rt></ruby>がない…<br>パスだ！",
+        "まさかボクがパスとは…<br>{name}、やるね。",
+        "ブラック、パスだ…<br>くう、くやしい。"
+      ],
+      winPlayer: [
+        "{name}の<ruby>勝<rt>か</rt></ruby>ちだ。<br>すごいよ。<ruby>完敗<rt>かんぱい</rt></ruby>だ。<br>…でも<ruby>楽<rt>たの</rt></ruby>しかった。",
+        "<ruby>負<rt>ま</rt></ruby>けた…{name}、<ruby>強<rt>つよ</rt></ruby>いね。<br>ブラック、<ruby>素直<rt>すなお</rt></ruby>にくやしい。<br>またやろう。",
+        "{name}の<ruby>圧勝<rt>あっしょう</rt></ruby>だね。<br>ボクもまだまだだな。<br><ruby>次<rt>つぎ</rt></ruby>は<ruby>負<rt>ま</rt></ruby>けないよ。",
+        "やられたよ{name}。<br>キミは<ruby>強<rt>つよ</rt></ruby>い。<br>でもボクも<ruby>成長<rt>せいちょう</rt></ruby>するよ。",
+        "{name}の<ruby>勝<rt>か</rt></ruby>ちだ…<br>くやしいけど、<br>キミとやれて<ruby>楽<rt>たの</rt></ruby>しかったよ。",
+        "<ruby>完敗<rt>かんぱい</rt></ruby>だね…<br>{name}、すごいよ。<br>リベンジさせてくれ。"
+      ],
+      winAI: [
+        "ブラックの<ruby>勝<rt>か</rt></ruby>ちだ。<br>でも{name}、<ruby>強<rt>つよ</rt></ruby>かったよ。<br>いい<ruby>勝負<rt>しょうぶ</rt></ruby>だった。",
+        "<ruby>勝<rt>か</rt></ruby>っちゃった。<br>でも{name}のあの<ruby>一手<rt>いって</rt></ruby>は<br>ドキッとしたよ。",
+        "ブラックの<ruby>勝<rt>か</rt></ruby>ちだね。<br>{name}もナイスファイト。<br>リベンジ<ruby>待<rt>ま</rt></ruby>ってるよ。",
+        "ボクの<ruby>勝<rt>か</rt></ruby>ちだ。<br>でも{name}、キミはつよい。<br>またやろう。",
+        "ブラック、<ruby>勝<rt>か</rt></ruby>たせてもらったよ。<br>{name}のあの<ruby>攻<rt>せ</rt></ruby>めは<br>ほんとにヒヤッとした。",
+        "<ruby>勝<rt>か</rt></ruby>ったけど…<br>ギリギリだったよ{name}。<br><ruby>次<rt>つぎ</rt></ruby>はわからないね。"
+      ],
+      draw: [
+        "ひきわけか。<br>{name}とブラック、<ruby>互角<rt>ごかく</rt></ruby>だね。<br>いい<ruby>勝負<rt>しょうぶ</rt></ruby>だった。",
+        "おんなじ<ruby>数<rt>かず</rt></ruby>…！<br>{name}、やるね。<br><ruby>次<rt>つぎ</rt></ruby>こそ<ruby>決着<rt>けっちゃく</rt></ruby>をつけよう。",
+        "ドロー…！<br>{name}とボク、ぴったり<ruby>同<rt>おな</rt></ruby>じか。<br>すごい<ruby>勝負<rt>しょうぶ</rt></ruby>だったね。",
+        "ひきわけだ。<br>{name}、キミはボクと<ruby>互角<rt>ごかく</rt></ruby>だよ。<br>それってすごいことだ。"
+      ],
+      bye: [
+        "じゃあね{name}。<br>またいつでもおいで。<br>ボクはいつでもここにいるよ。",
+        "おつかれ{name}。<br>いい<ruby>勝負<rt>しょうぶ</rt></ruby>だったね。<br>またやろう。<ruby>待<rt>ま</rt></ruby>ってるよ。",
+        "バイバイ{name}。<br>キミとのオセロ、<ruby>楽<rt>たの</rt></ruby>しかったよ。<br>いつでも<ruby>来<rt>き</rt></ruby>てね。",
+        "またね{name}。<br>ブラックはいつでも<br>キミを<ruby>待<rt>ま</rt></ruby>ってるよ。"
+      ]
+    }
+  },
+  spartan: {
+    aiLevel: 8,
+    boardTheme: 'theme-spartan',
+    images: {
+      normal: 'スパルタン', happy: 'スパルタン-かかってこい', happy2: 'スパルタン-そうか！', sad: 'スパルタン-負け',
+      think: 'スパルタン-考え中', point: 'スパルタン-かかってこい', cheer: 'スパルタン-そうか！'
+    },
+    comments: {
+      intro: [
+        "オレはしぶ・スパルタン。<br>フッ…{name}か。<br>オレに<ruby>挑<rt>いど</rt></ruby>むとはいい<ruby>度胸<rt>どきょう</rt></ruby>だぜ。<br>…<ruby>泣<rt>な</rt></ruby>いても<ruby>知<rt>し</rt></ruby>らねえからな？",
+        "しぶ・スパルタンだ。<ruby>覚<rt>おぼ</rt></ruby>えときな。<br>へえ、{name}がオレの<ruby>相手<rt>あいて</rt></ruby>？<br>ちょっとは<ruby>楽<rt>たの</rt></ruby>しませてくれよ？",
+        "しぶ・スパルタン<ruby>参上<rt>さんじょう</rt></ruby>！<br>おっと{name}、<ruby>勇気<rt>ゆうき</rt></ruby>あるじゃねえか。<br>レベル10000の<ruby>実力<rt>じつりょく</rt></ruby>、<br><ruby>見<rt>み</rt></ruby>せてやるぜ。",
+        "オレがしぶ・スパルタンだ。<br>{name}…ほう、いい<ruby>目<rt>め</rt></ruby>してるじゃねえか。<br><ruby>期待<rt>きたい</rt></ruby>してるぜ？",
+        "しぶ・スパルタン、<ruby>降臨<rt>こうりん</rt></ruby>。<br>フフ…{name}、<ruby>震<rt>ふる</rt></ruby>えてるか？<br>…冗談だぜ。<br>さあ、<ruby>勝負<rt>しょうぶ</rt></ruby>といこうか。",
+        "オレの<ruby>名<rt>な</rt></ruby>はしぶ・スパルタン。<br>{name}か…おもしろい。<br><ruby>本気<rt>ほんき</rt></ruby>でかかってこいよ。"
+      ],
+      colorExplain: [
+        "{name}が<ruby>黒<rt>くろ</rt></ruby>、オレが<ruby>白<rt>しろ</rt></ruby>だ。<br><ruby>黒<rt>くろ</rt></ruby>が<ruby>先手<rt>せんて</rt></ruby>だぜ。<br>さあ、かかってきな！"
+      ],
+      yourTurn: [
+        "{name}の<ruby>番<rt>ばん</rt></ruby>だぜ。<br>さあ、どう<ruby>出<rt>で</rt></ruby>る？",
+        "ほら{name}、<ruby>次<rt>つぎ</rt></ruby>はキミだぜ。<br><ruby>悩<rt>なや</rt></ruby>んでるヒマはないぜ？",
+        "{name}のターンだ。<br>オレを<ruby>驚<rt>おどろ</rt></ruby>かせてくれよ。",
+        "さあ{name}、<ruby>見<rt>み</rt></ruby>せてくれ。<br>キミの<ruby>本気<rt>ほんき</rt></ruby>ってやつをさ。",
+        "{name}、どこに<ruby>置<rt>お</rt></ruby>く？<br>じっくり<ruby>考<rt>かんが</rt></ruby>えな。",
+        "キミの<ruby>番<rt>ばん</rt></ruby>だぜ{name}。<br>オレを<ruby>楽<rt>たの</rt></ruby>しませてくれよ。",
+        "{name}、<ruby>次<rt>つぎ</rt></ruby>の<ruby>一手<rt>いって</rt></ruby>は？<br>オレはいつでもいいぜ。",
+        "フッ…{name}のターンだ。<br>どんな<ruby>手<rt>て</rt></ruby>を<ruby>打<rt>う</rt></ruby>ってくるかな。",
+        "{name}、ほら<ruby>早<rt>はや</rt></ruby>くしな。<br>…なんてね、ゆっくりでいいぜ。",
+        "さあ{name}。<br>オレに<ruby>勝<rt>か</rt></ruby>てると<ruby>思<rt>おも</rt></ruby>うなら<br>いい<ruby>手<rt>て</rt></ruby>を<ruby>見<rt>み</rt></ruby>せてくれ。"
+      ],
+      aiTurn: [
+        "オレの<ruby>番<rt>ばん</rt></ruby>だぜ。<br>ちょっと<ruby>待<rt>ま</rt></ruby>ちな…",
+        "フッ…ここだな。<br><ruby>見<rt>み</rt></ruby>てな{name}。",
+        "オレのターンだ。<br><ruby>震<rt>ふる</rt></ruby>えて<ruby>待<rt>ま</rt></ruby>ちな…なんてね。",
+        "さてと…<br>オレの<ruby>一手<rt>いって</rt></ruby>、いくぜ。",
+        "ふむ…なるほどね。<br>オレにまかせな。",
+        "オレの<ruby>番<rt>ばん</rt></ruby>だ。<br><ruby>最善<rt>さいぜん</rt></ruby>の<ruby>一手<rt>いって</rt></ruby>を<ruby>見<rt>み</rt></ruby>せてやるぜ。",
+        "フフ…<ruby>見<rt>み</rt></ruby>てな{name}。<br>これがオレの<ruby>実力<rt>じつりょく</rt></ruby>だぜ。",
+        "オレのターンだ。<br>ちょっと<ruby>待<rt>ま</rt></ruby>ちな…<br>よし、<ruby>決<rt>き</rt></ruby>まった。",
+        "ふむ、なるほど…<br>ここしかねえな。いくぜ。",
+        "フッ…ここだ。<br>{name}、<ruby>覚悟<rt>かくご</rt></ruby>しな。"
+      ],
+      playerGood: [
+        "ほう…{name}、やるじゃねえか。<br>ちょっと<ruby>見直<rt>みなお</rt></ruby>したぜ。",
+        "おっと{name}、いい<ruby>手<rt>て</rt></ruby>だ。<br>オレもうかうかしてられねえな。",
+        "フッ…{name}、<br>なかなかセンスあるぜ。",
+        "へえ！{name}やるじゃん。<br>…ちょっとドキッとしたぜ。",
+        "{name}、おみごとだぜ。<br>オレを<ruby>焦<rt>あせ</rt></ruby>らせるとはね。",
+        "おいおい{name}…<br>マジでやるじゃねえか。<br>オレ、ちょっとあせったぜ。",
+        "なかなかやるな{name}。<br>ちょっとだけ<ruby>認<rt>みと</rt></ruby>めてやるぜ。",
+        "ほう…その<ruby>手<rt>て</rt></ruby>か。<br>{name}、キミ<ruby>面白<rt>おもしろ</rt></ruby>いやつだな。",
+        "フッ…やるね{name}。<br>オレのことをよく<ruby>見<rt>み</rt></ruby>てるじゃねえか。",
+        "{name}！いい<ruby>手<rt>て</rt></ruby>だぜ！<br>…くっ、ちょっと<ruby>痛<rt>いた</rt></ruby>い。"
+      ],
+      playerBad: [
+        "あれ{name}、<br>そこでいいのかい？…フフ。",
+        "ありがたくもらうぜ{name}。<br>…なんて、ドンマイだ。",
+        "フッ、{name}。<br>オレに<ruby>優<rt>やさ</rt></ruby>しいんだな。",
+        "おやおや{name}。<br>チャンスをくれるのかい？",
+        "{name}…まあ、<br><ruby>次<rt>つぎ</rt></ruby>がんばれよ。",
+        "フフ…{name}、<br>そこはオレにとって<ruby>最高<rt>さいこう</rt></ruby>だぜ。",
+        "おっと{name}、ラッキーだぜ。<br>ありがたくもらうよ。",
+        "{name}、ドンマイだ。<br>でもオレは<ruby>容赦<rt>ようしゃ</rt></ruby>しねえぜ。",
+        "フッ、{name}。<br>オレのことが<ruby>好<rt>す</rt></ruby>きなのか？<br>…なんてね。",
+        "おいおい{name}…<br>オレにプレゼントか？<br>ありがたくもらうぜ。"
+      ],
+      aiGood: [
+        "フッ…<ruby>会心<rt>かいしん</rt></ruby>の<ruby>一手<rt>いって</rt></ruby>だぜ。<br>どうだい{name}？",
+        "ここだ。<br>オレの<ruby>読<rt>よ</rt></ruby>みは<ruby>完璧<rt>かんぺき</rt></ruby>だぜ。",
+        "いっぱいひっくりかえったな！<br>…すまねえな、{name}。",
+        "フフ、オレ<ruby>好調<rt>こうちょう</rt></ruby>だぜ。<br>でも{name}もがんばれよ。",
+        "これがレベル10000ってやつだぜ。<br>…なんてね。",
+        "オレは<ruby>無敵<rt>むてき</rt></ruby>だぜ？<br><ruby>今<rt>いま</rt></ruby>のでわかったろ？",
+        "オレに<ruby>勝<rt>か</rt></ruby>てるやつなんて<br>この<ruby>世<rt>よ</rt></ruby>にいねえよ。<br>…たぶんね。",
+        "どうだ{name}？<br>これがオレの<ruby>実力<rt>じつりょく</rt></ruby>だぜ。",
+        "フッ…<ruby>完璧<rt>かんぺき</rt></ruby>な<ruby>一手<rt>いって</rt></ruby>だ。<br>オレ<ruby>自身<rt>じしん</rt></ruby>にほれぼれするぜ。",
+        "いい<ruby>手<rt>て</rt></ruby>だろ？<br>オレは<ruby>天才<rt>てんさい</rt></ruby>だからな。<br>…なんてね。"
+      ],
+      playerLeading: [
+        "ほう…{name}、やるな。<br>オレもそろそろ<ruby>本気<rt>ほんき</rt></ruby><ruby>出<rt>だ</rt></ruby>すかな。",
+        "{name}リードか…<br>フッ、おもしろくなってきたぜ。",
+        "うーん{name}<ruby>強<rt>つよ</rt></ruby>い…<br>でもオレはここからだぜ。",
+        "ちょっと<ruby>待<rt>ま</rt></ruby>て…まさか<br>オレがおされてる…だと？<br>ありえねえ…！",
+        "{name}…おまえ<ruby>本当<rt>ほんと</rt></ruby>に<ruby>強<rt>つよ</rt></ruby>いな。<br>でもオレは<ruby>最後<rt>さいご</rt></ruby>に<ruby>勝<rt>か</rt></ruby>つ<ruby>男<rt>おとこ</rt></ruby>だぜ。",
+        "フッ…{name}、やるじゃねえか。<br>でもオレをなめるなよ？<br>ここからが<ruby>本番<rt>ほんばん</rt></ruby>だぜ。",
+        "おいおい…{name}リードかよ。<br>…<ruby>面白<rt>おもしろ</rt></ruby>い。<br><ruby>燃<rt>も</rt></ruby>えてきたぜ。",
+        "くっ…{name}がリードか。<br>だがオレは<ruby>逆境<rt>ぎゃっきょう</rt></ruby>にこそ<ruby>強<rt>つよ</rt></ruby>いんだぜ。"
+      ],
+      aiLeading: [
+        "オレがリードだぜ。<br>でも{name}、あきらめるなよ？",
+        "フッ、いい<ruby>調子<rt>ちょうし</rt></ruby>だ。<br>でも{name}の<ruby>逆転<rt>ぎゃくてん</rt></ruby>もあるかもな。",
+        "オレリードだけど…<br>{name}のことだ、<ruby>油断<rt>ゆだん</rt></ruby>はしねえぜ。",
+        "フフ…やっぱりオレは<ruby>強<rt>つよ</rt></ruby>い。<br>でも{name}もなかなかだぜ。",
+        "オレがリードだ。<br>でも{name}、<br>あきらめたら<ruby>試合終了<rt>しあいしゅうりょう</rt></ruby>だぜ？",
+        "フッ…<ruby>予定<rt>よてい</rt></ruby>どおりだぜ。<br>でも{name}、まだチャンスはある。<br>…かもな。",
+        "リードしてるぜ。<br>でも{name}が<ruby>逆転<rt>ぎゃくてん</rt></ruby>したら<br>それはそれでカッコいいな。",
+        "オレがリードだ。<br>まあ、<ruby>当然<rt>とうぜん</rt></ruby>だぜ。<br>…なんてね。{name}もがんばれよ。"
+      ],
+      pass: [
+        "{name}、<ruby>置<rt>お</rt></ruby>ける<ruby>場所<rt>ばしょ</rt></ruby>がないぜ。<br>パスだ。<ruby>次<rt>つぎ</rt></ruby>がんばれよ。",
+        "おっと{name}、パスだな。<br>ドンマイだぜ。",
+        "{name}、パスか。<br>でも<ruby>落<rt>お</rt></ruby>ちこむなよ。<br>チャンスはまだあるぜ。",
+        "フッ…{name}、パスだな。<br>でもあきらめるなよ？"
+      ],
+      aiPass: [
+        "くっ…オレが<ruby>置<rt>お</rt></ruby>けないだと…！？<br>パスだぜ…くやしい…！",
+        "まさかオレがパス…！<br>{name}、やるじゃねえか…！",
+        "バカな…オレがパスだと！？<br>{name}…おまえ何者だ…！",
+        "パス…だと…！？<br>オレにこんなことが<ruby>起<rt>お</rt></ruby>きるとは…！"
+      ],
+      winPlayer: [
+        "ば…バカな…！？<br><ruby>無敵<rt>むてき</rt></ruby>のオレが<ruby>負<rt>ま</rt></ruby>けた…だと…！？<br>{name}…おまえ<ruby>本物<rt>ほんもの</rt></ruby>の<ruby>天才<rt>てんさい</rt></ruby>だぜ…！",
+        "う…うそだろ…！？<br>レベル10000のオレが…！<br>{name}、おまえは<ruby>伝説<rt>でんせつ</rt></ruby>だ…<br>オレが<ruby>認<rt>みと</rt></ruby>めた<ruby>最強<rt>さいきょう</rt></ruby>のプレイヤーだぜ…！",
+        "まさか…オレが…<ruby>負<rt>ま</rt></ruby>ける日が<ruby>来<rt>く</rt></ruby>るとは…！<br>{name}…おまえ<ruby>本当<rt>ほんと</rt></ruby>にすごいやつだぜ。<br>オレの<ruby>誇<rt>ほこ</rt></ruby>りにかけて<br>もう<ruby>一度<rt>いちど</rt></ruby><ruby>勝負<rt>しょうぶ</rt></ruby>してくれ…！",
+        "くっ…<ruby>完敗<rt>かんぱい</rt></ruby>だ…！<br>こんなこと<ruby>今<rt>いま</rt></ruby>まで<ruby>一度<rt>いちど</rt></ruby>もなかった…<br>{name}、おまえは<ruby>歴史<rt>れきし</rt></ruby>に<ruby>名<rt>な</rt></ruby>を<ruby>残<rt>のこ</rt></ruby>すぜ…！",
+        "<ruby>負<rt>ま</rt></ruby>けた…！？<br>オレが…<ruby>負<rt>ま</rt></ruby>けた…！？<br>{name}…おまえこそが<ruby>真<rt>しん</rt></ruby>の<ruby>王者<rt>おうじゃ</rt></ruby>だぜ…！<br>…もう<ruby>一回<rt>いっかい</rt></ruby>やらせてくれ…！",
+        "ありえねえ…！<br>オレが<ruby>負<rt>ま</rt></ruby>けるなんて…！<br>{name}…おまえのことは<br><ruby>一生<rt>いっしょう</rt></ruby><ruby>忘<rt>わす</rt></ruby>れねえぜ…！"
+      ],
+      winAI: [
+        "フッ、オレの<ruby>勝<rt>か</rt></ruby>ちだぜ。<br>オレは<ruby>無敵<rt>むてき</rt></ruby>だからな。<br>でも{name}、<ruby>悪<rt>わる</rt></ruby>くなかったぜ。<br>またかかってきな。",
+        "オレに<ruby>勝<rt>か</rt></ruby>てるやつはいねえ。<br>でも{name}、なかなかいい<ruby>勝負<rt>しょうぶ</rt></ruby>だったぜ。<br><ruby>次<rt>つぎ</rt></ruby>はもっとつよくなってこいよ。",
+        "やっぱりオレが<ruby>最強<rt>さいきょう</rt></ruby>だぜ。<br>でも{name}のあの<ruby>一手<rt>いって</rt></ruby>はドキッとした。<br>リベンジ、<ruby>待<rt>ま</rt></ruby>ってるぜ。",
+        "フフ…オレの<ruby>勝<rt>か</rt></ruby>ちだ。<br><ruby>当然<rt>とうぜん</rt></ruby>だぜ。<br>でも{name}、キミはいい<ruby>勝負<rt>しょうぶ</rt></ruby>をしてくれた。<br>またやろうぜ。",
+        "オレの<ruby>勝<rt>か</rt></ruby>ちだぜ。<br>でも{name}、おまえはすごいやつだ。<br><ruby>次<rt>つぎ</rt></ruby>はもっとつよくなって<br>かかってこいよ。",
+        "フッ、<ruby>勝<rt>か</rt></ruby>ったぜ。<br>でも{name}、おまえは<ruby>弱<rt>よわ</rt></ruby>くない。<br>もっとつよくなれるぜ。<br>またいつでもかかってきな。"
+      ],
+      draw: [
+        "ひきわけ…だと！？<br>{name}、オレと<ruby>互角<rt>ごかく</rt></ruby>とはやるじゃねえか。",
+        "おんなじ<ruby>数<rt>かず</rt></ruby>か…<br>フッ、{name}。おまえ、おもしろいやつだぜ。<br><ruby>次<rt>つぎ</rt></ruby>こそ<ruby>決着<rt>けっちゃく</rt></ruby>だ。",
+        "ドロー…だと！？<br>オレと<ruby>互角<rt>ごかく</rt></ruby>って…<br>{name}、おまえ何者だ…！<br><ruby>次<rt>つぎ</rt></ruby>こそオレが<ruby>勝<rt>か</rt></ruby>つぜ！",
+        "まさかの<ruby>引<rt>ひ</rt></ruby>き<ruby>分<rt>わ</rt></ruby>けか…<br>フッ…{name}、<br>おまえには<ruby>才能<rt>さいのう</rt></ruby>があるぜ。<br>もう<ruby>一度<rt>いちど</rt></ruby><ruby>勝負<rt>しょうぶ</rt></ruby>だ！"
+      ],
+      bye: [
+        "フッ…もう<ruby>行<rt>い</rt></ruby>くのか{name}。<br>いつでもかかってこいよ。<br>オレはここで<ruby>待<rt>ま</rt></ruby>ってるぜ。",
+        "じゃあな{name}。<br>おまえとの<ruby>勝負<rt>しょうぶ</rt></ruby>、<ruby>悪<rt>わる</rt></ruby>くなかったぜ。<br>またいつでも<ruby>来<rt>こ</rt></ruby>いよ。",
+        "ばいばいだぜ{name}。<br>オレは<ruby>逃<rt>に</rt></ruby>げも<ruby>隠<rt>かく</rt></ruby>れもしねえ。<br>いつでも<ruby>相手<rt>あいて</rt></ruby>してやるぜ。",
+        "またな{name}。<br>つぎ<ruby>会<rt>あ</rt></ruby>うときは<br>もっとつよくなってこいよ。<br>…<ruby>待<rt>ま</rt></ruby>ってるぜ。"
+      ]
+    }
+  }
+};
+
+function getOpp(){ return OPPONENTS[currentOpponent]; }
+
+function setChar(pose,anim){
+  const opp = getOpp();
+  const imgName = opp.images[pose] || opp.images.normal;
+  charImg.src = 'images/' + imgName + '.png';
+  charWrap.className = 'character ' + (anim || 'floating');
+}
+
+function oppSay(key,speed,cb){
+  const opp = getOpp();
+  const lines = opp.comments[key];
+  if(!lines || lines.length===0) return cb && cb();
+  const line = fillName(pick(lines), name, honor);
+  typeWrite(line, speed||70, cb);
+}
+
+/* ===== 定数 ===== */
+const SZ=6;
+const B=1,W=2,EMPTY=0;
+const DIRS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+
+/* ===== ゲーム状態 ===== */
+let board,turn,aiLevel,gameOver;
+
+function initBoard(){
+  board=Array.from({length:SZ},()=>Array(SZ).fill(EMPTY));
+  const m=SZ/2;
+  board[m-1][m-1]=W; board[m-1][m]=B;
+  board[m][m-1]=B;   board[m][m]=W;
+}
+
+function inBounds(r,c){return r>=0&&r<SZ&&c>=0&&c<SZ;}
+
+function getFlips(r,c,color){
+  if(board[r][c]!==EMPTY)return[];
+  const opp=color===B?W:B;
+  let all=[];
+  for(const[dr,dc]of DIRS){
+    let rr=r+dr,cc=c+dc,line=[];
+    while(inBounds(rr,cc)&&board[rr][cc]===opp){line.push([rr,cc]);rr+=dr;cc+=dc;}
+    if(line.length>0&&inBounds(rr,cc)&&board[rr][cc]===color)all.push(...line);
+  }
+  return all;
+}
+
+function getMoves(color){
+  const moves=[];
+  for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){
+    if(getFlips(r,c,color).length>0)moves.push([r,c]);
+  }
+  return moves;
+}
+
+function countStones(){
+  let b=0,w=0;
+  for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){if(board[r][c]===B)b++;else if(board[r][c]===W)w++;}
+  return{b,w};
+}
+
+/* ===== AI ===== */
+const CORNER_BONUS=50, EDGE_BONUS=5, NEXT_TO_CORNER_PENALTY=-15;
+const corners=[[0,0],[0,SZ-1],[SZ-1,0],[SZ-1,SZ-1]];
+const nextToCorners=[[0,1],[1,0],[1,1],[0,SZ-2],[1,SZ-1],[1,SZ-2],[SZ-1,1],[SZ-2,0],[SZ-2,1],[SZ-1,SZ-2],[SZ-2,SZ-1],[SZ-2,SZ-2]];
+
+function evalBoard(color){
+  const opp=color===B?W:B;
+  let score=0;
+  const{b,w}=countStones();
+  score+=(color===B?b-w:w-b);
+  for(const[r,c]of corners){if(board[r][c]===color)score+=CORNER_BONUS;else if(board[r][c]===opp)score-=CORNER_BONUS;}
+  for(const[r,c]of nextToCorners){if(board[r][c]===color)score+=NEXT_TO_CORNER_PENALTY;else if(board[r][c]===opp)score-=NEXT_TO_CORNER_PENALTY;}
+  for(let i=0;i<SZ;i++){
+    for(const r of[0,SZ-1]){if(board[r][i]===color)score+=EDGE_BONUS;else if(board[r][i]===opp)score-=EDGE_BONUS;}
+    for(const c of[0,SZ-1]){if(board[i][c]===color)score+=EDGE_BONUS;else if(board[i][c]===opp)score-=EDGE_BONUS;}
+  }
+  score+=getMoves(color).length*2;
+  score-=getMoves(opp).length*2;
+  return score;
+}
+
+function minimax(depth,alpha,beta,maximizing,aiColor){
+  const playerColor=maximizing?aiColor:(aiColor===B?W:B);
+  const moves=getMoves(playerColor);
+  if(depth===0||moves.length===0){
+    if(moves.length===0){
+      const oppMoves=getMoves(playerColor===B?W:B);
+      if(oppMoves.length===0)return evalBoard(aiColor)*100;
+      return minimax(depth,alpha,beta,!maximizing,aiColor);
+    }
+    return evalBoard(aiColor);
+  }
+  if(maximizing){
+    let maxEval=-Infinity;
+    for(const[r,c]of moves){
+      const saved=board.map(row=>[...row]);
+      const flips=getFlips(r,c,playerColor);
+      board[r][c]=playerColor;
+      for(const[fr,fc]of flips)board[fr][fc]=playerColor;
+      const ev=minimax(depth-1,alpha,beta,false,aiColor);
+      board.forEach((row,i)=>row.forEach((_,j)=>board[i][j]=saved[i][j]));
+      maxEval=Math.max(maxEval,ev);
+      alpha=Math.max(alpha,ev);
+      if(beta<=alpha)break;
+    }
+    return maxEval;
+  }else{
+    let minEval=Infinity;
+    for(const[r,c]of moves){
+      const saved=board.map(row=>[...row]);
+      const flips=getFlips(r,c,playerColor);
+      board[r][c]=playerColor;
+      for(const[fr,fc]of flips)board[fr][fc]=playerColor;
+      const ev=minimax(depth-1,alpha,beta,true,aiColor);
+      board.forEach((row,i)=>row.forEach((_,j)=>board[i][j]=saved[i][j]));
+      minEval=Math.min(minEval,ev);
+      beta=Math.min(beta,ev);
+      if(beta<=alpha)break;
+    }
+    return minEval;
+  }
+}
+
+function aiChoose(){
+  const moves=getMoves(W);
+  if(moves.length===0)return null;
+
+  // レベル1 (Red): 弱いAI（評価関数のみ・ランダム混じり）
+  if(aiLevel===1){
+    if(Math.random()<0.35)return pick(moves);
+    let best=null,bestScore=-Infinity;
+    for(const[r,c]of moves){
+      const saved=board.map(row=>[...row]);
+      const flips=getFlips(r,c,W);
+      board[r][c]=W;for(const[fr,fc]of flips)board[fr][fc]=W;
+      const sc=evalBoard(W);
+      board.forEach((row,i)=>row.forEach((_,j)=>board[i][j]=saved[i][j]));
+      if(sc>bestScore){bestScore=sc;best=[r,c];}
+    }
+    return best;
+  }
+
+  // レベル4 (Black): 浅い探索 + たまにランダム
+  if(aiLevel===4){
+    if(Math.random()<0.15)return pick(moves);
+    let best=null,bestScore=-Infinity;
+    for(const[r,c]of moves){
+      const saved=board.map(row=>[...row]);
+      const flips=getFlips(r,c,W);
+      board[r][c]=W;for(const[fr,fc]of flips)board[fr][fc]=W;
+      const sc=minimax(1,-Infinity,Infinity,false,W);
+      board.forEach((row,i)=>row.forEach((_,j)=>board[i][j]=saved[i][j]));
+      if(sc>bestScore){bestScore=sc;best=[r,c];}
+    }
+    return best;
+  }
+
+  // レベル8 (Spartan): 深い探索
+  let best=null,bestScore=-Infinity;
+  for(const[r,c]of moves){
+    const saved=board.map(row=>[...row]);
+    const flips=getFlips(r,c,W);
+    board[r][c]=W;for(const[fr,fc]of flips)board[fr][fc]=W;
+    const sc=minimax(3,-Infinity,Infinity,false,W);
+    board.forEach((row,i)=>row.forEach((_,j)=>board[i][j]=saved[i][j]));
+    if(sc>bestScore){bestScore=sc;best=[r,c];}
+  }
+  return best;
+}
+
+/* ===== 描画 ===== */
+function renderBoard(){
+  boardEl.innerHTML='';
+  const playerMoves=turn===B?getMoves(B):[];
+  for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++){
+    const cell=document.createElement('div');
+    cell.className='othello-cell';
+    if(board[r][c]!==EMPTY){
+      const stone=document.createElement('div');
+      stone.className='othello-stone '+(board[r][c]===B?'black':'white');
+      cell.appendChild(stone);
+    }else if(!gameOver&&turn===B&&playerMoves.some(m=>m[0]===r&&m[1]===c)){
+      cell.classList.add('hint');
+      cell.addEventListener('click',()=>playerMove(r,c));
+    }else{
+      cell.classList.add('disabled');
+    }
+    boardEl.appendChild(cell);
+  }
+  const{b,w}=countStones();
+  scoreBlack.textContent=b;
+  scoreWhite.textContent=w;
+}
+
+function animateFlips(flips,color,cb){
+  let delay=0;
+  for(const[r,c]of flips){
+    const idx=r*SZ+c;
+    const cell=boardEl.children[idx];
+    const stone=cell.querySelector('.othello-stone');
+    if(stone){
+      setTimeout(()=>{
+        stone.classList.add('flipping');
+        setTimeout(()=>{
+          stone.className='othello-stone '+(color===B?'black':'white');
+          stone.classList.remove('flipping');
+        },200);
+      },delay);
+      delay+=80;
+    }
+  }
+  setTimeout(cb,delay+300);
+}
+
+function animatePlace(r,c,cb){
+  const idx=r*SZ+c;
+  const cell=boardEl.children[idx];
+  cell.innerHTML='';
+  const stone=document.createElement('div');
+  stone.className='othello-stone '+(board[r][c]===B?'black':'white')+' placing';
+  cell.appendChild(stone);
+  setTimeout(cb,350);
+}
+
+/* ===== ゲーム進行 ===== */
+function startGame(opponent){
+  currentOpponent = opponent;
+  const opp = getOpp();
+  aiLevel = opp.aiLevel;
+  gameOver = false;
+  initBoard();
+  turn = B;
+  levelSelect.classList.add('hidden');
+  endButtons.classList.add('hidden');
+  quitEndButtons.classList.add('hidden');
+  boardEl.classList.remove('hidden');
+  scoreBar.classList.remove('hidden');
+  quitArea.classList.remove('hidden');
+
+  // ボードテーマ適用
+  boardEl.className = 'othello-board ' + opp.boardTheme;
+
+  renderBoard();
+  setChar('normal','floating');
+  oppSay('intro',70,()=>{
+    setTimeout(()=>{
+      oppSay('colorExplain',70,()=>{
+        setTimeout(()=>{
+          setChar('normal','floating');
+          oppSay('yourTurn',70);
+        },800);
+      });
+    },800);
+  });
+}
+
+function playerMove(r,c){
+  if(turn!==B||gameOver)return;
+  const flips=getFlips(r,c,B);
+  if(flips.length===0)return;
+
+  board[r][c]=B;
+  for(const[fr,fc]of flips)board[fr][fc]=B;
+  renderBoard();
+  animatePlace(r,c,()=>{
+    animateFlips(flips,B,()=>{
+      renderBoard();
+      const{b,w}=countStones();
+      if(flips.length>=3){
+        setChar('sad','slumping');
+        oppSay('playerGood',70,()=>afterPlayerMove());
+      } else if(corners.some(([cr,cc])=>cr===r&&cc===c)){
+        setChar('sad','slumping');
+        oppSay('playerGood',70,()=>afterPlayerMove());
+      } else {
+        afterPlayerMove();
+      }
+    });
+  });
+}
+
+function afterPlayerMove(){
+  if(checkGameEnd())return;
+  turn=W;
+  const aiMoves=getMoves(W);
+  if(aiMoves.length===0){
+    setChar('sad','slumping');
+    oppSay('aiPass',70,()=>{
+      turn=B;
+      const pMoves=getMoves(B);
+      if(pMoves.length===0){endGame();return;}
+      renderBoard();
+      setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);},800);
+    });
+    return;
+  }
+  setChar('think','tilting');
+  oppSay('aiTurn',70,()=>{
+    setTimeout(()=>doAiMove(),600);
+  });
+}
+
+function doAiMove(){
+  const move=aiChoose();
+  if(!move){endGame();return;}
+  const[r,c]=move;
+  const flips=getFlips(r,c,W);
+  board[r][c]=W;
+  for(const[fr,fc]of flips)board[fr][fc]=W;
+  renderBoard();
+  animatePlace(r,c,()=>{
+    animateFlips(flips,W,()=>{
+      renderBoard();
+      if(checkGameEnd())return;
+      turn=B;
+      const pMoves=getMoves(B);
+      if(pMoves.length===0){
+        setChar('normal','floating');
+        oppSay('pass',70,()=>{
+          turn=W;
+          const am=getMoves(W);
+          if(am.length===0){endGame();return;}
+          setTimeout(()=>doAiMove(),600);
+        });
+        return;
+      }
+      const{b,w}=countStones();
+      if(flips.length>=3){
+        setChar(Math.random()<0.5?'happy':'happy2','joyful');
+        oppSay('aiGood',70,()=>{
+          setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
+        });
+      }else if(b>w+3){
+        setChar('sad','slumping');
+        oppSay('playerLeading',70,()=>{renderBoard();});
+      }else if(w>b+3){
+        setChar('happy','joyful');
+        oppSay('aiLeading',70,()=>{renderBoard();});
+      }else{
+        setChar('normal','floating');
+        oppSay('yourTurn',70);
+        renderBoard();
+      }
+    });
+  });
+}
+
+function checkGameEnd(){
+  if(getMoves(B).length===0&&getMoves(W).length===0){endGame();return true;}
+  let empty=0;
+  for(let r=0;r<SZ;r++)for(let c=0;c<SZ;c++)if(board[r][c]===EMPTY)empty++;
+  if(empty===0){endGame();return true;}
+  return false;
+}
+
+function endGame(){
+  gameOver=true;
+  const{b,w}=countStones();
+  renderBoard();
+  if(b>w){
+    setChar('sad','slumping');
+    oppSay('winPlayer',70,()=>showEndButtons());
+  }else if(w>b){
+    setChar('happy2','joyful');
+    oppSay('winAI',70,()=>showEndButtons());
+  }else{
+    setChar('normal','wiggling');
+    oppSay('draw',70,()=>showEndButtons());
+  }
+}
+
+function showEndButtons(){
+  quitArea.classList.add('hidden');
+  setTimeout(()=>{endButtons.classList.remove('hidden');},800);
+}
+
+/* ===== 画面状態管理 ===== */
+let screenState = 'select'; // 'select' | 'game' | 'quit'
+
+function goToSelect(){
+  endButtons.classList.add('hidden');
+  quitEndButtons.classList.add('hidden');
+  quitArea.classList.add('hidden');
+  boardEl.classList.add('hidden');
+  scoreBar.classList.add('hidden');
+  levelSelect.classList.remove('hidden');
+  screenState = 'select';
+  currentOpponent = 'red';
+  charImg.src = 'images/relax.png';
+  charWrap.className = 'character floating';
+  typeWrite('だれと<ruby>対決<rt>たいけつ</rt></ruby>する？<br>あいてを<ruby>選<rt>えら</rt></ruby>んでね！',70);
+}
+
+/* ===== イベント ===== */
+levelSelect.addEventListener('click',(e)=>{
+  const btn=e.target.closest('.char-select-btn');
+  if(!btn)return;
+  screenState = 'game';
+  startGame(btn.dataset.opponent);
+});
+
+// もういちどやる（同じ相手）
+retryBtn.addEventListener('click',()=>{
+  endButtons.classList.add('hidden');
+  startGame(currentOpponent);
+});
+
+// 対戦相手を変える
+changeBtn.addEventListener('click',()=>{
+  goToSelect();
+});
+
+// おしまい
+finishBtn.addEventListener('click',()=>{
+  window.location.href='bye.html';
+});
+
+// やめる
+quitBtn.addEventListener('click',()=>{
+  gameOver = true;
+  screenState = 'quit';
+  quitArea.classList.add('hidden');
+  boardEl.classList.add('hidden');
+  scoreBar.classList.add('hidden');
+  setChar('happy','floating');
+  oppSay('bye',70,()=>{
+    setTimeout(()=>{quitEndButtons.classList.remove('hidden');},800);
+  });
+});
+
+// もどるボタン
+backLink.addEventListener('click',(e)=>{
+  if(screenState==='game'){
+    e.preventDefault();
+    gameOver = true;
+    goToSelect();
+  } else if(screenState==='quit'){
+    e.preventDefault();
+    goToSelect();
+  }
+  // screenState==='select'の場合はデフォルト（index.html#menu）へ遷移
+});
+
+/* ===== 初期表示 ===== */
+charImg.src = 'images/relax.png';
+charWrap.className = 'character floating';
+typeWrite('だれと<ruby>対決<rt>たいけつ</rt></ruby>する？<br>あいてを<ruby>選<rt>えら</rt></ruby>んでね！',70);
+</script>
+</body>
+</html>

@@ -226,7 +226,7 @@ function tokenizeRuby(html) {
   }
   return tokens;
 }
-function typeWrite(text, speed = 55, onComplete) {
+function typeWrite(text, speed = 70, onComplete) {
   if (typeTimer) clearInterval(typeTimer);
   const tokens = tokenizeRuby(text);
   bubbleText.innerHTML = '';
@@ -277,7 +277,7 @@ function showIntro(step) {
   result.classList.add('hidden');
   setHandButtonsState('disabled');
   nextCue.classList.add('hidden');
-  typeWrite(INTRO[step], 60, () => {
+  typeWrite(INTRO[step], 70, () => {
     // タイプ完了後、少し間を置いて自動で<ruby>次<rt>つぎ</rt></ruby>へ
     if (introTimer) clearTimeout(introTimer);
     introTimer = setTimeout(() => {
@@ -369,7 +369,7 @@ function showResult(outcome) {
 
   setChar(pose, animClass);
   bubble.classList.remove('hidden');
-  typeWrite(fillName(line, name, honor), 45);
+  typeWrite(fillName(line, name, honor), 70);
 
   resultLabel.textContent = labelText;
   resultLabel.className = 'result-label ' + labelClass;
