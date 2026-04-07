@@ -73,17 +73,16 @@
   box-shadow:var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
-/* レッド — 右外側、サイズ固定コンテナ */
+/* レッド — 右外側、幅・高さ両方固定で表情切替時にサイズが変わらない */
 .tetris-red-float {
   position:absolute; bottom:-5px; right:-130px;
-  width:min(36vw,150px); z-index:8;
-  pointer-events:none; animation:red-bob 3s ease-in-out infinite;
+  width:min(36vw,150px); height:min(48vw,200px);
+  z-index:8; pointer-events:none; animation:red-bob 3s ease-in-out infinite;
+  overflow:hidden;
 }
 .tetris-red-float img {
-  width:100%; height:auto; object-fit:contain;
-  /* 全画像をread2基準に統一するため、固定高さ指定 */
-  max-height:200px; min-height:120px;
-  object-position:bottom center;
+  width:100%; height:100%;
+  object-fit:contain; object-position:bottom center;
 }
 .tetris-red-float.go-front { z-index:20; }
 @keyframes red-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
@@ -386,20 +385,6 @@ const goOverlay=document.getElementById('gameover-overlay');
 const goScore=document.getElementById('gameover-score');
 const sceneLayer=document.getElementById('scene-layer');
 const celebLayer=document.getElementById('celebrate-layer');
-
-/* === read2基準の画像サイズ正規化 === */
-const baseImg=new Image();
-baseImg.onload=function(){
-  /* read2の自然サイズを基準に全表情画像を同じ表示サイズに固定 */
-  const ratio=this.naturalHeight/this.naturalWidth;
-  const cw=charWrap.offsetWidth||150;
-  charWrap.style.height=Math.round(cw*ratio)+'px';
-  charImg.style.width='100%';
-  charImg.style.height='100%';
-  charImg.style.objectFit='contain';
-  charImg.style.objectPosition='bottom center';
-};
-baseImg.src='images/read2.png';
 
 /* 表情変更 */
 function setFace(img, keep){
