@@ -341,12 +341,18 @@ const COMMENTS={
     'レッドが念を送るで！','やばい！でも大丈夫！',
   ],
   gameover:[
-    'ゲームオーバーや〜！','おつかれ！がんばったな！',
-    'またやろな！','楽しかったな〜！',
-    'ナイスプレーやったで！','いいゲームやったで！',
-    'もう1回やる？','またチャレンジしよ！',
-    'レッド楽しかったわ！','かっこよかったで！',
-    '次はもっといけるで！',
+    'ゲームオーバーや〜！',
+  ],
+  /* ゲームオーバー後に順番に流すセリフ */
+  gameover_seq:[
+    'おつかれさま！がんばったな〜！',
+    'レッド、楽しかったわ〜！',
+    'ええゲームやったで！',
+    'また一緒にやろな！',
+    '{name}、すごかったで！',
+    '次はもっと上いけるで！',
+    'もう1回やる？',
+    '{name}のテトリス最高や！',
   ],
   idle:[
     'ブロック落ちてくるで〜','ここに置いたら？',
@@ -730,6 +736,7 @@ function gameLoop(t){
 }
 
 function startGame(){
+  if(goSeqTimer){clearInterval(goSeqTimer);goSeqTimer=null}
   createBoard();score=0;level=1;lines=0;combo=0;prevLevel=1;
   dropInterval=800;dropTimer=0;idleTimer=0;gameOver=false;gameRunning=true;
   scoreVal.textContent='0';levelVal.textContent='1';
@@ -743,6 +750,7 @@ function startGame(){
   lastTime=performance.now();requestAnimationFrame(gameLoop);
 }
 
+let goSeqTimer=null;
 function triggerGameOver(){
   gameRunning=false;gameOver=true;
   say('gameover');
@@ -753,6 +761,15 @@ function triggerGameOver(){
   boardArea.classList.remove('shake-sm','shake-md','shake-lg');
   boardArea.classList.add('shake-lg');
   setTimeout(()=>boardArea.classList.remove('shake-lg'),600);
+  /* セリフを順番に流す */
+  if(goSeqTimer)clearInterval(goSeqTimer);
+  const seq=[...COMMENTS.gameover_seq];
+  let si=0;
+  goSeqTimer=setInterval(()=>{
+    if(si>=seq.length){clearInterval(goSeqTimer);goSeqTimer=null;return}
+    bubbleText.innerHTML=fn(seq[si]);
+    si++;
+  },3000);
 }
 
 /* 操作 */
