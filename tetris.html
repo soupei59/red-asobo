@@ -343,17 +343,6 @@ const COMMENTS={
   gameover:[
     'ゲームオーバーや〜！',
   ],
-  /* ゲームオーバー後に順番に流すセリフ */
-  gameover_seq:[
-    'おつかれさま！がんばったな〜！',
-    'レッド、楽しかったわ〜！',
-    'ええゲームやったで！',
-    'また一緒にやろな！',
-    '{name}、すごかったで！',
-    '次はもっと上いけるで！',
-    'もう1回やる？',
-    '{name}のテトリス最高や！',
-  ],
   idle:[
     'ブロック落ちてくるで〜','ここに置いたら？',
     'おうえんしとるで！','集中やで！',
@@ -761,15 +750,42 @@ function triggerGameOver(){
   boardArea.classList.remove('shake-sm','shake-md','shake-lg');
   boardArea.classList.add('shake-lg');
   setTimeout(()=>boardArea.classList.remove('shake-lg'),600);
-  /* セリフを順番に流す */
+  /* スコア・レベル・ライン数に応じた動的セリフを生成 */
   if(goSeqTimer)clearInterval(goSeqTimer);
-  const seq=[...COMMENTS.gameover_seq];
+  const seq=buildGameOverSeq(score,level,lines);
   let si=0;
   goSeqTimer=setInterval(()=>{
     if(si>=seq.length){clearInterval(goSeqTimer);goSeqTimer=null;return}
     bubbleText.innerHTML=fn(seq[si]);
     si++;
   },3000);
+}
+
+function buildGameOverSeq(sc,lv,ln){
+  const s=[];
+  /* スコア感想 */
+  if(sc===0) s.push('0てん…！？まあ気にせんとこ！');
+  else if(sc<500) s.push(sc+'てん！まだまだこれからや！');
+  else if(sc<1500) s.push(sc+'てん！ええやん！');
+  else if(sc<3000) s.push(sc+'てん！なかなかやるな〜！');
+  else if(sc<5000) s.push(sc+'てん！すごいやん{name}！');
+  else s.push(sc+'てん！{name}天才ちゃう！？');
+  /* レベル感想 */
+  if(lv<=1) s.push('レベル1…次はもっといけるで！');
+  else if(lv<=3) s.push('レベル'+lv+'まで到達！ええ感じ！');
+  else if(lv<=5) s.push('レベル'+lv+'！なかなかやるな〜！');
+  else if(lv<=7) s.push('レベル'+lv+'！上級者やん{name}！');
+  else s.push('レベル'+lv+'！？もう達人やで！');
+  /* ライン数感想 */
+  if(ln===0) s.push('1れつも消せんかった…次がんばろ！');
+  else if(ln<5) s.push(ln+'れつ消したで！次はもっと！');
+  else if(ln<15) s.push(ln+'れつ消し！ナイスやで！');
+  else if(ln<30) s.push(ln+'れつも消したんか！すごいわ！');
+  else s.push(ln+'れつ！！レッド感動や…！');
+  /* 締め */
+  s.push('レッド楽しかったわ〜！');
+  s.push('また一緒にやろな{name}！');
+  return s;
 }
 
 /* 操作 */
