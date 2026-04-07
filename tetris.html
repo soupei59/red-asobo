@@ -101,7 +101,7 @@
 .tetris-bubble span { display:block; width:100%; }
 /* 開始前・ゲームオーバー時：小さめフォントで2行たっぷり */
 .tetris-bubble.bubble-long {
-  font-size:clamp(16px,5vw,20px); line-height:1.45;
+  font-size:clamp(14px,4.5vw,18px); line-height:1.45;
 }
 
 /* 操作ボタン（十字配置） */
@@ -286,7 +286,7 @@ const boardColW=BOARD_W+6;
 document.getElementById('board-col').style.width=boardColW+'px';
 document.getElementById('sidebar').style.width=SIDEBAR_W+'px';
 /* セリフ枠・操作ボタンはボード+サイドバー全幅に */
-const totalW=boardColW+SIDEBAR_W+4;
+const totalW=boardColW+SIDEBAR_W+30;
 document.querySelector('.tetris-comment').style.width=totalW+'px';
 document.querySelector('.tetris-controls').style.width=totalW+'px';
 document.getElementById('next-wrap').style.width=SIDEBAR_W+'px';
