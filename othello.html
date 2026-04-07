@@ -9,14 +9,7 @@
 /* ===== オセロ専用スタイル ===== */
 
 /* キャラ選択 */
-.char-select-title {
-  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: var(--t-xl);
-  font-weight: 900;
-  color: var(--ink);
-  text-align: center;
-  margin-bottom: var(--s-3);
-}
+/* char-select-title 削除済み */
 .char-select {
   display: flex;
   gap: var(--s-3);
@@ -59,6 +52,11 @@
   color: var(--ink);
   text-align: center;
   line-height: 1.3;
+}
+.char-select-name {
+  display: block;
+  font-weight: 900;
+  -webkit-text-stroke: 0.5px var(--ink);
 }
 .char-select-level {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
@@ -535,19 +533,18 @@
 
     <!-- キャラ選択 -->
     <div id="level-select">
-      <p class="char-select-title">レベルを<ruby>選<rt>えら</rt></ruby>んでね</p>
       <div class="char-select">
         <button type="button" class="char-select-btn" data-opponent="red">
           <img src="images/normal.png" alt="レッド">
-          <span class="char-select-label">レッド<span class="char-select-level">レベル10</span></span>
+          <span class="char-select-label"><span class="char-select-name">レッド</span><span class="char-select-level">レベル10</span></span>
         </button>
         <button type="button" class="char-select-btn" data-opponent="black">
           <img src="images/black1.png" alt="ブラック">
-          <span class="char-select-label">ブラック<span class="char-select-level">レベル100</span></span>
+          <span class="char-select-label"><span class="char-select-name">ブラック</span><span class="char-select-level">レベル100</span></span>
         </button>
         <button type="button" class="char-select-btn" data-opponent="spartan">
           <img src="images/spartan-mystery.png" alt="？？？">
-          <span class="char-select-label">？？？<span class="char-select-level">レベル10000</span></span>
+          <span class="char-select-label"><span class="char-select-name">？？？</span><span class="char-select-level">レベル10000</span></span>
         </button>
       </div>
     </div>
