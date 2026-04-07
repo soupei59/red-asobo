@@ -383,6 +383,10 @@ let _twTimer=null, _twTyping=false, _twFull='';
 function twTokenize(html){
   const t=[];let i=0;
   while(i<html.length){
+    if(html.startsWith('<ruby>',i)){
+      const end=html.indexOf('</ruby>',i);
+      if(end!==-1){t.push(html.slice(i,end+7));i=end+7;continue;}
+    }
     if(html.startsWith('<br>',i)){t.push('<br>');i+=4;}
     else{t.push(html[i]);i++;}
   }
@@ -404,50 +408,50 @@ function twComplete(){
   bubbleText.innerHTML=_twFull;_twTyping=false;
 }
 
-/* ===== セリフ（ルビなし・小6漢字OK） ===== */
+/* ===== セリフ（ルビ付き） ===== */
 /* プレイ中：大きいフォントで短いセリフ */
 const COMMENTS={
   start:[
-    '{name}、行くで！','テトリスタイムや！',
-    '頑張ろ{name}！','スタートや！',
+    '{name}、<ruby>行<rt>い</rt></ruby>くで！','テトリスタイムや！',
+    '<ruby>頑張<rt>がんば</rt></ruby>ろ{name}！','スタートや！',
   ],
   clear1:[
-    'ナイス！','いいやん！','ええ感じ！',
-    'やるな〜！','その調子！','いいぞ！',
+    'ナイス！','いいやん！','ええ<ruby>感<rt>かん</rt></ruby>じ！',
+    'やるな〜！','その<ruby>調子<rt>ちょうし</rt></ruby>！','いいぞ！',
     'うまい！','パチパチ！','スッキリ！',
     'センスある！','いいね！','ナイス！',
     'さすが！','ピカーン！','ええぞ！',
   ],
   clear2:[
-    'ダブル！すごい！','2列消し！','やるやん！',
+    'ダブル！すごい！','2<ruby>列消<rt>れつけ</rt></ruby>し！','やるやん！',
     'ダブルきた！','かっこええ！','サイコー！',
   ],
   clear3:[
-    'トリプル！！','すごすぎ！！','天才！？',
-    'うおおお！','3列！！','きゃー！',
+    'トリプル！！','すごすぎ！！','<ruby>天才<rt>てんさい</rt></ruby>！？',
+    'うおおお！','3<ruby>列<rt>れつ</rt></ruby>！！','きゃー！',
   ],
   clear4:[
-    'テトリス！！','神！！','伝説！！',
-    '最強！','天才や！！','サイコー！！',
+    'テトリス！！','<ruby>神<rt>かみ</rt></ruby>！！','<ruby>伝説<rt>でんせつ</rt></ruby>！！',
+    '<ruby>最強<rt>さいきょう</rt></ruby>！','<ruby>天才<rt>てんさい</rt></ruby>や！！','サイコー！！',
   ],
   danger:[
-    'やばいで！','落ち着いて！','まだ行ける！',
-    '頑張れ！','大丈夫！','ここからや！',
+    'やばいで！','<ruby>落<rt>お</rt></ruby>ち<ruby>着<rt>つ</rt></ruby>いて！','まだ<ruby>行<rt>い</rt></ruby>ける！',
+    '<ruby>頑張<rt>がんば</rt></ruby>れ！','<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>！','ここからや！',
   ],
   idle:[
-    {t:'応援してるで！',f:'hi'},{t:'どこに置く？',f:'umm2'},{t:'頑張れ〜！',f:'ike'},
-    {t:'ファイト！',f:'ike'},{t:'いいペース！',f:'yatta'},{t:'行ける行ける！',f:'hi'},
-    {t:'こっちかな？',f:'umm2'},{t:'ブロック来るで！',f:'ike'},{t:'見てるで〜！',f:'hi'},
-    {t:'ぷっ…おなら出た',f:'aseri'},{t:'お腹すいてきた…',f:'umm2'},{t:'あ、眠くなってきた…',f:'umm2'},
-    {t:'今何時？',f:'umm2'},{t:'あ、よだれ出た',f:'aseri'},
-    {t:'おしりかゆい…',f:'aseri'},{t:'ちょっとトイレ…',f:'aseri'},{t:'くしゃみ出そう…ふぇ…',f:'umm2'},
-    {t:'ブロックおいしそう',f:'umm2'},{t:'あっ足つった！',f:'aseri'},
+    {t:'<ruby>応援<rt>おうえん</rt></ruby>してるで！',f:'hi'},{t:'どこに<ruby>置<rt>お</rt></ruby>く？',f:'umm2'},{t:'<ruby>頑張<rt>がんば</rt></ruby>れ〜！',f:'ike'},
+    {t:'ファイト！',f:'ike'},{t:'いいペース！',f:'yatta'},{t:'<ruby>行<rt>い</rt></ruby>ける<ruby>行<rt>い</rt></ruby>ける！',f:'hi'},
+    {t:'こっちかな？',f:'umm2'},{t:'ブロック<ruby>来<rt>く</rt></ruby>るで！',f:'ike'},{t:'<ruby>見<rt>み</rt></ruby>てるで〜！',f:'hi'},
+    {t:'ぷっ…おなら<ruby>出<rt>で</rt></ruby>た',f:'aseri'},{t:'お<ruby>腹<rt>なか</rt></ruby>すいてきた…',f:'umm2'},{t:'あ、<ruby>眠<rt>ねむ</rt></ruby>くなってきた…',f:'umm2'},
+    {t:'<ruby>今何時<rt>いまなんじ</rt></ruby>？',f:'umm2'},{t:'あ、よだれ<ruby>出<rt>で</rt></ruby>た',f:'aseri'},
+    {t:'おしりかゆい…',f:'aseri'},{t:'ちょっとトイレ…',f:'aseri'},{t:'くしゃみ<ruby>出<rt>で</rt></ruby>そう…ふぇ…',f:'umm2'},
+    {t:'ブロックおいしそう',f:'umm2'},{t:'あっ<ruby>足<rt>あし</rt></ruby>つった！',f:'aseri'},
   ],
   levelup:[
-    'レベルアップ！','速くなるで！','すごい！',
+    'レベルアップ！','<ruby>速<rt>はや</rt></ruby>くなるで！','すごい！',
   ],
   combo:[
-    'コンボ！','繋がった！','ノリノリ！',
+    'コンボ！','つながった！','ノリノリ！',
   ],
 };
 function rc(key){
@@ -458,35 +462,35 @@ function rc(key){
 
 /* 開始前の説明セリフ（2行・長め）+ 表情 */
 const INTRO_SEQ=[
-  {text:'テトリスで遊ぼ〜！<br>レッドが応援するで！', face:'hi'},
-  {text:'ブロックが上から落ちてくるから<br>横に動かして並べてな！', face:'umm2'},
-  {text:'横一列揃えたら消えるで！<br>たくさん消すとすごい点が入るで！', face:'yatta'},
-  {text:'←と→ で動かす、↓ で落とす<br>グルグルで回転や！', face:'ike'},
-  {text:'準備はええか？<br>スタートボタンを押してな！', face:'hi'},
+  {text:'テトリスで<ruby>遊<rt>あそ</rt></ruby>ぼ〜！<br>レッドが<ruby>応援<rt>おうえん</rt></ruby>するで！', face:'hi'},
+  {text:'ブロックが<ruby>上<rt>うえ</rt></ruby>から<ruby>落<rt>お</rt></ruby>ちてくるから<br><ruby>横<rt>よこ</rt></ruby>に<ruby>動<rt>うご</rt></ruby>かして<ruby>並<rt>なら</rt></ruby>べてな！', face:'hi'},
+  {text:'<ruby>横一列<rt>よこいちれつ</rt></ruby>そろえたら<ruby>消<rt>き</rt></ruby>えるで！<br>たくさん<ruby>消<rt>け</rt></ruby>すとすごい<ruby>点<rt>てん</rt></ruby>が<ruby>入<rt>はい</rt></ruby>るで！', face:'hi'},
+  {text:'←と→ で<ruby>動<rt>うご</rt></ruby>かす、↓ で<ruby>落<rt>お</rt></ruby>とす<br>グルグルで<ruby>回転<rt>かいてん</rt></ruby>や！', face:'hi'},
+  {text:'<ruby>準備<rt>じゅんび</rt></ruby>はええか？<br>スタートボタンを<ruby>押<rt>お</rt></ruby>してな！', face:'hi'},
 ];
 
 /* ゲームオーバー時のセリフ（2行・長め・動的） + 表情 */
 function buildGameOverSeq(sc,lv,ln){
   const s=[];
-  s.push({text:'ゲームオーバーや〜！<br>{name}お疲れさま！', face:'aseri'});
-  if(sc===0) s.push({text:'0点…！？<br>次は頑張ろな！', face:'aseri'});
-  else if(sc<500) s.push({text:sc+'点や！<br>これからやで{name}！', face:'umm2'});
-  else if(sc<1500) s.push({text:sc+'点！<br>ええ感じや{name}！', face:'hi'});
-  else if(sc<3000) s.push({text:sc+'点！<br>やるな〜{name}！', face:'yatta'});
-  else if(sc<5000) s.push({text:sc+'点！<br>すごいやん{name}！', face:'yatta'});
-  else s.push({text:sc+'点！？<br>{name}天才ちゃう！？', face:'yatta'});
-  if(lv<=1) s.push({text:'レベル1か〜<br>次は上目指そ{name}！', face:'umm2'});
-  else if(lv<=3) s.push({text:'レベル'+lv+'まで行った！<br>ええ感じや{name}！', face:'hi'});
+  s.push({text:'ゲームオーバーや〜！<br>{name}お<ruby>疲<rt>つか</rt></ruby>れさま！', face:'aseri'});
+  if(sc===0) s.push({text:'0<ruby>点<rt>てん</rt></ruby>…！？<br><ruby>次<rt>つぎ</rt></ruby>は<ruby>頑張<rt>がんば</rt></ruby>ろな！', face:'aseri'});
+  else if(sc<500) s.push({text:sc+'<ruby>点<rt>てん</rt></ruby>や！<br>これからやで{name}！', face:'umm2'});
+  else if(sc<1500) s.push({text:sc+'<ruby>点<rt>てん</rt></ruby>！<br>ええ<ruby>感<rt>かん</rt></ruby>じや{name}！', face:'hi'});
+  else if(sc<3000) s.push({text:sc+'<ruby>点<rt>てん</rt></ruby>！<br>やるな〜{name}！', face:'yatta'});
+  else if(sc<5000) s.push({text:sc+'<ruby>点<rt>てん</rt></ruby>！<br>すごいやん{name}！', face:'yatta'});
+  else s.push({text:sc+'<ruby>点<rt>てん</rt></ruby>！？<br>{name}<ruby>天才<rt>てんさい</rt></ruby>ちゃう！？', face:'yatta'});
+  if(lv<=1) s.push({text:'レベル1か〜<br><ruby>次<rt>つぎ</rt></ruby>は<ruby>上<rt>うえ</rt></ruby><ruby>目指<rt>めざ</rt></ruby>そ{name}！', face:'umm2'});
+  else if(lv<=3) s.push({text:'レベル'+lv+'まで<ruby>行<rt>い</rt></ruby>った！<br>ええ<ruby>感<rt>かん</rt></ruby>じや{name}！', face:'hi'});
   else if(lv<=5) s.push({text:'レベル'+lv+'！<br>うまいな〜{name}！', face:'yatta'});
-  else if(lv<=7) s.push({text:'レベル'+lv+'！<br>上級者やん{name}！', face:'ike'});
-  else s.push({text:'レベル'+lv+'！？<br>{name}もう達人や！', face:'yatta'});
-  if(ln===0) s.push({text:'1列も消せんかった…<br>次こそ行けるで！', face:'aseri'});
-  else if(ln<5) s.push({text:ln+'列消したで！<br>次はもっと消そな！', face:'umm2'});
-  else if(ln<15) s.push({text:ln+'列も消した！<br>ナイスやで{name}！', face:'yatta'});
-  else if(ln<30) s.push({text:ln+'列も消した！<br>すごすぎ{name}！', face:'yatta'});
-  else s.push({text:ln+'列！！<br>感動で涙出そうや…！', face:'yatta'});
-  s.push({text:'めっちゃ楽しかった〜！<br>{name}ありがとな！', face:'hi'});
-  s.push({text:'また一緒に遊ぼな！<br>{name}待ってるで〜！', face:'hi'});
+  else if(lv<=7) s.push({text:'レベル'+lv+'！<br><ruby>上級者<rt>じょうきゅうしゃ</rt></ruby>やん{name}！', face:'ike'});
+  else s.push({text:'レベル'+lv+'！？<br>{name}もう<ruby>達人<rt>たつじん</rt></ruby>や！', face:'yatta'});
+  if(ln===0) s.push({text:'1<ruby>列<rt>れつ</rt></ruby>も<ruby>消<rt>け</rt></ruby>せんかった…<br><ruby>次<rt>つぎ</rt></ruby>こそ<ruby>行<rt>い</rt></ruby>けるで！', face:'aseri'});
+  else if(ln<5) s.push({text:ln+'<ruby>列消<rt>れつけ</rt></ruby>したで！<br><ruby>次<rt>つぎ</rt></ruby>はもっと<ruby>消<rt>け</rt></ruby>そな！', face:'umm2'});
+  else if(ln<15) s.push({text:ln+'<ruby>列<rt>れつ</rt></ruby>も<ruby>消<rt>け</rt></ruby>した！<br>ナイスやで{name}！', face:'yatta'});
+  else if(ln<30) s.push({text:ln+'<ruby>列<rt>れつ</rt></ruby>も<ruby>消<rt>け</rt></ruby>した！<br>すごすぎ{name}！', face:'yatta'});
+  else s.push({text:ln+'<ruby>列<rt>れつ</rt></ruby>！！<br><ruby>感動<rt>かんどう</rt></ruby>で<ruby>涙<rt>なみだ</rt></ruby><ruby>出<rt>で</rt></ruby>そうや…！', face:'yatta'});
+  s.push({text:'めっちゃ<ruby>楽<rt>たの</rt></ruby>しかった〜！<br>{name}ありがとな！', face:'hi'});
+  s.push({text:'また<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>遊<rt>あそ</rt></ruby>ぼな！<br>{name}<ruby>待<rt>ま</rt></ruby>ってるで〜！', face:'hi'});
   return s;
 }
 
@@ -1281,7 +1285,6 @@ function startGame(){
   currentTheme='';document.body.style.background='';document.body.style.animation='';
   clearEffects();
   updateTheme(1);
-  if(weatherInterval){clearInterval(weatherInterval);weatherInterval=null}
   current=rp();nextPiece=rp();drawNext();
   setBubbleMode(false);
   say('start');
