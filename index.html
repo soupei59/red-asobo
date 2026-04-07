@@ -6,7 +6,7 @@
 <title>レッドとあそぼう</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* ===== レッド登場演出 ===== */
+/* ===== レッド登場演出（派手版） ===== */
 .entrance-overlay {
   position: fixed;
   inset: 0;
@@ -14,14 +14,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.75);
   opacity: 0;
   transition: opacity 0.3s;
 }
 .entrance-overlay.active { opacity: 1; }
-.entrance-overlay.fade-out { opacity: 0; transition: opacity 0.6s; }
+.entrance-overlay.fade-out { opacity: 0; transition: opacity 0.8s; }
 
-/* 白フラッシュ */
+/* 二段フラッシュ */
 .entrance-flash {
   position: absolute;
   inset: 0;
@@ -29,13 +29,11 @@
   opacity: 0;
 }
 .entrance-overlay.active .entrance-flash {
-  animation: red-flash 0.8s ease-out forwards;
+  animation: red-flash 1.6s ease-out forwards;
 }
 @keyframes red-flash {
-  0%   { opacity: 0; }
-  10%  { opacity: 1; }
-  35%  { opacity: 1; }
-  100% { opacity: 0; }
+  0% { opacity:0; } 5% { opacity:1; } 18% { opacity:1; } 30% { opacity:0; }
+  55% { opacity:0; } 60% { opacity:0.7; } 70% { opacity:0; } 100% { opacity:0; }
 }
 
 /* 放射状の光線 */
@@ -46,19 +44,20 @@
   opacity: 0;
 }
 .entrance-overlay.active .entrance-rays {
-  animation: rays-appear 1.6s 0.3s ease-out forwards;
+  animation: rays-appear 3.2s 0.5s ease-out forwards;
 }
 @keyframes rays-appear {
-  0%   { opacity: 0; transform: scale(0.5) rotate(0deg); }
-  30%  { opacity: 1; }
-  100% { opacity: 0; transform: scale(2) rotate(25deg); }
+  0%   { opacity: 0; transform: scale(0.3) rotate(0deg); }
+  20%  { opacity: 1; }
+  50%  { opacity: 0.8; transform: scale(1.5) rotate(15deg); }
+  100% { opacity: 0; transform: scale(2.5) rotate(40deg); }
 }
 .ray {
   position: absolute;
   top: 50%; left: 50%;
-  width: 4px;
-  height: 120vh;
-  background: linear-gradient(to bottom, rgba(255,220,120,0.9), rgba(200,90,77,0.4), transparent);
+  width: 5px;
+  height: 140vh;
+  background: linear-gradient(to bottom, rgba(255,220,120,1), rgba(255,160,80,0.6), rgba(200,90,77,0.3), transparent);
   transform-origin: top center;
   border-radius: 2px;
 }
@@ -75,6 +74,35 @@
 .ray:nth-child(11) { transform: rotate(300deg); }
 .ray:nth-child(12) { transform: rotate(330deg); }
 
+/* 星パーティクル */
+.ent-star {
+  position:absolute; z-index:3;
+  width:12px; height:12px;
+  background: radial-gradient(circle, rgba(255,220,120,1) 30%, transparent 70%);
+  border-radius:50%; opacity:0;
+}
+.entrance-overlay.active .ent-star {
+  animation: ent-star-fly 1.4s ease-out forwards;
+}
+@keyframes ent-star-fly {
+  0%   { opacity:1; transform: translate(0,0) scale(1); }
+  100% { opacity:0; transform: var(--star-move) scale(0.3); }
+}
+
+/* リングエフェクト */
+.ent-ring {
+  position:absolute; width:80px; height:80px;
+  border:3px solid rgba(255,220,120,0.7);
+  border-radius:50%; opacity:0; z-index:1;
+}
+.entrance-overlay.active .ent-ring {
+  animation: ent-red-ring 1.2s 0.3s ease-out forwards;
+}
+@keyframes ent-red-ring {
+  0%   { opacity:1; transform: scale(0); }
+  100% { opacity:0; transform: scale(10); }
+}
+
 /* キャラ登場 */
 .entrance-char {
   position: relative;
@@ -88,15 +116,16 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(255,220,120,0.8)) drop-shadow(0 0 60px rgba(200,90,77,0.5));
+  filter: drop-shadow(0 0 40px rgba(255,220,120,0.9)) drop-shadow(0 0 80px rgba(200,90,77,0.6));
 }
 .entrance-overlay.active .entrance-char {
-  animation: char-entrance 0.7s 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  animation: char-entrance 1.4s 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
 @keyframes char-entrance {
   0%   { opacity: 0; transform: scale(0) rotate(-15deg); }
-  60%  { opacity: 1; transform: scale(1.2) rotate(3deg); }
-  80%  { transform: scale(0.95) rotate(-1deg); }
+  35%  { opacity: 1; transform: scale(1.35) rotate(5deg); }
+  55%  { transform: scale(0.9) rotate(-2deg); }
+  70%  { transform: scale(1.1) rotate(1deg); }
   100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
@@ -106,24 +135,25 @@
   z-index: 3;
   bottom: 18%;
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: clamp(28px, 8vw, 52px);
+  font-size: clamp(32px, 9vw, 58px);
   font-weight: 900;
   color: #fff;
   text-shadow:
-    0 0 20px rgba(255,220,120,0.9),
-    0 0 40px rgba(200,90,77,0.7),
-    3px 3px 0 rgba(200,90,77,0.9);
+    0 0 25px rgba(255,220,120,1),
+    0 0 50px rgba(200,90,77,0.8),
+    4px 4px 0 rgba(200,90,77,0.9);
   letter-spacing: 0.15em;
   opacity: 0;
   transform: scale(0.3);
 }
 .entrance-overlay.active .entrance-text {
-  animation: text-pop 0.5s 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  animation: text-pop 0.8s 1.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
 @keyframes text-pop {
-  0%   { opacity: 0; transform: scale(0.3); }
-  70%  { opacity: 1; transform: scale(1.15); }
-  100% { opacity: 1; transform: scale(1); }
+  0%   { opacity: 0; transform: scale(0.3) rotate(-5deg); }
+  50%  { opacity: 1; transform: scale(1.25) rotate(2deg); }
+  75%  { transform: scale(0.95) rotate(0deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
 }
 </style>
 </head>
@@ -165,12 +195,19 @@
       <!-- レッド登場演出オーバーレイ -->
       <div id="entrance-overlay" class="entrance-overlay hidden">
         <div class="entrance-flash"></div>
+        <div class="ent-ring"></div>
         <div class="entrance-rays">
           <div class="ray"></div><div class="ray"></div><div class="ray"></div>
           <div class="ray"></div><div class="ray"></div><div class="ray"></div>
           <div class="ray"></div><div class="ray"></div><div class="ray"></div>
           <div class="ray"></div><div class="ray"></div><div class="ray"></div>
         </div>
+        <div class="ent-star" style="--star-move:translate(-80px,-100px);top:45%;left:45%;animation-delay:0.8s;"></div>
+        <div class="ent-star" style="--star-move:translate(90px,-70px);top:40%;left:55%;animation-delay:1.0s;"></div>
+        <div class="ent-star" style="--star-move:translate(-50px,90px);top:55%;left:42%;animation-delay:1.1s;"></div>
+        <div class="ent-star" style="--star-move:translate(70px,80px);top:58%;left:58%;animation-delay:0.9s;"></div>
+        <div class="ent-star" style="--star-move:translate(-110px,20px);top:50%;left:38%;animation-delay:1.2s;"></div>
+        <div class="ent-star" style="--star-move:translate(100px,-30px);top:48%;left:62%;animation-delay:1.05s;"></div>
         <div class="entrance-char" id="entrance-char">
           <img src="images/choki.png" alt="レッド登場！">
         </div>
@@ -388,8 +425,8 @@ startBtn.addEventListener('click', () => {
           });
         }, 1200);
       });
-    }, 600);
-  }, 2200);
+    }, 1000);
+  }, 4000);
 });
 
 toMenuBtn.addEventListener('click', () => goTo('menu'));
