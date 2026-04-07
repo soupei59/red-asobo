@@ -64,7 +64,7 @@
 
 /* === メインレイアウト === */
 .tetris-wrapper { display:flex; flex-direction:column; align-items:center; width:100%; padding-bottom:8px; position:relative; z-index:1; }
-.tetris-main { display:flex; align-items:flex-start; gap:10px; justify-content:center; }
+.tetris-main { display:flex; align-items:flex-start; gap:4px; justify-content:center; }
 .tetris-board-col { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
 .tetris-board-area { position:relative; flex-shrink:0; }
 .tetris-canvas {
@@ -236,17 +236,6 @@
               <div class="gameover-score" id="gameover-score">スコア: 0</div>
             </div>
           </div>
-          <div class="tetris-comment">
-            <div class="tetris-bubble" id="bubble">
-              <span id="bubble-text">テトリスで あそぼ〜！</span>
-            </div>
-          </div>
-          <div class="tetris-controls" id="controls">
-            <button type="button" class="ctrl-btn" id="btn-left"><img src="images/tetoris-btn-left.png" alt="←"></button>
-            <button type="button" class="ctrl-btn" id="btn-rotate"><img src="images/tetoris-btn-rotation.png" alt="↻"></button>
-            <button type="button" class="ctrl-btn" id="btn-right"><img src="images/tetoris-btn-right.png" alt="→"></button>
-            <button type="button" class="ctrl-btn" id="btn-down"><img src="images/tetoris-btn-down.png" alt="↓"></button>
-          </div>
         </div>
         <div class="tetris-sidebar" id="sidebar">
           <span class="tetris-next-label">つぎ</span>
@@ -258,6 +247,17 @@
             <a href="bye.html" class="sb-btn sb-finish">おしまい</a>
           </div>
         </div>
+      </div>
+      <div class="tetris-comment">
+        <div class="tetris-bubble" id="bubble">
+          <span id="bubble-text">テトリスで あそぼ〜！</span>
+        </div>
+      </div>
+      <div class="tetris-controls" id="controls">
+        <button type="button" class="ctrl-btn" id="btn-left"><img src="images/tetoris-btn-left.png" alt="←"></button>
+        <button type="button" class="ctrl-btn" id="btn-rotate"><img src="images/tetoris-btn-rotation.png" alt="↻"></button>
+        <button type="button" class="ctrl-btn" id="btn-right"><img src="images/tetoris-btn-right.png" alt="→"></button>
+        <button type="button" class="ctrl-btn" id="btn-down"><img src="images/tetoris-btn-down.png" alt="↓"></button>
       </div>
     </div>
   </div>
@@ -282,9 +282,13 @@ const nextCanvas=document.getElementById('next-canvas');
 const nextCtx=nextCanvas.getContext('2d');
 nextCanvas.width=NEXT_CW; nextCanvas.height=NEXT_CW;
 
-const boardColW=Math.min(BOARD_W+90, 420);
+const boardColW=BOARD_W+6;
 document.getElementById('board-col').style.width=boardColW+'px';
 document.getElementById('sidebar').style.width=SIDEBAR_W+'px';
+/* セリフ枠・操作ボタンはボード+サイドバー全幅に */
+const totalW=boardColW+SIDEBAR_W+4;
+document.querySelector('.tetris-comment').style.width=totalW+'px';
+document.querySelector('.tetris-controls').style.width=totalW+'px';
 document.getElementById('next-wrap').style.width=SIDEBAR_W+'px';
 document.getElementById('next-wrap').style.height=SIDEBAR_W+'px';
 
