@@ -303,6 +303,32 @@ const honor=localStorage.getItem('red_honor')||'';
 const dName=pName+honor;
 function fn(s){return s.replace(/\{name\}/g,dName)}
 
+/* ===== タイプライター ===== */
+let _twTimer=null, _twTyping=false, _twFull='';
+function twTokenize(html){
+  const t=[];let i=0;
+  while(i<html.length){
+    if(html.startsWith('<br>',i)){t.push('<br>');i+=4;}
+    else{t.push(html[i]);i++;}
+  }
+  return t;
+}
+function typeWrite(text,speed,cb){
+  if(_twTimer)clearInterval(_twTimer);
+  const tokens=twTokenize(text);
+  bubbleText.innerHTML=''; _twFull=text; _twTyping=true;
+  let i=0;
+  _twTimer=setInterval(()=>{
+    if(i<tokens.length){i++;bubbleText.innerHTML=tokens.slice(0,i).join('');}
+    else{clearInterval(_twTimer);_twTimer=null;_twTyping=false;if(cb)cb();}
+  },speed);
+}
+function twComplete(){
+  if(!_twTyping)return;
+  clearInterval(_twTimer);_twTimer=null;
+  bubbleText.innerHTML=_twFull;_twTyping=false;
+}
+
 /* ===== セリフ（ルビなし・小6漢字OK） ===== */
 /* プレイ中：大きいフォントで短いセリフ */
 const COMMENTS={
@@ -405,6 +431,9 @@ function setFace(img, keep){
   if(!keep) window._ft=setTimeout(()=>{charImg.src='images/read2.png'},3500);
 }
 
+/* バブルタップで早送り */
+bubble.addEventListener('click',()=>{if(_twTyping)twComplete();});
+
 /* セリフ＋表情連動 */
 const bubble=document.getElementById('bubble');
 function setBubbleMode(long){
@@ -422,10 +451,10 @@ function say(key){
   };
   if(faceMap[key]) setFace(faceMap[key], key==='gameover');
 }
-/* 長文セリフ（開始前・ゲームオーバー用） */
+/* 長文セリフ（開始前・ゲームオーバー用）— タイプライター */
 function sayLong(text){
   setBubbleMode(true);
-  bubbleText.innerHTML=fn(text);
+  typeWrite(fn(text),50);
 }
 
 /* ===== レベル別背景テーマ ===== */
