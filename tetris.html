@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>テトリス｜レッドとあそぼう</title>
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== テトリス固有スタイル ===== */
+.tetris-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding-bottom: 180px;
+}
+
+/* ステージ（キャラ＋吹き出し） */
+.tetris-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+.tetris-char {
+  width: min(22vw, 100px);
+  height: min(22vw, 100px);
+  flex-shrink: 0;
+}
+.tetris-char img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.tetris-bubble {
+  background: var(--linen-soft);
+  border: 2px solid var(--border-mid);
+  border-radius: var(--r-xl);
+  padding: 6px 14px;
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: var(--t-sm);
+  color: var(--ink);
+  max-width: 55vw;
+  min-height: 2em;
+  position: relative;
+}
+.tetris-bubble::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: var(--border-mid);
+}
+
+/* スコア・レベル表示 */
+.tetris-info {
+  display: flex;
+  gap: 16px;
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: var(--t-base);
+  color: var(--ink);
+  font-weight: 700;
+}
+.tetris-info span {
+  background: var(--linen-soft);
+  border: 2px solid var(--border-mid);
+  border-radius: var(--r-md);
+  padding: 4px 12px;
+}
+
+/* ゲームボード */
+.tetris-board-area {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.tetris-canvas {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  background: #1a1520;
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* ネクスト表示 */
+.tetris-next {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.tetris-next-label {
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: var(--t-xs);
+  color: var(--ink);
+  font-weight: 700;
+}
+.tetris-next canvas {
+  border: 2px solid var(--border-mid);
+  border-radius: 4px;
+  background: #1a1520;
+}
+
+/* 操作ボタン */
+.tetris-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 6px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(255,245,235,0.95);
+  border-top: 2px solid var(--border-mid);
+  z-index: 100;
+}
+.ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(22px,6vw,36px);
+  font-weight: 900;
+  padding: 14px 0;
+  border: 3px solid var(--ink);
+  border-radius: var(--r-lg);
+  background: var(--linen-soft);
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s, background 0.1s;
+}
+.ctrl-btn:active {
+  transform: scale(0.92);
+  background: var(--border-mid);
+}
+.ctrl-btn.rotate-btn {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
+.ctrl-btn.rotate-btn:active {
+  background: #b5382e;
+}
+
+/* ゲームオーバー画面 */
+.tetris-gameover {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 6px;
+  z-index: 10;
+}
+.tetris-gameover.hidden { display: none; }
+.gameover-title {
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: clamp(24px,7vw,40px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(200,90,77,0.8);
+}
+.gameover-score {
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: var(--t-lg);
+  color: #ffe0a0;
+}
+.gameover-btns {
+  display: flex;
+  gap: 10px;
+}
+
+/* ライン消しエフェクト */
+.line-clear-fx {
+  position: absolute;
+  left: 3px;
+  height: 0;
+  width: calc(100% - 6px);
+  background: rgba(255,255,255,0.9);
+  pointer-events: none;
+  z-index: 5;
+  animation: line-flash 0.4s ease-out forwards;
+}
+@keyframes line-flash {
+  0%   { opacity:1; transform: scaleY(1); }
+  50%  { opacity:1; transform: scaleY(1.5); }
+  100% { opacity:0; transform: scaleY(0); }
+}
+
+/* 画面揺れ */
+.shake {
+  animation: board-shake 0.3s ease-out;
+}
+@keyframes board-shake {
+  0%   { transform: translate(0,0); }
+  20%  { transform: translate(-3px,2px); }
+  40%  { transform: translate(3px,-2px); }
+  60%  { transform: translate(-2px,1px); }
+  80%  { transform: translate(1px,-1px); }
+  100% { transform: translate(0,0); }
+}
+
+/* コンボ表示 */
+.combo-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%) scale(0.5);
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: clamp(28px,8vw,48px);
+  font-weight: 900;
+  color: #ffe060;
+  text-shadow: 0 0 15px rgba(200,90,77,0.8), 3px 3px 0 rgba(200,90,77,0.9);
+  pointer-events: none;
+  z-index: 6;
+  animation: combo-pop 1s ease-out forwards;
+}
+@keyframes combo-pop {
+  0%   { opacity:0; transform: translate(-50%,-50%) scale(0.5); }
+  20%  { opacity:1; transform: translate(-50%,-50%) scale(1.3); }
+  40%  { transform: translate(-50%,-50%) scale(1); }
+  100% { opacity:0; transform: translate(-50%,-80%) scale(1); }
+}
+
+/* スタートオーバーレイ */
+.tetris-start-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-radius: 6px;
+  z-index: 10;
+}
+.tetris-start-overlay.hidden { display: none; }
+.start-title {
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: clamp(28px,8vw,44px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255,220,120,0.9);
+}
+</style>
+</head>
+<body class="tetris-page">
+  <a href="index.html#menu" class="back-link">← もどる</a>
+
+  <div class="container">
+    <div class="tetris-wrapper">
+
+      <!-- キャラ＋吹き出し -->
+      <div class="tetris-stage">
+        <div class="tetris-char floating" id="char-wrap">
+          <img src="images/normal.png" alt="シブ・レッド" id="char-img">
+        </div>
+        <div class="tetris-bubble" id="bubble">
+          <span id="bubble-text">テトリスで あそぼ〜！</span>
+        </div>
+      </div>
+
+      <!-- スコア表示 -->
+      <div class="tetris-info">
+        <span>スコア: <b id="score-val">0</b></span>
+        <span>レベル: <b id="level-val">1</b></span>
+      </div>
+
+      <!-- ゲーム盤面 -->
+      <div class="tetris-board-area" id="board-area">
+        <canvas id="tetris-canvas" class="tetris-canvas"></canvas>
+        <div class="tetris-next">
+          <span class="tetris-next-label">つぎ</span>
+          <canvas id="next-canvas"></canvas>
+        </div>
+
+        <!-- スタート画面 -->
+        <div class="tetris-start-overlay" id="start-overlay">
+          <div class="start-title">テトリス</div>
+          <button type="button" class="btn warm" id="start-btn">スタート！</button>
+        </div>
+
+        <!-- ゲームオーバー -->
+        <div class="tetris-gameover hidden" id="gameover-overlay">
+          <div class="gameover-title">ゲームオーバー</div>
+          <div class="gameover-score" id="gameover-score">スコア: 0</div>
+          <div class="gameover-btns">
+            <button type="button" class="btn warm" id="retry-btn">もういちど</button>
+            <a href="bye.html" class="btn small" style="background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">おしまい</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作ボタン -->
+  <div class="tetris-controls" id="controls">
+    <button type="button" class="ctrl-btn" id="btn-left">◀</button>
+    <button type="button" class="ctrl-btn" id="btn-down">▼</button>
+    <button type="button" class="ctrl-btn rotate-btn" id="btn-rotate">↻</button>
+    <button type="button" class="ctrl-btn" id="btn-right">▶</button>
+  </div>
+
+<script>
+/* ===== 定数 ===== */
+const COLS = 10;
+const ROWS = 20;
+const CELL = Math.min(Math.floor((window.innerWidth - 100) / COLS), 28);
+const NEXT_CELL = Math.floor(CELL * 0.7);
+
+const canvas = document.getElementById('tetris-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = COLS * CELL;
+canvas.height = ROWS * CELL;
+
+const nextCanvas = document.getElementById('next-canvas');
+const nextCtx = nextCanvas.getContext('2d');
+nextCanvas.width = 4 * NEXT_CELL;
+nextCanvas.height = 4 * NEXT_CELL;
+
+/* テトリミノ定義（SRS） */
+const SHAPES = {
+  I: { blocks: [[0,0],[1,0],[2,0],[3,0]], color: '#00e5ff' },
+  O: { blocks: [[0,0],[1,0],[0,1],[1,1]], color: '#ffe040' },
+  T: { blocks: [[0,0],[1,0],[2,0],[1,1]], color: '#c050e0' },
+  S: { blocks: [[1,0],[2,0],[0,1],[1,1]], color: '#40e060' },
+  Z: { blocks: [[0,0],[1,0],[1,1],[2,1]], color: '#ff4040' },
+  J: { blocks: [[0,0],[0,1],[1,1],[2,1]], color: '#4080ff' },
+  L: { blocks: [[2,0],[0,1],[1,1],[2,1]], color: '#ff9020' },
+};
+const SHAPE_KEYS = Object.keys(SHAPES);
+
+/* ===== 名前取得 ===== */
+const name  = localStorage.getItem('red_name')  || 'きみ';
+const honor = localStorage.getItem('red_honor') || '';
+const displayName = name + honor;
+function fillName(s) { return s.replace(/\{name\}/g, displayName); }
+
+/* ===== レッドのコメント ===== */
+const COMMENTS = {
+  start: [
+    'テトリスやるで〜！{name}、いくで！',
+    '{name}！ブロック<ruby>積<rt>つ</rt></ruby>んでいこ〜！',
+    'よっしゃ{name}、テトリス<ruby>勝負<rt>しょうぶ</rt></ruby>や！',
+  ],
+  clear1: [
+    'ナイス{name}！', 'おお〜！いいやん！', 'ええ<ruby>感<rt>かん</rt></ruby>じ〜！',
+    '{name}やるな〜！', 'その<ruby>調子<rt>ちょうし</rt></ruby>〜！',
+  ],
+  clear2: [
+    'ダブルや！すごいで{name}！', '2れつ<ruby>消<rt>け</rt></ruby>し！やるやん！',
+    '{name}、かっこええ〜！',
+  ],
+  clear3: [
+    'トリプル！！{name}すごすぎ！', '3れつ<ruby>消<rt>け</rt></ruby>し！天才ちゃう！？',
+    'うおお！{name}すごい！！',
+  ],
+  clear4: [
+    'テトリス！！！！{name}最高や！！', '4れつ<ruby>消<rt>け</rt></ruby>し！！レッドも<ruby>感動<rt>かんどう</rt></ruby>や〜！！',
+    '{name}…<ruby>神<rt>かみ</rt></ruby>か！？すごすぎ！！',
+  ],
+  danger: [
+    '{name}、やばいで！がんばれ〜！', 'おちついて{name}！', 'まだいける{name}！',
+  ],
+  gameover: [
+    'おつかれ{name}！<ruby>楽<rt>たの</rt></ruby>しかったな〜！',
+    '{name}、ナイスプレーやったで！',
+    'またやろな{name}！レッド<ruby>待<rt>ま</rt></ruby>っとるで！',
+  ],
+  idle: [
+    '{name}〜ブロック<ruby>落<rt>お</rt></ruby>ちてくるで〜', 'ここに<ruby>置<rt>お</rt></ruby>いたらええんちゃう？',
+    'レッド、おうえんしとるで〜！', '{name}、<ruby>集中<rt>しゅうちゅう</rt></ruby>やで！',
+  ],
+};
+
+function randomComment(key) {
+  const arr = COMMENTS[key];
+  return fillName(arr[Math.floor(Math.random() * arr.length)]);
+}
+
+/* ===== DOM ===== */
+const bubbleText  = document.getElementById('bubble-text');
+const charImg     = document.getElementById('char-img');
+const scoreVal    = document.getElementById('score-val');
+const levelVal    = document.getElementById('level-val');
+const boardArea   = document.getElementById('board-area');
+const startOverlay  = document.getElementById('start-overlay');
+const gameoverOverlay = document.getElementById('gameover-overlay');
+const gameoverScore = document.getElementById('gameover-score');
+
+/* ===== ゲーム状態 ===== */
+let board = [];
+let current = null;
+let nextPiece = null;
+let score = 0;
+let level = 1;
+let lines = 0;
+let dropInterval = 800;
+let dropTimer = 0;
+let lastTime = 0;
+let gameRunning = false;
+let gameOver = false;
+let combo = 0;
+let idleTimer = 0;
+
+/* ===== ボード操作 ===== */
+function createBoard() {
+  board = [];
+  for (let r = 0; r < ROWS; r++) {
+    board.push(new Array(COLS).fill(null));
+  }
+}
+
+function randomPiece() {
+  const key = SHAPE_KEYS[Math.floor(Math.random() * SHAPE_KEYS.length)];
+  const shape = SHAPES[key];
+  return {
+    blocks: shape.blocks.map(b => [...b]),
+    color: shape.color,
+    x: Math.floor(COLS / 2) - 1,
+    y: 0,
+    type: key,
+  };
+}
+
+function valid(piece, dx, dy, blocks) {
+  const b = blocks || piece.blocks;
+  for (const [bx, by] of b) {
+    const nx = piece.x + bx + dx;
+    const ny = piece.y + by + dy;
+    if (nx < 0 || nx >= COLS || ny >= ROWS) return false;
+    if (ny >= 0 && board[ny][nx]) return false;
+  }
+  return true;
+}
+
+function rotate(piece) {
+  if (piece.type === 'O') return;
+  const newBlocks = piece.blocks.map(([x, y]) => [-y, x]);
+  // オフセット：中心合わせ
+  const minX = Math.min(...newBlocks.map(b => b[0]));
+  const minY = Math.min(...newBlocks.map(b => b[1]));
+  const adjusted = newBlocks.map(([x, y]) => [x - minX, y - minY]);
+  // SRSっぽい壁キック
+  const kicks = [[0,0],[-1,0],[1,0],[0,-1],[-1,-1],[1,-1],[0,-2]];
+  for (const [kx, ky] of kicks) {
+    const testPiece = { ...piece, x: piece.x + kx, y: piece.y + ky };
+    if (valid(testPiece, 0, 0, adjusted)) {
+      piece.blocks = adjusted;
+      piece.x += kx;
+      piece.y += ky;
+      return;
+    }
+  }
+}
+
+function lockPiece() {
+  for (const [bx, by] of current.blocks) {
+    const rx = current.x + bx;
+    const ry = current.y + by;
+    if (ry < 0) { triggerGameOver(); return; }
+    board[ry][rx] = current.color;
+  }
+  // ライン消し
+  const fullRows = [];
+  for (let r = 0; r < ROWS; r++) {
+    if (board[r].every(c => c !== null)) fullRows.push(r);
+  }
+  if (fullRows.length > 0) {
+    clearLines(fullRows);
+  } else {
+    combo = 0;
+    spawnNext();
+  }
+}
+
+function clearLines(rows) {
+  const count = rows.length;
+  combo++;
+  // スコア計算
+  const lineScore = [0, 100, 300, 500, 800][count] * level;
+  const comboBonus = combo > 1 ? 50 * (combo - 1) * level : 0;
+  score += lineScore + comboBonus;
+  lines += count;
+  level = Math.floor(lines / 10) + 1;
+  dropInterval = Math.max(100, 800 - (level - 1) * 60);
+
+  scoreVal.textContent = score;
+  levelVal.textContent = level;
+
+  // エフェクト
+  showLineClearFx(rows);
+  if (count >= 4) {
+    showComboPopup('テトリス！！');
+    setCharImage('hai2');
+    sayComment('clear4');
+  } else if (count === 3) {
+    showComboPopup('トリプル！');
+    setCharImage('hai');
+    sayComment('clear3');
+  } else if (count === 2) {
+    showComboPopup('ダブル！');
+    setCharImage('hai');
+    sayComment('clear2');
+  } else {
+    setCharImage('clap');
+    sayComment('clear1');
+  }
+  if (combo > 1) {
+    setTimeout(() => showComboPopup(combo + ' コンボ！'), 500);
+  }
+
+  // ラインを消して詰める
+  setTimeout(() => {
+    for (const r of rows.sort((a,b) => b - a)) {
+      board.splice(r, 1);
+      board.unshift(new Array(COLS).fill(null));
+    }
+    spawnNext();
+  }, 400);
+}
+
+function spawnNext() {
+  current = nextPiece;
+  nextPiece = randomPiece();
+  drawNext();
+  if (!valid(current, 0, 0)) {
+    triggerGameOver();
+  }
+  // 危険ゾーン警告
+  if (getDangerLevel() > 0.6) {
+    setCharImage('oshii');
+    sayComment('danger');
+  }
+}
+
+function getDangerLevel() {
+  let topRow = ROWS;
+  for (let r = 0; r < ROWS; r++) {
+    if (board[r].some(c => c !== null)) { topRow = r; break; }
+  }
+  return 1 - (topRow / ROWS);
+}
+
+/* ===== レッド表情・コメント ===== */
+function setCharImage(key) {
+  const map = {
+    normal: 'normal', hai: 'hai', hai2: 'hai2',
+    oshii: 'oshii', clap: 'clap', relax: 'relax', tame: 'tame',
+  };
+  charImg.src = 'images/' + (map[key] || key) + '.png';
+  // 数秒後にnormalに戻す
+  clearTimeout(window._charTimeout);
+  window._charTimeout = setTimeout(() => {
+    charImg.src = 'images/normal.png';
+  }, 3000);
+}
+
+function sayComment(key) {
+  bubbleText.innerHTML = randomComment(key);
+  idleTimer = 0;
+}
+
+/* ===== エフェクト ===== */
+function showLineClearFx(rows) {
+  boardArea.classList.add('shake');
+  setTimeout(() => boardArea.classList.remove('shake'), 300);
+
+  for (const r of rows) {
+    const el = document.createElement('div');
+    el.className = 'line-clear-fx';
+    el.style.top = (r * CELL + 3) + 'px';
+    el.style.height = CELL + 'px';
+    boardArea.appendChild(el);
+    setTimeout(() => el.remove(), 500);
+  }
+}
+
+function showComboPopup(text) {
+  const el = document.createElement('div');
+  el.className = 'combo-popup';
+  el.textContent = text;
+  boardArea.appendChild(el);
+  setTimeout(() => el.remove(), 1100);
+}
+
+/* ===== 描画 ===== */
+function drawCell(context, x, y, color, size) {
+  const s = size;
+  const pad = 1;
+  context.fillStyle = color;
+  context.fillRect(x * s + pad, y * s + pad, s - pad * 2, s - pad * 2);
+  // ハイライト
+  context.fillStyle = 'rgba(255,255,255,0.25)';
+  context.fillRect(x * s + pad, y * s + pad, s - pad * 2, 3);
+  context.fillRect(x * s + pad, y * s + pad, 3, s - pad * 2);
+  // シャドウ
+  context.fillStyle = 'rgba(0,0,0,0.2)';
+  context.fillRect(x * s + pad, y * s + s - 3 - pad, s - pad * 2, 3);
+  context.fillRect(x * s + s - 3 - pad, y * s + pad, 3, s - pad * 2);
+}
+
+function drawBoard() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // グリッド
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 0.5;
+  for (let c = 1; c < COLS; c++) {
+    ctx.beginPath();
+    ctx.moveTo(c * CELL, 0);
+    ctx.lineTo(c * CELL, canvas.height);
+    ctx.stroke();
+  }
+  for (let r = 1; r < ROWS; r++) {
+    ctx.beginPath();
+    ctx.moveTo(0, r * CELL);
+    ctx.lineTo(canvas.width, r * CELL);
+    ctx.stroke();
+  }
+
+  // 固定ブロック
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (board[r][c]) drawCell(ctx, c, r, board[r][c], CELL);
+    }
+  }
+
+  // ゴースト（落下先プレビュー）
+  if (current) {
+    let ghostY = 0;
+    while (valid({ ...current, y: current.y + ghostY + 1 }, 0, 0)) ghostY++;
+    ctx.globalAlpha = 0.2;
+    for (const [bx, by] of current.blocks) {
+      drawCell(ctx, current.x + bx, current.y + by + ghostY, current.color, CELL);
+    }
+    ctx.globalAlpha = 1;
+
+    // カレントピース
+    for (const [bx, by] of current.blocks) {
+      if (current.y + by >= 0) {
+        drawCell(ctx, current.x + bx, current.y + by, current.color, CELL);
+      }
+    }
+  }
+}
+
+function drawNext() {
+  nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  if (!nextPiece) return;
+  for (const [bx, by] of nextPiece.blocks) {
+    drawCell(nextCtx, bx, by, nextPiece.color, NEXT_CELL);
+  }
+}
+
+/* ===== ゲームループ ===== */
+function gameLoop(time) {
+  if (!gameRunning) return;
+  const dt = time - lastTime;
+  lastTime = time;
+  dropTimer += dt;
+  idleTimer += dt;
+
+  if (dropTimer >= dropInterval) {
+    dropTimer = 0;
+    if (valid(current, 0, 1)) {
+      current.y++;
+    } else {
+      lockPiece();
+    }
+  }
+
+  // たまにアイドルコメント
+  if (idleTimer > 12000) {
+    idleTimer = 0;
+    sayComment('idle');
+    setCharImage('normal');
+  }
+
+  drawBoard();
+  requestAnimationFrame(gameLoop);
+}
+
+/* ===== ゲーム開始・終了 ===== */
+function startGame() {
+  createBoard();
+  score = 0; level = 1; lines = 0; combo = 0;
+  dropInterval = 800; dropTimer = 0; idleTimer = 0;
+  gameOver = false; gameRunning = true;
+  scoreVal.textContent = '0';
+  levelVal.textContent = '1';
+
+  startOverlay.classList.add('hidden');
+  gameoverOverlay.classList.add('hidden');
+
+  current = randomPiece();
+  nextPiece = randomPiece();
+  drawNext();
+  sayComment('start');
+  setCharImage('tame');
+
+  lastTime = performance.now();
+  requestAnimationFrame(gameLoop);
+}
+
+function triggerGameOver() {
+  gameRunning = false;
+  gameOver = true;
+  gameoverScore.textContent = 'スコア: ' + score;
+  gameoverOverlay.classList.remove('hidden');
+  setCharImage('relax');
+  sayComment('gameover');
+}
+
+/* ===== 操作 ===== */
+function moveLeft() {
+  if (!gameRunning || !current) return;
+  if (valid(current, -1, 0)) { current.x--; drawBoard(); }
+}
+function moveRight() {
+  if (!gameRunning || !current) return;
+  if (valid(current, 1, 0)) { current.x++; drawBoard(); }
+}
+function moveDown() {
+  if (!gameRunning || !current) return;
+  if (valid(current, 0, 1)) {
+    current.y++;
+    dropTimer = 0;
+    score += 1;
+    scoreVal.textContent = score;
+    drawBoard();
+  }
+}
+function hardDrop() {
+  if (!gameRunning || !current) return;
+  while (valid(current, 0, 1)) { current.y++; score += 2; }
+  scoreVal.textContent = score;
+  lockPiece();
+  drawBoard();
+}
+function rotatePiece() {
+  if (!gameRunning || !current) return;
+  rotate(current);
+  drawBoard();
+}
+
+// タッチボタン
+document.getElementById('btn-left').addEventListener('click', moveLeft);
+document.getElementById('btn-right').addEventListener('click', moveRight);
+document.getElementById('btn-down').addEventListener('click', moveDown);
+document.getElementById('btn-rotate').addEventListener('click', rotatePiece);
+
+// 長押しリピート
+function setupRepeat(btnId, fn) {
+  const btn = document.getElementById(btnId);
+  let interval = null;
+  const start = () => { fn(); interval = setInterval(fn, 100); };
+  const stop = () => { clearInterval(interval); interval = null; };
+  btn.addEventListener('touchstart', (e) => { e.preventDefault(); start(); }, { passive: false });
+  btn.addEventListener('touchend', stop);
+  btn.addEventListener('touchcancel', stop);
+  btn.addEventListener('mousedown', start);
+  btn.addEventListener('mouseup', stop);
+  btn.addEventListener('mouseleave', stop);
+}
+setupRepeat('btn-left', moveLeft);
+setupRepeat('btn-right', moveRight);
+setupRepeat('btn-down', moveDown);
+
+// キーボード
+document.addEventListener('keydown', (e) => {
+  if (gameOver && !gameRunning) return;
+  switch (e.key) {
+    case 'ArrowLeft':  e.preventDefault(); moveLeft(); break;
+    case 'ArrowRight': e.preventDefault(); moveRight(); break;
+    case 'ArrowDown':  e.preventDefault(); moveDown(); break;
+    case 'ArrowUp':    e.preventDefault(); rotatePiece(); break;
+    case ' ':          e.preventDefault(); hardDrop(); break;
+  }
+});
+
+// スタート・リトライ
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('retry-btn').addEventListener('click', startGame);
+
+// 初期描画
+createBoard();
+drawBoard();
+bubbleText.innerHTML = fillName('テトリスで あそぼ〜！');
+</script>
+</body>
+</html>
