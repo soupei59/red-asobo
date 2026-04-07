@@ -170,11 +170,13 @@
 
 .entrance-overlay .entrance-char-img {
   width: min(55vw, 260px);
-  height: min(55vw, 260px);
+  height: auto;
+  max-height: 50vh;
   object-fit: contain;
   position: relative;
   z-index: 2;
   background: transparent;
+  border: none; outline: none;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
