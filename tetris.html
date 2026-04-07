@@ -6,763 +6,582 @@
 <title>テトリス｜レッドとあそぼう</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* ===== テトリス固有スタイル ===== */
+.tetris-wrapper { display:flex; flex-direction:column; align-items:center; width:100%; padding-bottom:8px; }
+.tetris-main { display:flex; align-items:flex-start; gap:10px; justify-content:center; }
 
-/* 全体をビューポート内に収める */
-.tetris-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding-bottom: 8px;
-  gap: 0;
-}
-
-/* ===== メインエリア：ボード左 + サイドバー右 ===== */
-.tetris-main {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* ボード＋レッドを含む列 */
-.tetris-board-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ゲームボード */
-.tetris-board-area {
-  position: relative;
-  flex-shrink: 0;
-}
+/* 左列：ボード+セリフ+操作ボタン */
+.tetris-board-col { display:flex; flex-direction:column; align-items:center; }
+.tetris-board-area { position:relative; flex-shrink:0; }
 .tetris-canvas {
-  border: 3px solid var(--border-strong);
-  border-radius: var(--r-md);
-  background: #F5E6E2;
-  display: block;
-  box-shadow: var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
+  border:3px solid var(--border-strong); border-radius:var(--r-md);
+  background:#F5E6E2; display:block;
+  box-shadow:var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
-/* レッド — 枠の左外側でちょっとだけ被る */
+/* レッド — 右外側、ちょっとだけ被る、1.5倍 */
 .tetris-red-float {
-  position: absolute;
-  bottom: 10px;
-  left: -75px;
-  width: min(24vw, 100px);
-  z-index: 8;
-  pointer-events: none;
-  animation: red-bob 3s ease-in-out infinite;
+  position:absolute; bottom:10px; right:-85px;
+  width:min(36vw,150px); z-index:8;
+  pointer-events:none; animation:red-bob 3s ease-in-out infinite;
 }
-.tetris-red-float img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-@keyframes red-bob {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
-}
+.tetris-red-float img { width:100%; height:auto; object-fit:contain; }
+@keyframes red-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 
-/* セリフ吹き出し（ボード幅に揃う） */
-.tetris-comment {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 0 2px;
-  min-height: 44px;
-  width: 100%;
-}
+/* セリフ吹き出し */
+.tetris-comment { display:flex; align-items:center; justify-content:center; padding:6px 0 2px; min-height:44px; width:100%; }
 .tetris-bubble {
-  background: var(--linen-soft);
-  border: 1px solid var(--border-mid);
-  border-radius: var(--r-lg);
-  padding: 6px 14px;
-  font-size: var(--t-lg);
-  font-weight: 700;
-  color: var(--ink);
-  width: 100%;
-  height: 3em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: relative;
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  line-height: 1.4;
+  background:var(--linen-soft); border:1px solid var(--border-mid); border-radius:var(--r-lg);
+  padding:6px 14px; font-size:var(--t-lg); font-weight:700; color:var(--ink);
+  width:100%; height:3em; display:flex; align-items:center; justify-content:center;
+  text-align:center; box-shadow:var(--shadow-sm); overflow:hidden; line-height:1.4;
 }
 
-/* 操作ボタン（ボード幅に揃う） */
-.tetris-controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 6px 0 2px;
-  width: 100%;
-}
+/* 操作ボタン */
+.tetris-controls { display:flex; justify-content:center; gap:10px; padding:6px 0 2px; width:100%; }
 .ctrl-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(48px,12vw,68px);
-  height: clamp(48px,12vw,68px);
-  border: none;
-  border-radius: var(--r-full);
-  background: transparent;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform 0.12s var(--ease-spring);
-  flex-shrink: 0;
-  padding: 0;
+  display:flex; align-items:center; justify-content:center;
+  width:clamp(48px,12vw,68px); height:clamp(48px,12vw,68px);
+  border:none; border-radius:var(--r-full); background:transparent;
+  cursor:pointer; user-select:none; -webkit-user-select:none;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  transition:transform 0.12s var(--ease-spring); flex-shrink:0; padding:0;
 }
-.ctrl-btn img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-}
-.ctrl-btn:active {
-  transform: scale(0.85);
-}
+.ctrl-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
+.ctrl-btn:active { transform:scale(0.85); }
 
-/* 下部ボタン（操作ボタンから十分離す） */
-.tetris-bottom-btns {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  padding: 0;
-  margin-top: 20px;
-  width: 100%;
-}
-.tetris-bottom-btns .bottom-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 28px;
-  border: none;
-  border-radius: var(--r-full);
-  font-size: var(--t-base);
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 0.12s var(--ease-spring), box-shadow 0.12s;
-  box-shadow: var(--shadow-sm);
-}
-.tetris-bottom-btns .bottom-btn:active {
-  transform: scale(0.95);
-}
-.tetris-bottom-btns .btn-retry {
-  background: var(--linen-soft);
-  color: var(--ink);
-  border: 2px solid var(--border-mid);
-}
-.tetris-bottom-btns .btn-finish {
-  background: var(--red);
-  color: #fff;
-  border: 2px solid var(--red);
-}
-
-/* ===== サイドバー ===== */
-.tetris-sidebar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  padding-top: 0;
-}
-.tetris-next-label {
-  font-size: var(--t-sm);
-  color: var(--ink-soft);
-  font-weight: 700;
-  margin-bottom: -4px;
-}
+/* 右サイドバー */
+.tetris-sidebar { display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; }
+.tetris-next-label { font-size:var(--t-sm); color:var(--ink-soft); font-weight:700; margin-bottom:-4px; }
 .tetris-next-wrap {
-  background: #F5E6E2;
-  border: 2px solid var(--border-mid);
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-xs);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  background:#F5E6E2; border:2px solid var(--border-mid); border-radius:var(--r-sm);
+  box-shadow:var(--shadow-xs); display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
-.tetris-next-wrap canvas {
-  display: block;
-}
+.tetris-next-wrap canvas { display:block; }
 .tetris-info-item {
-  background: var(--linen-soft);
-  border: 2px solid var(--border-mid);
-  border-radius: var(--r-md);
-  padding: 6px 10px;
-  font-size: var(--t-sm);
-  font-weight: 700;
-  color: var(--ink);
-  text-align: center;
-  box-shadow: var(--shadow-xs);
-  width: 100%;
-  white-space: nowrap;
+  background:var(--linen-soft); border:2px solid var(--border-mid); border-radius:var(--r-md);
+  padding:6px 10px; font-size:var(--t-sm); font-weight:700; color:var(--ink);
+  text-align:center; box-shadow:var(--shadow-xs); width:100%; white-space:nowrap;
 }
 
-/* ===== スタートオーバーレイ（暗転なし） ===== */
+/* もういちど・おしまい（サイドバー下に配置） */
+.sidebar-btns { display:flex; flex-direction:column; gap:8px; width:100%; margin-top:4px; }
+.sidebar-btns .sb-btn {
+  display:flex; align-items:center; justify-content:center;
+  padding:8px 0; border:2px solid var(--border-mid); border-radius:var(--r-md);
+  font-size:var(--t-sm); font-weight:700; cursor:pointer; text-decoration:none;
+  transition:transform 0.12s var(--ease-spring); box-shadow:var(--shadow-xs);
+}
+.sidebar-btns .sb-btn:active { transform:scale(0.95); }
+.sidebar-btns .sb-retry { background:var(--linen-soft); color:var(--ink); }
+.sidebar-btns .sb-finish { background:var(--red); color:#fff; border-color:var(--red); }
+
+/* スタートオーバーレイ */
 .tetris-start-overlay {
-  position: absolute; inset: 0;
-  background: transparent;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 16px; border-radius: var(--r-md); z-index: 10;
+  position:absolute; inset:0; background:transparent;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:16px; border-radius:var(--r-md); z-index:10;
 }
-.tetris-start-overlay.hidden { display: none; }
-.start-title {
-  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: clamp(24px,7vw,38px);
-  font-weight: 900; color: var(--red);
-  text-shadow: 0 2px 8px rgba(200,90,77,0.15);
-}
+.tetris-start-overlay.hidden { display:none; }
+.start-title { font-family:'Yomogi','Zen Maru Gothic',cursive; font-size:clamp(24px,7vw,38px); font-weight:900; color:var(--red); text-shadow:0 2px 8px rgba(200,90,77,0.15); }
 
-/* ===== エフェクト ===== */
+/* ゲームオーバーオーバーレイ */
+.tetris-gameover-overlay {
+  position:absolute; inset:0; background:rgba(45,40,35,0.0);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:12px; border-radius:var(--r-md); z-index:10;
+  pointer-events:none; opacity:0; transition:background 0.8s, opacity 0.8s;
+}
+.tetris-gameover-overlay.active { background:rgba(45,40,35,0.55); opacity:1; pointer-events:auto; }
+.gameover-title {
+  font-family:'Yomogi','Zen Maru Gothic',cursive; font-size:clamp(22px,6vw,36px);
+  font-weight:900; color:#fff; text-shadow:0 2px 12px rgba(200,90,77,0.6);
+  transform:scale(0); transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.tetris-gameover-overlay.active .gameover-title { transform:scale(1); }
+.gameover-score {
+  font-size:var(--t-lg); font-weight:700; color:var(--cream-yellow, #FFE4A0);
+  opacity:0; transition:opacity 0.5s 0.3s;
+}
+.tetris-gameover-overlay.active .gameover-score { opacity:1; }
+
+/* エフェクト */
 .line-clear-fx {
-  position: absolute;
-  left: 3px;
-  height: 0;
-  width: calc(100% - 6px);
-  background: linear-gradient(90deg, transparent, rgba(255,220,120,0.9), rgba(200,90,77,0.6), rgba(255,220,120,0.9), transparent);
-  pointer-events: none;
-  z-index: 5;
-  border-radius: 4px;
-  animation: line-flash 0.4s ease-out forwards;
+  position:absolute; left:3px; height:0; width:calc(100% - 6px);
+  background:linear-gradient(90deg,transparent,rgba(255,220,120,0.9),rgba(200,90,77,0.6),rgba(255,220,120,0.9),transparent);
+  pointer-events:none; z-index:5; border-radius:4px; animation:line-flash 0.4s ease-out forwards;
 }
-@keyframes line-flash {
-  0%   { opacity:1; transform: scaleY(1); }
-  50%  { opacity:1; transform: scaleY(1.8); }
-  100% { opacity:0; transform: scaleY(0); }
-}
-.shake { animation: board-shake 0.3s ease-out; }
-@keyframes board-shake {
-  0%   { transform: translate(0,0); }
-  20%  { transform: translate(-3px,2px); }
-  40%  { transform: translate(3px,-2px); }
-  60%  { transform: translate(-2px,1px); }
-  80%  { transform: translate(1px,-1px); }
-  100% { transform: translate(0,0); }
-}
+@keyframes line-flash { 0%{opacity:1;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.8)} 100%{opacity:0;transform:scaleY(0)} }
+
+.shake-sm { animation:shake-sm 0.25s ease-out; }
+@keyframes shake-sm { 0%{transform:translate(0,0)} 25%{transform:translate(-2px,1px)} 50%{transform:translate(2px,-1px)} 75%{transform:translate(-1px,1px)} 100%{transform:translate(0,0)} }
+
+.shake-md { animation:shake-md 0.4s ease-out; }
+@keyframes shake-md { 0%{transform:translate(0,0)} 15%{transform:translate(-4px,3px)} 30%{transform:translate(4px,-3px)} 45%{transform:translate(-3px,2px)} 60%{transform:translate(3px,-1px)} 80%{transform:translate(-1px,1px)} 100%{transform:translate(0,0)} }
+
+.shake-lg { animation:shake-lg 0.6s ease-out; }
+@keyframes shake-lg { 0%{transform:translate(0,0)} 10%{transform:translate(-6px,4px)} 20%{transform:translate(6px,-4px)} 30%{transform:translate(-5px,3px)} 40%{transform:translate(5px,-3px)} 50%{transform:translate(-3px,2px)} 65%{transform:translate(3px,-1px)} 80%{transform:translate(-1px,1px)} 100%{transform:translate(0,0)} }
+
+/* 背景フラッシュ */
+.board-flash { position:absolute; inset:0; border-radius:var(--r-md); pointer-events:none; z-index:4; opacity:0; }
+.flash-gold { animation:flash-gold 0.5s ease-out forwards; }
+@keyframes flash-gold { 0%{opacity:0.6;background:rgba(255,220,100,0.5)} 100%{opacity:0;background:rgba(255,220,100,0)} }
+.flash-rainbow { animation:flash-rainbow 0.8s ease-out forwards; }
+@keyframes flash-rainbow { 0%{opacity:0.7;background:linear-gradient(135deg,rgba(255,100,100,0.4),rgba(255,200,50,0.4),rgba(100,200,255,0.4),rgba(200,100,255,0.4))} 100%{opacity:0} }
+
+/* 星パーティクル */
+.star-burst { position:absolute; width:12px; height:12px; pointer-events:none; z-index:7; }
+.star-burst::before { content:'★'; font-size:16px; color:#FFD700; text-shadow:0 0 6px rgba(255,200,0,0.8); }
+
 .combo-popup {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%) scale(0.5);
-  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: clamp(22px,6vw,38px);
-  font-weight: 900;
-  color: var(--red);
-  text-shadow: 0 0 12px rgba(255,220,120,0.6), 2px 2px 0 rgba(200,90,77,0.3);
-  -webkit-text-stroke: 0.5px var(--ink);
-  pointer-events: none; z-index: 6;
-  animation: combo-pop 1s ease-out forwards;
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.5);
+  font-family:'Yomogi','Zen Maru Gothic',cursive; font-size:clamp(22px,6vw,38px);
+  font-weight:900; color:var(--red);
+  text-shadow:0 0 12px rgba(255,220,120,0.6),2px 2px 0 rgba(200,90,77,0.3);
+  -webkit-text-stroke:0.5px var(--ink); pointer-events:none; z-index:6;
+  animation:combo-pop 1s ease-out forwards;
 }
-@keyframes combo-pop {
-  0%   { opacity:0; transform: translate(-50%,-50%) scale(0.5); }
-  20%  { opacity:1; transform: translate(-50%,-50%) scale(1.3); }
-  40%  { transform: translate(-50%,-50%) scale(1); }
-  100% { opacity:0; transform: translate(-50%,-80%) scale(1); }
-}
+@keyframes combo-pop { 0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)} 20%{opacity:1;transform:translate(-50%,-50%) scale(1.3)} 40%{transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-80%) scale(1)} }
 </style>
 </head>
 <body class="tetris-page">
   <a href="index.html#menu" class="back-link">← もどる</a>
-
   <div class="container">
     <div class="tetris-wrapper">
-
       <div class="tetris-main">
-        <!-- 左列: ボード + セリフ + ボタン -->
         <div class="tetris-board-col" id="board-col">
-          <!-- ゲームボード -->
           <div class="tetris-board-area" id="board-area">
             <canvas id="tetris-canvas" class="tetris-canvas"></canvas>
-
-            <!-- レッド -->
             <div class="tetris-red-float" id="char-wrap">
-              <img src="images/read.png" alt="シブ・レッド">
+              <img src="images/read2.png" alt="シブ・レッド" id="char-img">
             </div>
-
-            <!-- スタート画面 -->
             <div class="tetris-start-overlay" id="start-overlay">
               <div class="start-title">テトリス</div>
               <button type="button" class="btn warm" id="start-btn">スタート！</button>
             </div>
+            <div class="tetris-gameover-overlay" id="gameover-overlay">
+              <div class="gameover-title">ゲームオーバー</div>
+              <div class="gameover-score" id="gameover-score">スコア: 0</div>
+            </div>
           </div>
-
-          <!-- セリフ吹き出し -->
           <div class="tetris-comment">
             <div class="tetris-bubble" id="bubble">
               <span id="bubble-text">テトリスで あそぼ〜！</span>
             </div>
           </div>
-
-          <!-- 操作ボタン -->
           <div class="tetris-controls" id="controls">
             <button type="button" class="ctrl-btn" id="btn-left"><img src="images/tetoris-btn-left.png" alt="←"></button>
             <button type="button" class="ctrl-btn" id="btn-down"><img src="images/tetoris-btn-down.png" alt="↓"></button>
             <button type="button" class="ctrl-btn" id="btn-rotate"><img src="images/tetoris-btn-rotation.png" alt="↻"></button>
             <button type="button" class="ctrl-btn" id="btn-right"><img src="images/tetoris-btn-right.png" alt="→"></button>
           </div>
-
-          <!-- もういちど＋おしまい -->
-          <div class="tetris-bottom-btns">
-            <button type="button" class="bottom-btn btn-retry" id="retry-btn">もういちど</button>
-            <a href="bye.html" class="bottom-btn btn-finish">おしまい</a>
-          </div>
         </div>
-
-        <!-- 右サイドバー -->
         <div class="tetris-sidebar" id="sidebar">
           <span class="tetris-next-label">つぎ</span>
-          <div class="tetris-next-wrap" id="next-wrap">
-            <canvas id="next-canvas"></canvas>
-          </div>
+          <div class="tetris-next-wrap" id="next-wrap"><canvas id="next-canvas"></canvas></div>
           <div class="tetris-info-item">スコア<br><b id="score-val">0</b></div>
           <div class="tetris-info-item">レベル<br><b id="level-val">1</b></div>
+          <div class="sidebar-btns">
+            <button type="button" class="sb-btn sb-retry" id="retry-btn">もういちど</button>
+            <a href="bye.html" class="sb-btn sb-finish">おしまい</a>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 
 <script>
-/* ===== レスポンシブCELLサイズ計算 ===== */
-const COLS = 10;
-const ROWS = 20;
-
-/* ビューポートに基づいてCELLサイズを決定 */
-function calcCellSize() {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  /* サイドバー幅(80-100px) + gap + 余白 を除いたボード可用幅 */
-  const sidebarW = vw < 400 ? 72 : 90;
-  const gap = 10;
-  const margin = vw < 400 ? 20 : 40;
-  const maxBoardW = vw - sidebarW - gap - margin;
-  /* ビューポート高さからも制約（ヘッダ+セリフ+ボタン+余白 ≒ 260px） */
-  const maxBoardH = vh - 260;
-  const cellFromW = Math.floor(maxBoardW / COLS);
-  const cellFromH = Math.floor(maxBoardH / ROWS);
-  return Math.max(Math.min(cellFromW, cellFromH, 26), 12);
+const COLS=10, ROWS=20;
+function calcCell(){
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const sw=vw<400?72:90, gap=10, margin=vw<400?20:40;
+  const mw=vw-sw-gap-margin, mh=vh-240;
+  return Math.max(Math.min(Math.floor(mw/COLS),Math.floor(mh/ROWS),26),12);
 }
-const CELL = calcCellSize();
-const BOARD_W = COLS * CELL;
-const BOARD_H = ROWS * CELL;
+const CELL=calcCell(), BOARD_W=COLS*CELL, BOARD_H=ROWS*CELL;
+const SIDEBAR_W=Math.max(Math.floor(BOARD_W*0.35),70);
 
-/* サイドバー幅をボード幅に比例して決定 */
-const SIDEBAR_W = Math.max(Math.floor(BOARD_W * 0.35), 70);
+const canvas=document.getElementById('tetris-canvas');
+const ctx=canvas.getContext('2d');
+canvas.width=BOARD_W; canvas.height=BOARD_H;
 
-/* キャンバスのセットアップ */
-const canvas = document.getElementById('tetris-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = BOARD_W;
-canvas.height = BOARD_H;
+const NEXT_CELL=Math.floor(SIDEBAR_W/5), NEXT_CW=NEXT_CELL*4;
+const nextCanvas=document.getElementById('next-canvas');
+const nextCtx=nextCanvas.getContext('2d');
+nextCanvas.width=NEXT_CW; nextCanvas.height=NEXT_CW;
 
-/* NEXTキャンバス：サイドバー幅に合わせ、中央配置用に正方形 */
-const NEXT_CELL = Math.floor(SIDEBAR_W / 5);
-const NEXT_CW = NEXT_CELL * 4;
-const nextCanvas = document.getElementById('next-canvas');
-const nextCtx = nextCanvas.getContext('2d');
-nextCanvas.width = NEXT_CW;
-nextCanvas.height = NEXT_CW;
+document.getElementById('sidebar').style.width=SIDEBAR_W+'px';
+document.getElementById('next-wrap').style.width=SIDEBAR_W+'px';
+document.getElementById('next-wrap').style.height=SIDEBAR_W+'px';
 
-/* サイドバー幅を適用 */
-document.getElementById('sidebar').style.width = SIDEBAR_W + 'px';
-document.getElementById('next-wrap').style.width = SIDEBAR_W + 'px';
-document.getElementById('next-wrap').style.height = SIDEBAR_W + 'px';
-
-/* テトリミノ定義 */
-const SHAPES = {
-  I: { blocks: [[0,0],[1,0],[2,0],[3,0]], color: '#D4A0A0' },  /* ローズ */
-  O: { blocks: [[0,0],[1,0],[0,1],[1,1]], color: '#E5B94E' },  /* マスタード */
-  T: { blocks: [[0,0],[1,0],[2,0],[1,1]], color: '#B5A5C4' },  /* ラベンダー */
-  S: { blocks: [[1,0],[2,0],[0,1],[1,1]], color: '#A8B89C' },  /* セージ */
-  Z: { blocks: [[0,0],[1,0],[1,1],[2,1]], color: '#C85A4D' },  /* トマト赤 */
-  J: { blocks: [[0,0],[0,1],[1,1],[2,1]], color: '#7BA3B5' },  /* くすみ青 */
-  L: { blocks: [[2,0],[0,1],[1,1],[2,1]], color: '#D89B7C' },  /* テラコッタ */
+const SHAPES={
+  I:{blocks:[[0,0],[1,0],[2,0],[3,0]],color:'#D4A0A0'},
+  O:{blocks:[[0,0],[1,0],[0,1],[1,1]],color:'#E5B94E'},
+  T:{blocks:[[0,0],[1,0],[2,0],[1,1]],color:'#B5A5C4'},
+  S:{blocks:[[1,0],[2,0],[0,1],[1,1]],color:'#A8B89C'},
+  Z:{blocks:[[0,0],[1,0],[1,1],[2,1]],color:'#C85A4D'},
+  J:{blocks:[[0,0],[0,1],[1,1],[2,1]],color:'#7BA3B5'},
+  L:{blocks:[[2,0],[0,1],[1,1],[2,1]],color:'#D89B7C'},
 };
-const SHAPE_KEYS = Object.keys(SHAPES);
+const SHAPE_KEYS=Object.keys(SHAPES);
+const pName=localStorage.getItem('red_name')||'きみ';
+const honor=localStorage.getItem('red_honor')||'';
+const dName=pName+honor;
+function fn(s){return s.replace(/\{name\}/g,dName)}
 
-/* 名前取得 */
-const playerName = localStorage.getItem('red_name') || 'きみ';
-const honor = localStorage.getItem('red_honor') || '';
-const displayName = playerName + honor;
-function fillName(s) { return s.replace(/\{name\}/g, displayName); }
-
-/* レッドのコメント */
-const COMMENTS = {
-  start: [
+/* ===== セリフ（5倍に大幅増量） ===== */
+const COMMENTS={
+  start:[
     'テトリスやるで〜！{name}、いくで！',
     '{name}！ブロック<ruby>積<rt>つ</rt></ruby>んでいこ〜！',
     'よっしゃ{name}、テトリス<ruby>勝負<rt>しょうぶ</rt></ruby>や！',
+    '{name}、<ruby>準備<rt>じゅんび</rt></ruby>はええか？いくで！',
+    'テトリスタイムや！{name}、<ruby>気合<rt>きあい</rt></ruby>いれてこ！',
+    '{name}と<ruby>一緒<rt>いっしょ</rt></ruby>にテトリス！うれしいわ〜！',
+    'さあ{name}、ブロックの<ruby>雨<rt>あめ</rt></ruby>がふってくるで！',
+    'レッドが<ruby>応援<rt>おうえん</rt></ruby>するで！{name}がんばれ〜！',
+    '{name}、今日は何<ruby>点<rt>てん</rt></ruby>とれるかな〜？',
+    'ブロックの<ruby>達人<rt>たつじん</rt></ruby>{name}、スタートや！',
   ],
-  clear1: [
-    'ナイス{name}！', 'おお〜！いいやん！', 'ええ<ruby>感<rt>かん</rt></ruby>じ〜！',
-    '{name}やるな〜！', 'その<ruby>調子<rt>ちょうし</rt></ruby>〜！',
+  clear1:[
+    'ナイス{name}！','おお〜！いいやん！','ええ<ruby>感<rt>かん</rt></ruby>じ〜！',
+    '{name}やるな〜！','その<ruby>調子<rt>ちょうし</rt></ruby>〜！',
+    '1れつ<ruby>消<rt>け</rt></ruby>し！いいぞ{name}！',
+    'うんうん、ええやん{name}！','おっ、きれいに<ruby>消<rt>き</rt></ruby>えたな！',
+    '{name}、うまいやん〜！','ナイスナイス〜！{name}！',
+    'よっしゃ！<ruby>消<rt>け</rt></ruby>したで！','いい<ruby>判断<rt>はんだん</rt></ruby>や{name}！',
+    'パチパチ〜！{name}すごい！','スムーズやな〜{name}！',
+    'ええぞ{name}！この<ruby>調子<rt>ちょうし</rt></ruby>！',
+    '{name}、さすがやな〜！','レッドもうれしいで！',
+    'いいね！{name}ノッてきたな！','キレイに<ruby>消<rt>け</rt></ruby>したな〜！',
+    'お〜！1れつスッキリ！','{name}、センスあるで！',
+    'ピカーン！きれいに<ruby>消<rt>け</rt></ruby>したで！','はい1れつ<ruby>消<rt>け</rt></ruby>し〜！',
+    'どんどんいこ{name}！','ナイスプレー{name}！',
   ],
-  clear2: [
-    'ダブルや！すごいで{name}！', '2れつ<ruby>消<rt>け</rt></ruby>し！やるやん！',
-    '{name}、かっこええ〜！',
+  clear2:[
+    'ダブルや！すごいで{name}！','2れつ<ruby>消<rt>け</rt></ruby>し！やるやん！',
+    '{name}、かっこええ〜！','おおお！ダブル！{name}すご！',
+    '2れつ<ruby>一気<rt>いっき</rt></ruby>に！{name}やるなぁ！',
+    'ダブルきた〜！{name}ノリノリやん！',
+    '{name}、2れついっぺんに<ruby>消<rt>け</rt></ruby>すとか！',
+    'うおおダブル！気持ちええな〜！',
+    '{name}のダブル、サイコーや！','2れつ<ruby>消<rt>け</rt></ruby>し！テンション上がるわ〜！',
+    'ダブル<ruby>決<rt>き</rt></ruby>まった！{name}カッコええ！',
+    'やったー！ダブルや！{name}すごい！',
   ],
-  clear3: [
-    'トリプル！！{name}すごすぎ！', '3れつ<ruby>消<rt>け</rt></ruby>し！天才ちゃう！？',
-    'うおお！{name}すごい！！',
+  clear3:[
+    'トリプル！！{name}すごすぎ！','3れつ<ruby>消<rt>け</rt></ruby>し！天才ちゃう！？',
+    'うおお！{name}すごい！！','トリプルきた！{name}、<ruby>神<rt>かみ</rt></ruby>ってるで！',
+    '3れつ！！{name}マジですごいわ！',
+    'トリプル<ruby>決<rt>き</rt></ruby>まった！レッド大<ruby>興奮<rt>こうふん</rt></ruby>や！',
+    '{name}、3れつ<ruby>消<rt>け</rt></ruby>しとか<ruby>半端<rt>はんぱ</rt></ruby>ないって！',
+    'うわあああ！トリプル！{name}すごすぎるわ！',
+    'レッド<ruby>感動<rt>かんどう</rt></ruby>や！{name}のトリプル！',
+    '3れつ一気に<ruby>消<rt>け</rt></ruby>すとかプロやん{name}！',
+    'きゃー！トリプル！{name}カッコよすぎ！',
+    'トリプルや！{name}、もうテトリスの<ruby>達人<rt>たつじん</rt></ruby>やな！',
   ],
-  clear4: [
-    'テトリス！！！！{name}最高や！！', '4れつ<ruby>消<rt>け</rt></ruby>し！！レッドも<ruby>感動<rt>かんどう</rt></ruby>や〜！！',
+  clear4:[
+    'テトリス！！！！{name}最高や！！',
+    '4れつ<ruby>消<rt>け</rt></ruby>し！！レッドも<ruby>感動<rt>かんどう</rt></ruby>や〜！！',
     '{name}…<ruby>神<rt>かみ</rt></ruby>か！？すごすぎ！！',
+    'テトリスきたああ！{name}、<ruby>伝説<rt>でんせつ</rt></ruby>やで！',
+    '4れつ<ruby>一気<rt>いっき</rt></ruby>に！！{name}サイコー！！',
+    'テトリスや！レッド<ruby>泣<rt>な</rt></ruby>きそうやわ…すごい{name}！',
+    '{name}のテトリス！<ruby>歴史<rt>れきし</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>るで！',
+    'うわあああ！テトリス！{name}天才！！',
+    '4れつ<ruby>消<rt>け</rt></ruby>し！{name}、もう<ruby>王者<rt>おうじゃ</rt></ruby>やな！',
+    'テトリスきた！{name}カッコよすぎて<ruby>震<rt>ふる</rt></ruby>えるわ！',
+    'すっっっごい！テトリス！{name}最強や！',
   ],
-  danger: [
-    '{name}、やばいで！がんばれ〜！', 'おちついて{name}！', 'まだいける{name}！',
+  danger:[
+    '{name}、やばいで！がんばれ〜！','おちついて{name}！','まだいける{name}！',
+    '{name}、ピンチやけど<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>！',
+    'あわわ…{name}、おちついてな！',
+    '{name}、ここが<ruby>勝負<rt>しょうぶ</rt></ruby>どころや！',
+    'うわ〜<ruby>積<rt>つ</rt></ruby>みあがってきた！{name}がんばれ！',
+    '{name}、あきらめんといてな！','ここからや{name}！<ruby>逆転<rt>ぎゃくてん</rt></ruby>できる！',
+    'レッドが<ruby>念<rt>ねん</rt></ruby>を<ruby>送<rt>おく</rt></ruby>るで！{name}がんばれ〜！',
+    '{name}、深<ruby>呼吸<rt>こきゅう</rt></ruby>して…いけるいける！',
+    'やばいやばい！でも{name}なら<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>！',
   ],
-  gameover: [
+  gameover:[
     'ゲームオーバーや〜！{name}おつかれ！',
     'ゲームオーバー！{name}がんばったな〜！',
     'ゲームオーバーや！またやろな{name}！',
+    '{name}、おつかれさま！<ruby>楽<rt>たの</rt></ruby>しかったな〜！',
+    '{name}、ナイスプレーやったで！',
+    'いいゲームやったで{name}！','もう1回やる？{name}！',
+    '{name}、すごかったで！またチャレンジしよ！',
+    'おつかれ{name}！レッド<ruby>楽<rt>たの</rt></ruby>しかったわ〜！',
+    'ゲームオーバー！でも{name}かっこよかったで！',
+    '{name}、おつかれ！<ruby>次<rt>つぎ</rt></ruby>はもっといけるで！',
   ],
-  idle: [
-    '{name}〜ブロック<ruby>落<rt>お</rt></ruby>ちてくるで〜', 'ここに<ruby>置<rt>お</rt></ruby>いたらええんちゃう？',
-    'レッド、おうえんしとるで〜！', '{name}、<ruby>集中<rt>しゅうちゅう</rt></ruby>やで！',
+  idle:[
+    '{name}〜ブロック<ruby>落<rt>お</rt></ruby>ちてくるで〜',
+    'ここに<ruby>置<rt>お</rt></ruby>いたらええんちゃう？',
+    'レッド、おうえんしとるで〜！',
+    '{name}、<ruby>集中<rt>しゅうちゅう</rt></ruby>やで！',
+    '{name}〜どこに<ruby>置<rt>お</rt></ruby>く？','レッド、わくわくしてるで！',
+    '{name}、いい<ruby>感<rt>かん</rt></ruby>じやで〜！','ブロックくるで〜{name}！',
+    '{name}、<ruby>考<rt>かんが</rt></ruby>え<ruby>中<rt>ちゅう</rt></ruby>？',
+    'レッドも<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>考<rt>かんが</rt></ruby>えてるで！',
+    'うーん…こっちかな〜？','ファイト{name}！',
+    '{name}、テトリス<ruby>楽<rt>たの</rt></ruby>しいな〜！',
+    'がんばれがんばれ{name}！','レッドが見守っとるで〜！',
+    '{name}〜まだまだいけるで！','ブロックと<ruby>仲良<rt>なかよ</rt></ruby>くなろ！',
+    '{name}、リラックスしてな〜','次のブロック何かな〜？',
+    '{name}、いいペースやで！',
+  ],
+  levelup:[
+    'レベルアップ！{name}すごい！',
+    '{name}、レベルが<ruby>上<rt>あ</rt></ruby>がったで！',
+    'おお〜レベルアップや！{name}、<ruby>速<rt>はや</rt></ruby>くなるで！',
+    'レベルアップ！{name}、<ruby>気<rt>き</rt></ruby>をつけてな！',
+    '{name}、どんどん<ruby>強<rt>つよ</rt></ruby>くなってるで！',
+  ],
+  combo:[
+    '{name}、コンボや！すごい！','コンボ<ruby>継続<rt>けいぞく</rt></ruby>！{name}ノリノリ！',
+    'つながった！{name}いいぞ！','コンボ！{name}、<ruby>止<rt>と</rt></ruby>まらんな！',
+    'レッドも<ruby>興奮<rt>こうふん</rt></ruby>してきたで！コンボ！',
   ],
 };
-function randomComment(key) {
-  const arr = COMMENTS[key];
-  return fillName(arr[Math.floor(Math.random() * arr.length)]);
-}
+function rc(key){const a=COMMENTS[key];return fn(a[Math.floor(Math.random()*a.length)])}
 
 /* DOM */
-const bubbleText = document.getElementById('bubble-text');
-const scoreVal   = document.getElementById('score-val');
-const levelVal   = document.getElementById('level-val');
-const boardArea  = document.getElementById('board-area');
-const startOverlay = document.getElementById('start-overlay');
+const bubbleText=document.getElementById('bubble-text');
+const charImg=document.getElementById('char-img');
+const scoreVal=document.getElementById('score-val');
+const levelVal=document.getElementById('level-val');
+const boardArea=document.getElementById('board-area');
+const startOverlay=document.getElementById('start-overlay');
+const goOverlay=document.getElementById('gameover-overlay');
+const goScore=document.getElementById('gameover-score');
+
+/* 表情変更 */
+function setFace(img){
+  charImg.src='images/'+img+'.png';
+  clearTimeout(window._ft);
+  window._ft=setTimeout(()=>{charImg.src='images/read2.png'},3500);
+}
+
+/* セリフ＋表情連動 */
+function say(key){
+  bubbleText.innerHTML=rc(key);
+  idleTimer=0;
+  const faceMap={
+    start:'ike', clear1:'yatta', clear2:'yatta', clear3:'yatta', clear4:'yatta',
+    danger:'aseri', gameover:'umm2', idle:'read2', levelup:'ike', combo:'yatta',
+  };
+  if(faceMap[key]) setFace(faceMap[key]);
+}
 
 /* ゲーム状態 */
-let board = [];
-let current = null;
-let nextPiece = null;
-let score = 0, level = 1, lines = 0;
-let dropInterval = 800, dropTimer = 0;
-let lastTime = 0;
-let gameRunning = false, gameOver = false;
-let combo = 0, idleTimer = 0;
+let board=[], current=null, nextPiece=null;
+let score=0, level=1, lines=0, prevLevel=1;
+let dropInterval=800, dropTimer=0, lastTime=0;
+let gameRunning=false, gameOver=false;
+let combo=0, idleTimer=0;
 
-/* ボード操作 */
-function createBoard() {
-  board = [];
-  for (let r = 0; r < ROWS; r++) board.push(new Array(COLS).fill(null));
+function createBoard(){board=[];for(let r=0;r<ROWS;r++)board.push(new Array(COLS).fill(null))}
+function rp(){
+  const k=SHAPE_KEYS[Math.floor(Math.random()*SHAPE_KEYS.length)];
+  const s=SHAPES[k];
+  return{blocks:s.blocks.map(b=>[...b]),color:s.color,x:Math.floor(COLS/2)-1,y:0,type:k};
 }
-
-function randomPiece() {
-  const key = SHAPE_KEYS[Math.floor(Math.random() * SHAPE_KEYS.length)];
-  const shape = SHAPES[key];
-  return {
-    blocks: shape.blocks.map(b => [...b]),
-    color: shape.color,
-    x: Math.floor(COLS / 2) - 1, y: 0, type: key,
-  };
-}
-
-function valid(piece, dx, dy, blocks) {
-  const b = blocks || piece.blocks;
-  for (const [bx, by] of b) {
-    const nx = piece.x + bx + dx;
-    const ny = piece.y + by + dy;
-    if (nx < 0 || nx >= COLS || ny >= ROWS) return false;
-    if (ny >= 0 && board[ny][nx]) return false;
-  }
+function valid(p,dx,dy,bl){
+  const b=bl||p.blocks;
+  for(const[bx,by]of b){const nx=p.x+bx+dx,ny=p.y+by+dy;if(nx<0||nx>=COLS||ny>=ROWS)return false;if(ny>=0&&board[ny][nx])return false}
   return true;
 }
-
-function rotate(piece) {
-  if (piece.type === 'O') return;
-  const newBlocks = piece.blocks.map(([x, y]) => [-y, x]);
-  const minX = Math.min(...newBlocks.map(b => b[0]));
-  const minY = Math.min(...newBlocks.map(b => b[1]));
-  const adjusted = newBlocks.map(([x, y]) => [x - minX, y - minY]);
-  const kicks = [[0,0],[-1,0],[1,0],[0,-1],[-1,-1],[1,-1],[0,-2]];
-  for (const [kx, ky] of kicks) {
-    const tp = { ...piece, x: piece.x + kx, y: piece.y + ky };
-    if (valid(tp, 0, 0, adjusted)) {
-      piece.blocks = adjusted;
-      piece.x += kx; piece.y += ky;
-      return;
-    }
+function rotate(p){
+  if(p.type==='O')return;
+  const nb=p.blocks.map(([x,y])=>[-y,x]);
+  const mx=Math.min(...nb.map(b=>b[0])),my=Math.min(...nb.map(b=>b[1]));
+  const adj=nb.map(([x,y])=>[x-mx,y-my]);
+  const kicks=[[0,0],[-1,0],[1,0],[0,-1],[-1,-1],[1,-1],[0,-2]];
+  for(const[kx,ky]of kicks){const tp={...p,x:p.x+kx,y:p.y+ky};if(valid(tp,0,0,adj)){p.blocks=adj;p.x+=kx;p.y+=ky;return}}
+}
+function lockPiece(){
+  for(const[bx,by]of current.blocks){
+    const rx=current.x+bx,ry=current.y+by;
+    if(ry<0){triggerGameOver();return}
+    board[ry][rx]=current.color;
   }
+  const fr=[];for(let r=0;r<ROWS;r++)if(board[r].every(c=>c!==null))fr.push(r);
+  if(fr.length>0)clearLines(fr);else{combo=0;spawnNext()}
 }
+function clearLines(rows){
+  const cnt=rows.length; combo++;
+  const ls=[0,100,300,500,800][cnt]*level;
+  const cb=combo>1?50*(combo-1)*level:0;
+  score+=ls+cb; lines+=cnt;
+  const newLv=Math.floor(lines/10)+1;
+  if(newLv>level){level=newLv;dropInterval=Math.max(100,800-(level-1)*60);say('levelup')}
+  else level=newLv;
+  dropInterval=Math.max(100,800-(level-1)*60);
+  scoreVal.textContent=score; levelVal.textContent=level;
 
-function lockPiece() {
-  for (const [bx, by] of current.blocks) {
-    const rx = current.x + bx, ry = current.y + by;
-    if (ry < 0) { triggerGameOver(); return; }
-    board[ry][rx] = current.color;
-  }
-  const fullRows = [];
-  for (let r = 0; r < ROWS; r++) {
-    if (board[r].every(c => c !== null)) fullRows.push(r);
-  }
-  if (fullRows.length > 0) clearLines(fullRows);
-  else { combo = 0; spawnNext(); }
+  /* 演出 */
+  showLineFx(rows,cnt);
+  if(cnt>=4){showPopup('テトリス！！');say('clear4')}
+  else if(cnt===3){showPopup('トリプル！');say('clear3')}
+  else if(cnt===2){showPopup('ダブル！');say('clear2')}
+  else say('clear1');
+  if(combo>1){setTimeout(()=>{showPopup(combo+' コンボ！');say('combo')},500)}
+  setTimeout(()=>{for(const r of rows.sort((a,b)=>b-a)){board.splice(r,1);board.unshift(new Array(COLS).fill(null))}spawnNext()},400);
 }
-
-function clearLines(rows) {
-  const count = rows.length;
-  combo++;
-  const lineScore = [0, 100, 300, 500, 800][count] * level;
-  const comboBonus = combo > 1 ? 50 * (combo - 1) * level : 0;
-  score += lineScore + comboBonus;
-  lines += count;
-  level = Math.floor(lines / 10) + 1;
-  dropInterval = Math.max(100, 800 - (level - 1) * 60);
-  scoreVal.textContent = score;
-  levelVal.textContent = level;
-
-  showLineClearFx(rows);
-  if (count >= 4)      { showComboPopup('テトリス！！'); sayComment('clear4'); }
-  else if (count === 3) { showComboPopup('トリプル！');  sayComment('clear3'); }
-  else if (count === 2) { showComboPopup('ダブル！');    sayComment('clear2'); }
-  else                   { sayComment('clear1'); }
-  if (combo > 1) setTimeout(() => showComboPopup(combo + ' コンボ！'), 500);
-
-  setTimeout(() => {
-    for (const r of rows.sort((a,b) => b - a)) {
-      board.splice(r, 1);
-      board.unshift(new Array(COLS).fill(null));
-    }
-    spawnNext();
-  }, 400);
+function spawnNext(){
+  current=nextPiece; nextPiece=rp(); drawNext();
+  if(!valid(current,0,0))triggerGameOver();
+  if(getDanger()>0.6)say('danger');
 }
-
-function spawnNext() {
-  current = nextPiece;
-  nextPiece = randomPiece();
-  drawNext();
-  if (!valid(current, 0, 0)) triggerGameOver();
-  if (getDangerLevel() > 0.6) sayComment('danger');
-}
-
-function getDangerLevel() {
-  for (let r = 0; r < ROWS; r++) {
-    if (board[r].some(c => c !== null)) return 1 - (r / ROWS);
-  }
-  return 0;
-}
-
-function sayComment(key) {
-  bubbleText.innerHTML = randomComment(key);
-  idleTimer = 0;
-}
+function getDanger(){for(let r=0;r<ROWS;r++)if(board[r].some(c=>c!==null))return 1-(r/ROWS);return 0}
 
 /* エフェクト */
-function showLineClearFx(rows) {
-  boardArea.classList.add('shake');
-  setTimeout(() => boardArea.classList.remove('shake'), 300);
-  for (const r of rows) {
-    const el = document.createElement('div');
-    el.className = 'line-clear-fx';
-    el.style.top = (r * CELL + 3) + 'px';
-    el.style.height = CELL + 'px';
-    boardArea.appendChild(el);
-    setTimeout(() => el.remove(), 500);
+function showLineFx(rows,cnt){
+  const shakeClass=cnt>=4?'shake-lg':cnt>=2?'shake-md':'shake-sm';
+  boardArea.classList.remove('shake-sm','shake-md','shake-lg');
+  void boardArea.offsetWidth;
+  boardArea.classList.add(shakeClass);
+  setTimeout(()=>boardArea.classList.remove(shakeClass),600);
+
+  for(const r of rows){
+    const el=document.createElement('div');el.className='line-clear-fx';
+    el.style.top=(r*CELL+3)+'px';el.style.height=CELL+'px';
+    boardArea.appendChild(el);setTimeout(()=>el.remove(),500);
+  }
+  /* 背景フラッシュ */
+  if(cnt>=2){
+    const fl=document.createElement('div');fl.className='board-flash '+(cnt>=4?'flash-rainbow':'flash-gold');
+    boardArea.appendChild(fl);setTimeout(()=>fl.remove(),800);
+  }
+  /* 星パーティクル（3列以上） */
+  if(cnt>=3){
+    for(let i=0;i<(cnt>=4?12:6);i++){
+      const st=document.createElement('div');st.className='star-burst';
+      st.style.left=Math.random()*BOARD_W+'px';st.style.top=rows[0]*CELL+'px';
+      st.style.animation=`star-fly ${0.5+Math.random()*0.5}s ease-out forwards`;
+      st.style.setProperty('--sx',(Math.random()-0.5)*200+'px');
+      st.style.setProperty('--sy',(-50-Math.random()*150)+'px');
+      boardArea.appendChild(st);setTimeout(()=>st.remove(),1200);
+    }
   }
 }
-function showComboPopup(text) {
-  const el = document.createElement('div');
-  el.className = 'combo-popup';
-  el.textContent = text;
-  boardArea.appendChild(el);
-  setTimeout(() => el.remove(), 1100);
+/* 星パーティクルアニメ */
+if(!document.getElementById('star-style')){
+  const ss=document.createElement('style');ss.id='star-style';
+  ss.textContent='@keyframes star-fly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0.3) rotate(360deg)}}';
+  document.head.appendChild(ss);
+}
+
+function showPopup(text){
+  const el=document.createElement('div');el.className='combo-popup';el.textContent=text;
+  boardArea.appendChild(el);setTimeout(()=>el.remove(),1100);
 }
 
 /* 描画 */
-function drawCell(context, x, y, color, size, ox, oy) {
-  ox = ox || 0; oy = oy || 0;
-  const s = size, pad = 1;
-  const r = Math.min(s * 0.2, 5);
-  const cx = ox + x * s + pad, cy = oy + y * s + pad;
-  const w = s - pad * 2, h = s - pad * 2;
-  context.beginPath();
-  context.moveTo(cx + r, cy);
-  context.lineTo(cx + w - r, cy);
-  context.arcTo(cx + w, cy, cx + w, cy + r, r);
-  context.lineTo(cx + w, cy + h - r);
-  context.arcTo(cx + w, cy + h, cx + w - r, cy + h, r);
-  context.lineTo(cx + r, cy + h);
-  context.arcTo(cx, cy + h, cx, cy + h - r, r);
-  context.lineTo(cx, cy + r);
-  context.arcTo(cx, cy, cx + r, cy, r);
-  context.closePath();
-  context.fillStyle = color;
-  context.fill();
-  context.fillStyle = 'rgba(255,255,255,0.3)';
-  context.fillRect(cx + 2, cy + 2, w - 4, 3);
-  context.fillRect(cx + 2, cy + 2, 3, h - 4);
-  context.fillStyle = 'rgba(45,40,35,0.15)';
-  context.fillRect(cx + 2, cy + h - 4, w - 4, 2);
-  context.fillRect(cx + w - 4, cy + 2, 2, h - 4);
+function drawCell(c,x,y,col,s,ox,oy){
+  ox=ox||0;oy=oy||0;const p=1,r=Math.min(s*0.2,5);
+  const cx=ox+x*s+p,cy=oy+y*s+p,w=s-p*2,h=s-p*2;
+  c.beginPath();c.moveTo(cx+r,cy);c.lineTo(cx+w-r,cy);c.arcTo(cx+w,cy,cx+w,cy+r,r);
+  c.lineTo(cx+w,cy+h-r);c.arcTo(cx+w,cy+h,cx+w-r,cy+h,r);c.lineTo(cx+r,cy+h);
+  c.arcTo(cx,cy+h,cx,cy+h-r,r);c.lineTo(cx,cy+r);c.arcTo(cx,cy,cx+r,cy,r);c.closePath();
+  c.fillStyle=col;c.fill();
+  c.fillStyle='rgba(255,255,255,0.3)';c.fillRect(cx+2,cy+2,w-4,3);c.fillRect(cx+2,cy+2,3,h-4);
+  c.fillStyle='rgba(45,40,35,0.15)';c.fillRect(cx+2,cy+h-4,w-4,2);c.fillRect(cx+w-4,cy+2,2,h-4);
 }
-
-function drawBoard() {
-  ctx.fillStyle = '#F5E6E2';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  /* グリッド線 */
-  ctx.strokeStyle = 'rgba(45,40,35,0.07)';
-  ctx.lineWidth = 0.5;
-  ctx.setLineDash([2, 4]);
-  for (let c = 1; c < COLS; c++) {
-    ctx.beginPath(); ctx.moveTo(c * CELL, 0);
-    ctx.lineTo(c * CELL, canvas.height); ctx.stroke();
-  }
-  for (let r = 1; r < ROWS; r++) {
-    ctx.beginPath(); ctx.moveTo(0, r * CELL);
-    ctx.lineTo(canvas.width, r * CELL); ctx.stroke();
-  }
+function drawBoard(){
+  ctx.fillStyle='#F5E6E2';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle='rgba(45,40,35,0.07)';ctx.lineWidth=0.5;ctx.setLineDash([2,4]);
+  for(let c=1;c<COLS;c++){ctx.beginPath();ctx.moveTo(c*CELL,0);ctx.lineTo(c*CELL,canvas.height);ctx.stroke()}
+  for(let r=1;r<ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CELL);ctx.lineTo(canvas.width,r*CELL);ctx.stroke()}
   ctx.setLineDash([]);
-  /* 固定ブロック */
-  for (let r = 0; r < ROWS; r++)
-    for (let c = 0; c < COLS; c++)
-      if (board[r][c]) drawCell(ctx, c, r, board[r][c], CELL);
-  /* ゴースト＋カレント */
-  if (current) {
-    let ghostY = 0;
-    while (valid({ ...current, y: current.y + ghostY + 1 }, 0, 0)) ghostY++;
-    for (const [bx, by] of current.blocks) {
-      const gx = (current.x + bx) * CELL + 2;
-      const gy = (current.y + by + ghostY) * CELL + 2;
-      ctx.strokeStyle = 'rgba(45,40,35,0.15)';
-      ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
-      ctx.strokeRect(gx, gy, CELL - 4, CELL - 4);
-      ctx.setLineDash([]);
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(board[r][c])drawCell(ctx,c,r,board[r][c],CELL);
+  if(current){
+    let gy=0;while(valid({...current,y:current.y+gy+1},0,0))gy++;
+    for(const[bx,by]of current.blocks){
+      const gx2=(current.x+bx)*CELL+2,gy2=(current.y+by+gy)*CELL+2;
+      ctx.strokeStyle='rgba(45,40,35,0.15)';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+      ctx.strokeRect(gx2,gy2,CELL-4,CELL-4);ctx.setLineDash([]);
     }
-    for (const [bx, by] of current.blocks) {
-      if (current.y + by >= 0)
-        drawCell(ctx, current.x + bx, current.y + by, current.color, CELL);
-    }
+    for(const[bx,by]of current.blocks)if(current.y+by>=0)drawCell(ctx,current.x+bx,current.y+by,current.color,CELL);
   }
 }
-
-function drawNext() {
-  nextCtx.fillStyle = '#F5E6E2';
-  nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
-  if (!nextPiece) return;
-  /* ピースのバウンディングボックスを求めて中央配置 */
-  const xs = nextPiece.blocks.map(b => b[0]);
-  const ys = nextPiece.blocks.map(b => b[1]);
-  const pw = (Math.max(...xs) - Math.min(...xs) + 1) * NEXT_CELL;
-  const ph = (Math.max(...ys) - Math.min(...ys) + 1) * NEXT_CELL;
-  const ox = Math.floor((NEXT_CW - pw) / 2) - Math.min(...xs) * NEXT_CELL;
-  const oy = Math.floor((NEXT_CW - ph) / 2) - Math.min(...ys) * NEXT_CELL;
-  for (const [bx, by] of nextPiece.blocks) {
-    drawCell(nextCtx, bx, by, nextPiece.color, NEXT_CELL, ox, oy);
-  }
+function drawNext(){
+  nextCtx.fillStyle='#F5E6E2';nextCtx.fillRect(0,0,nextCanvas.width,nextCanvas.height);
+  if(!nextPiece)return;
+  const xs=nextPiece.blocks.map(b=>b[0]),ys=nextPiece.blocks.map(b=>b[1]);
+  const pw=(Math.max(...xs)-Math.min(...xs)+1)*NEXT_CELL,ph=(Math.max(...ys)-Math.min(...ys)+1)*NEXT_CELL;
+  const ox=Math.floor((NEXT_CW-pw)/2)-Math.min(...xs)*NEXT_CELL;
+  const oy=Math.floor((NEXT_CW-ph)/2)-Math.min(...ys)*NEXT_CELL;
+  for(const[bx,by]of nextPiece.blocks)drawCell(nextCtx,bx,by,nextPiece.color,NEXT_CELL,ox,oy);
 }
 
 /* ゲームループ */
-function gameLoop(time) {
-  if (!gameRunning) return;
-  const dt = time - lastTime;
-  lastTime = time;
-  dropTimer += dt;
-  idleTimer += dt;
-  if (dropTimer >= dropInterval) {
-    dropTimer = 0;
-    if (valid(current, 0, 1)) current.y++;
-    else lockPiece();
-  }
-  if (idleTimer > 12000) { idleTimer = 0; sayComment('idle'); }
-  drawBoard();
-  requestAnimationFrame(gameLoop);
+function gameLoop(t){
+  if(!gameRunning)return;
+  const dt=t-lastTime;lastTime=t;dropTimer+=dt;idleTimer+=dt;
+  if(dropTimer>=dropInterval){dropTimer=0;if(valid(current,0,1))current.y++;else lockPiece()}
+  if(idleTimer>12000){idleTimer=0;say('idle')}
+  drawBoard();requestAnimationFrame(gameLoop);
 }
 
-/* ゲーム開始・終了 */
-function startGame() {
-  createBoard();
-  score = 0; level = 1; lines = 0; combo = 0;
-  dropInterval = 800; dropTimer = 0; idleTimer = 0;
-  gameOver = false; gameRunning = true;
-  scoreVal.textContent = '0';
-  levelVal.textContent = '1';
+function startGame(){
+  createBoard();score=0;level=1;lines=0;combo=0;prevLevel=1;
+  dropInterval=800;dropTimer=0;idleTimer=0;gameOver=false;gameRunning=true;
+  scoreVal.textContent='0';levelVal.textContent='1';
   startOverlay.classList.add('hidden');
-  current = randomPiece();
-  nextPiece = randomPiece();
-  drawNext();
-  sayComment('start');
-  lastTime = performance.now();
-  requestAnimationFrame(gameLoop);
+  goOverlay.classList.remove('active');
+  current=rp();nextPiece=rp();drawNext();say('start');
+  lastTime=performance.now();requestAnimationFrame(gameLoop);
 }
 
-function triggerGameOver() {
-  gameRunning = false;
-  gameOver = true;
-  sayComment('gameover');
+function triggerGameOver(){
+  gameRunning=false;gameOver=true;
+  say('gameover');
+  goScore.textContent='スコア: '+score;
+  goOverlay.classList.add('active');
+  /* 盤面をグレーアウト */
+  boardArea.classList.remove('shake-sm','shake-md','shake-lg');
+  boardArea.classList.add('shake-lg');
+  setTimeout(()=>boardArea.classList.remove('shake-lg'),600);
 }
 
 /* 操作 */
-function moveLeft()  { if (!gameRunning || !current) return; if (valid(current, -1, 0)) { current.x--; drawBoard(); } }
-function moveRight() { if (!gameRunning || !current) return; if (valid(current, 1, 0))  { current.x++; drawBoard(); } }
-function moveDown()  {
-  if (!gameRunning || !current) return;
-  if (valid(current, 0, 1)) { current.y++; dropTimer = 0; score += 1; scoreVal.textContent = score; drawBoard(); }
-}
-function hardDrop()  {
-  if (!gameRunning || !current) return;
-  while (valid(current, 0, 1)) { current.y++; score += 2; }
-  scoreVal.textContent = score; lockPiece(); drawBoard();
-}
-function rotatePiece() { if (!gameRunning || !current) return; rotate(current); drawBoard(); }
+function ml(){if(!gameRunning||!current)return;if(valid(current,-1,0)){current.x--;drawBoard()}}
+function mr(){if(!gameRunning||!current)return;if(valid(current,1,0)){current.x++;drawBoard()}}
+function md(){if(!gameRunning||!current)return;if(valid(current,0,1)){current.y++;dropTimer=0;score+=1;scoreVal.textContent=score;drawBoard()}}
+function hd(){if(!gameRunning||!current)return;while(valid(current,0,1)){current.y++;score+=2}scoreVal.textContent=score;lockPiece();drawBoard()}
+function rr(){if(!gameRunning||!current)return;rotate(current);drawBoard()}
 
-/* タッチボタン */
-document.getElementById('btn-left').addEventListener('click', moveLeft);
-document.getElementById('btn-right').addEventListener('click', moveRight);
-document.getElementById('btn-down').addEventListener('click', moveDown);
-document.getElementById('btn-rotate').addEventListener('click', rotatePiece);
+document.getElementById('btn-left').addEventListener('click',ml);
+document.getElementById('btn-right').addEventListener('click',mr);
+document.getElementById('btn-down').addEventListener('click',md);
+document.getElementById('btn-rotate').addEventListener('click',rr);
 
-function setupRepeat(btnId, fn) {
-  const btn = document.getElementById(btnId);
-  let interval = null;
-  const start = () => { fn(); interval = setInterval(fn, 100); };
-  const stop  = () => { clearInterval(interval); interval = null; };
-  btn.addEventListener('touchstart', (e) => { e.preventDefault(); start(); }, { passive: false });
-  btn.addEventListener('touchend', stop);
-  btn.addEventListener('touchcancel', stop);
-  btn.addEventListener('mousedown', start);
-  btn.addEventListener('mouseup', stop);
-  btn.addEventListener('mouseleave', stop);
+function setupRepeat(id,fn){
+  const b=document.getElementById(id);let iv=null;
+  const go=()=>{fn();iv=setInterval(fn,100)};const st=()=>{clearInterval(iv);iv=null};
+  b.addEventListener('touchstart',e=>{e.preventDefault();go()},{passive:false});
+  b.addEventListener('touchend',st);b.addEventListener('touchcancel',st);
+  b.addEventListener('mousedown',go);b.addEventListener('mouseup',st);b.addEventListener('mouseleave',st);
 }
-setupRepeat('btn-left', moveLeft);
-setupRepeat('btn-right', moveRight);
-setupRepeat('btn-down', moveDown);
+setupRepeat('btn-left',ml);setupRepeat('btn-right',mr);setupRepeat('btn-down',md);
 
-/* キーボード */
-document.addEventListener('keydown', (e) => {
-  if (gameOver && !gameRunning) return;
-  switch (e.key) {
-    case 'ArrowLeft':  e.preventDefault(); moveLeft(); break;
-    case 'ArrowRight': e.preventDefault(); moveRight(); break;
-    case 'ArrowDown':  e.preventDefault(); moveDown(); break;
-    case 'ArrowUp':    e.preventDefault(); rotatePiece(); break;
-    case ' ':          e.preventDefault(); hardDrop(); break;
+document.addEventListener('keydown',e=>{
+  if(gameOver&&!gameRunning)return;
+  switch(e.key){
+    case'ArrowLeft':e.preventDefault();ml();break;case'ArrowRight':e.preventDefault();mr();break;
+    case'ArrowDown':e.preventDefault();md();break;case'ArrowUp':e.preventDefault();rr();break;
+    case' ':e.preventDefault();hd();break;
   }
 });
 
-/* スタート・リトライ */
-document.getElementById('start-btn').addEventListener('click', startGame);
-document.getElementById('retry-btn').addEventListener('click', startGame);
+document.getElementById('start-btn').addEventListener('click',startGame);
+document.getElementById('retry-btn').addEventListener('click',startGame);
 
-/* 初期描画 */
-createBoard();
-drawBoard();
-drawNext();
-bubbleText.innerHTML = fillName('テトリスで あそぼ〜！');
+createBoard();drawBoard();drawNext();
+bubbleText.innerHTML=fn('テトリスで あそぼ〜！');
 </script>
 </body>
 </html>
