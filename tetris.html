@@ -96,7 +96,9 @@
   display:flex; align-items:center; justify-content:center;
   text-align:center; box-shadow:var(--shadow-sm); overflow:hidden;
   transition:font-size 0.2s; box-sizing:border-box;
+  word-break:break-all; overflow-wrap:break-word;
 }
+.tetris-bubble span { display:block; width:100%; }
 /* 開始前・ゲームオーバー時：小さめフォントで2行たっぷり */
 .tetris-bubble.bubble-long {
   font-size:clamp(10px,2.8vw,13px);
@@ -345,35 +347,35 @@ function rc(key){const a=COMMENTS[key];return fn(a[Math.floor(Math.random()*a.le
 
 /* 開始前の説明セリフ（2行・長め） */
 const INTRO_SEQ=[
-  'テトリスであそぼ〜！レッドがおうえんするで！',
-  'ブロックが上からおちてくるから、よこにうごかしてならべてな！',
-  'よこいちれつそろえたらきえるで！たくさんけすとすごいてんが入るで！',
-  '←と→ でうごかす、↓ でおとす、グルグルでかいてんや！',
-  'じゅんびはええか？スタートボタンをおしてな！',
+  'テトリスであそぼ〜！<br>レッドがおうえんするで！',
+  'ブロックが上からおちてくるから<br>よこにうごかしてならべてな！',
+  'よこいちれつそろえたらきえるで！<br>たくさんけすとすごいてんが入るで！',
+  '←と→ でうごかす、↓ でおとす<br>グルグルでかいてんや！',
+  'じゅんびはええか？<br>スタートボタンをおしてな！',
 ];
 
 /* ゲームオーバー時のセリフ（2行・長め・動的） */
 function buildGameOverSeq(sc,lv,ln){
   const s=[];
-  s.push('{name}、ゲームオーバーや〜！おつかれさま！');
-  if(sc===0) s.push('0てん…！？ まあ気にせんとこ！つぎがんばろな！');
-  else if(sc<500) s.push(sc+'てんや！まだまだこれからやで{name}！');
-  else if(sc<1500) s.push(sc+'てん！ええかんじやったで{name}！');
-  else if(sc<3000) s.push(sc+'てん！なかなかやるな〜{name}！');
-  else if(sc<5000) s.push(sc+'てん！すごいやん{name}！レッドびっくりや！');
-  else s.push(sc+'てん！？{name}、天才ちゃう！？レッドかんどうや！');
-  if(lv<=1) s.push('レベル1か〜、つぎはもっと上いけるで{name}！');
-  else if(lv<=3) s.push('レベル'+lv+'までいった！ええかんじやで{name}！');
-  else if(lv<=5) s.push('レベル'+lv+'！{name}なかなかうまいな〜！');
-  else if(lv<=7) s.push('レベル'+lv+'！{name}、じょうきゅうしゃやん！すごいわ！');
-  else s.push('レベル'+lv+'！？{name}、もうたつじんやで！');
-  if(ln===0) s.push('1れつもけせんかった…でもつぎはいけるで{name}！');
-  else if(ln<5) s.push(ln+'れつけしたで！つぎはもっとけせるはずや{name}！');
-  else if(ln<15) s.push(ln+'れつもけした！ナイスやで{name}！');
-  else if(ln<30) s.push(ln+'れつもけしたんか！{name}すごすぎるわ！');
-  else s.push(ln+'れつ！！レッドかんどうでなみだ出そうや{name}…！');
-  s.push('レッドめっちゃたのしかったわ〜！{name}ありがとな！');
-  s.push('またいっしょにテトリスやろな{name}！まってるで〜！');
+  s.push('{name}、ゲームオーバーや〜！<br>おつかれさま！');
+  if(sc===0) s.push('0てん…！？<br>まあ気にせんとこ！つぎがんばろな！');
+  else if(sc<500) s.push(sc+'てんや！<br>まだまだこれからやで{name}！');
+  else if(sc<1500) s.push(sc+'てん！<br>ええかんじやったで{name}！');
+  else if(sc<3000) s.push(sc+'てん！<br>なかなかやるな〜{name}！');
+  else if(sc<5000) s.push(sc+'てん！すごいやん{name}！<br>レッドびっくりや！');
+  else s.push(sc+'てん！？{name}、天才ちゃう！？<br>レッドかんどうや！');
+  if(lv<=1) s.push('レベル1か〜<br>つぎはもっと上いけるで{name}！');
+  else if(lv<=3) s.push('レベル'+lv+'までいった！<br>ええかんじやで{name}！');
+  else if(lv<=5) s.push('レベル'+lv+'！<br>{name}なかなかうまいな〜！');
+  else if(lv<=7) s.push('レベル'+lv+'！{name}、<br>じょうきゅうしゃやん！すごいわ！');
+  else s.push('レベル'+lv+'！？<br>{name}、もうたつじんやで！');
+  if(ln===0) s.push('1れつもけせんかった…<br>でもつぎはいけるで{name}！');
+  else if(ln<5) s.push(ln+'れつけしたで！<br>つぎはもっとけせるはずや！');
+  else if(ln<15) s.push(ln+'れつもけした！<br>ナイスやで{name}！');
+  else if(ln<30) s.push(ln+'れつもけしたんか！<br>{name}すごすぎるわ！');
+  else s.push(ln+'れつ！！<br>レッドかんどうでなみだ出そうや…！');
+  s.push('レッドめっちゃたのしかったわ〜！<br>{name}ありがとな！');
+  s.push('またいっしょにテトリスやろな！<br>{name}、まってるで〜！');
   return s;
 }
 
@@ -784,32 +786,7 @@ function triggerGameOver(){
   },3500);
 }
 
-function buildGameOverSeq(sc,lv,ln){
-  const s=[];
-  /* スコアかんそう */
-  if(sc===0) s.push('{name}、0てん…！？気にせんとこ！');
-  else if(sc<500) s.push('{name}、'+sc+'てん！これからや！');
-  else if(sc<1500) s.push('{name}、'+sc+'てん！ええやん！');
-  else if(sc<3000) s.push('{name}、'+sc+'てん！やるな〜！');
-  else if(sc<5000) s.push('{name}、'+sc+'てん！すごいやん！');
-  else s.push('{name}、'+sc+'てん！天才ちゃう！？');
-  /* レベルかんそう */
-  if(lv<=1) s.push('レベル1…つぎはもっといけるで！');
-  else if(lv<=3) s.push('レベル'+lv+'までいった！ええかんじ！');
-  else if(lv<=5) s.push('レベル'+lv+'！なかなかやるな〜！');
-  else if(lv<=7) s.push('レベル'+lv+'！じょうきゅうしゃやん！');
-  else s.push('レベル'+lv+'！？もうたつじんやで！');
-  /* ラインすうかんそう */
-  if(ln===0) s.push('1れつもけせんかった…つぎがんばろ！');
-  else if(ln<5) s.push(ln+'れつけしたで！つぎはもっと！');
-  else if(ln<15) s.push(ln+'れつけし！ナイスやで！');
-  else if(ln<30) s.push(ln+'れつもけしたんか！すごいわ！');
-  else s.push(ln+'れつ！！レッドかんどうや…！');
-  /* しめ */
-  s.push('レッドたのしかったわ〜！');
-  s.push('またいっしょにやろな{name}！');
-  return s;
-}
+/* buildGameOverSeq は上で定義済み */
 
 /* 操作 */
 function ml(){if(!gameRunning||!current)return;if(valid(current,-1,0)){current.x--;drawBoard()}}
