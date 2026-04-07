@@ -7,11 +7,13 @@
 <link rel="stylesheet" href="style.css">
 <style>
 /* ===== テトリス固有スタイル ===== */
+/* 手書き風・あたたかみのあるデザイン */
+
 .tetris-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
   padding-bottom: 180px;
 }
@@ -38,13 +40,14 @@
   background: var(--linen-soft);
   border: 2px solid var(--border-mid);
   border-radius: var(--r-xl);
-  padding: 6px 14px;
+  padding: 8px 16px;
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
   font-size: var(--t-sm);
   color: var(--ink);
   max-width: 55vw;
   min-height: 2em;
   position: relative;
+  box-shadow: var(--shadow-sm);
 }
 .tetris-bubble::before {
   content: '';
@@ -59,7 +62,7 @@
 /* スコア・レベル表示 */
 .tetris-info {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
   font-size: var(--t-base);
   color: var(--ink);
@@ -68,8 +71,9 @@
 .tetris-info span {
   background: var(--linen-soft);
   border: 2px solid var(--border-mid);
-  border-radius: var(--r-md);
-  padding: 4px 12px;
+  border-radius: var(--r-full);
+  padding: 4px 16px;
+  box-shadow: var(--shadow-xs);
 }
 
 /* ゲームボード */
@@ -77,14 +81,14 @@
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
 }
 .tetris-canvas {
-  border: 3px solid var(--ink);
-  border-radius: 6px;
-  background: #1a1520;
+  border: 3px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--linen-deep);
   display: block;
-  image-rendering: pixelated;
+  box-shadow: var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
 /* ネクスト表示 */
@@ -92,21 +96,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 .tetris-next-label {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: var(--t-xs);
-  color: var(--ink);
+  font-size: var(--t-sm);
+  color: var(--ink-soft);
   font-weight: 700;
 }
 .tetris-next canvas {
   border: 2px solid var(--border-mid);
-  border-radius: 4px;
-  background: #1a1520;
+  border-radius: var(--r-sm);
+  background: var(--linen-deep);
+  box-shadow: var(--shadow-xs);
 }
 
-/* 操作ボタン */
+/* 操作ボタン — まるっこく温かみのある手触り */
 .tetris-controls {
   position: fixed;
   bottom: 0;
@@ -114,21 +119,22 @@
   right: 0;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 6px;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(255,245,235,0.95);
-  border-top: 2px solid var(--border-mid);
+  gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--linen) 60%, rgba(247,242,234,0.9));
+  border-top: 2px solid var(--border-soft);
   z-index: 100;
 }
 .ctrl-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(22px,6vw,36px);
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: clamp(20px,5.5vw,32px);
   font-weight: 900;
   padding: 14px 0;
-  border: 3px solid var(--ink);
-  border-radius: var(--r-lg);
+  border: 2px solid var(--border-mid);
+  border-radius: var(--r-full);
   background: var(--linen-soft);
   color: var(--ink);
   cursor: pointer;
@@ -136,32 +142,37 @@
   -webkit-user-select: none;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.1s, background 0.1s;
+  transition: transform 0.12s var(--ease-spring), box-shadow 0.12s;
+  box-shadow: var(--shadow-sm);
 }
 .ctrl-btn:active {
-  transform: scale(0.92);
-  background: var(--border-mid);
+  transform: scale(0.9);
+  box-shadow: var(--shadow-xs);
+  background: var(--linen-deep);
 }
 .ctrl-btn.rotate-btn {
-  background: var(--red);
-  color: #fff;
+  background: var(--red-soft);
+  color: var(--ink);
   border-color: var(--red);
 }
 .ctrl-btn.rotate-btn:active {
-  background: #b5382e;
+  background: var(--red);
+  color: #fff;
 }
 
 /* ゲームオーバー画面 */
 .tetris-gameover {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(45,40,35,0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  border-radius: 6px;
+  gap: 14px;
+  border-radius: var(--r-md);
   z-index: 10;
 }
 .tetris-gameover.hidden { display: none; }
@@ -170,12 +181,12 @@
   font-size: clamp(24px,7vw,40px);
   font-weight: 900;
   color: #fff;
-  text-shadow: 0 0 20px rgba(200,90,77,0.8);
+  text-shadow: 0 2px 8px rgba(200,90,77,0.5);
 }
 .gameover-score {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
   font-size: var(--t-lg);
-  color: #ffe0a0;
+  color: var(--cream-yellow);
 }
 .gameover-btns {
   display: flex;
@@ -188,14 +199,15 @@
   left: 3px;
   height: 0;
   width: calc(100% - 6px);
-  background: rgba(255,255,255,0.9);
+  background: linear-gradient(90deg, transparent, rgba(255,220,120,0.9), rgba(200,90,77,0.6), rgba(255,220,120,0.9), transparent);
   pointer-events: none;
   z-index: 5;
+  border-radius: 4px;
   animation: line-flash 0.4s ease-out forwards;
 }
 @keyframes line-flash {
   0%   { opacity:1; transform: scaleY(1); }
-  50%  { opacity:1; transform: scaleY(1.5); }
+  50%  { opacity:1; transform: scaleY(1.8); }
   100% { opacity:0; transform: scaleY(0); }
 }
 
@@ -219,10 +231,11 @@
   left: 50%;
   transform: translate(-50%,-50%) scale(0.5);
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: clamp(28px,8vw,48px);
+  font-size: clamp(26px,7vw,44px);
   font-weight: 900;
-  color: #ffe060;
-  text-shadow: 0 0 15px rgba(200,90,77,0.8), 3px 3px 0 rgba(200,90,77,0.9);
+  color: var(--red);
+  text-shadow: 0 0 12px rgba(255,220,120,0.6), 2px 2px 0 rgba(200,90,77,0.3);
+  -webkit-text-stroke: 0.5px var(--ink);
   pointer-events: none;
   z-index: 6;
   animation: combo-pop 1s ease-out forwards;
@@ -238,13 +251,15 @@
 .tetris-start-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(45,40,35,0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  border-radius: 6px;
+  gap: 18px;
+  border-radius: var(--r-md);
   z-index: 10;
 }
 .tetris-start-overlay.hidden { display: none; }
@@ -253,7 +268,7 @@
   font-size: clamp(28px,8vw,44px);
   font-weight: 900;
   color: #fff;
-  text-shadow: 0 0 20px rgba(255,220,120,0.9);
+  text-shadow: 0 2px 12px rgba(200,90,77,0.4);
 }
 </style>
 </head>
@@ -331,15 +346,15 @@ const nextCtx = nextCanvas.getContext('2d');
 nextCanvas.width = 4 * NEXT_CELL;
 nextCanvas.height = 4 * NEXT_CELL;
 
-/* テトリミノ定義（SRS） */
+/* テトリミノ定義（温かみカラー） */
 const SHAPES = {
-  I: { blocks: [[0,0],[1,0],[2,0],[3,0]], color: '#00e5ff' },
-  O: { blocks: [[0,0],[1,0],[0,1],[1,1]], color: '#ffe040' },
-  T: { blocks: [[0,0],[1,0],[2,0],[1,1]], color: '#c050e0' },
-  S: { blocks: [[1,0],[2,0],[0,1],[1,1]], color: '#40e060' },
-  Z: { blocks: [[0,0],[1,0],[1,1],[2,1]], color: '#ff4040' },
-  J: { blocks: [[0,0],[0,1],[1,1],[2,1]], color: '#4080ff' },
-  L: { blocks: [[2,0],[0,1],[1,1],[2,1]], color: '#ff9020' },
+  I: { blocks: [[0,0],[1,0],[2,0],[3,0]], color: '#9CB8C9' },  /* くすみブルー */
+  O: { blocks: [[0,0],[1,0],[0,1],[1,1]], color: '#E5B94E' },  /* マスタード */
+  T: { blocks: [[0,0],[1,0],[2,0],[1,1]], color: '#B5A5C4' },  /* ラベンダー */
+  S: { blocks: [[1,0],[2,0],[0,1],[1,1]], color: '#A8B89C' },  /* セージ */
+  Z: { blocks: [[0,0],[1,0],[1,1],[2,1]], color: '#C85A4D' },  /* トマト赤 */
+  J: { blocks: [[0,0],[0,1],[1,1],[2,1]], color: '#7BA3B5' },  /* くすみ青 */
+  L: { blocks: [[2,0],[0,1],[1,1],[2,1]], color: '#D89B7C' },  /* テラコッタ */
 };
 const SHAPE_KEYS = Object.keys(SHAPES);
 
@@ -601,24 +616,46 @@ function showComboPopup(text) {
 function drawCell(context, x, y, color, size) {
   const s = size;
   const pad = 1;
+  const r = Math.min(s * 0.2, 5); // 角丸の半径
+  const cx = x * s + pad;
+  const cy = y * s + pad;
+  const w = s - pad * 2;
+  const h = s - pad * 2;
+
+  // 角丸の四角を描画
+  context.beginPath();
+  context.moveTo(cx + r, cy);
+  context.lineTo(cx + w - r, cy);
+  context.arcTo(cx + w, cy, cx + w, cy + r, r);
+  context.lineTo(cx + w, cy + h - r);
+  context.arcTo(cx + w, cy + h, cx + w - r, cy + h, r);
+  context.lineTo(cx + r, cy + h);
+  context.arcTo(cx, cy + h, cx, cy + h - r, r);
+  context.lineTo(cx, cy + r);
+  context.arcTo(cx, cy, cx + r, cy, r);
+  context.closePath();
   context.fillStyle = color;
-  context.fillRect(x * s + pad, y * s + pad, s - pad * 2, s - pad * 2);
-  // ハイライト
-  context.fillStyle = 'rgba(255,255,255,0.25)';
-  context.fillRect(x * s + pad, y * s + pad, s - pad * 2, 3);
-  context.fillRect(x * s + pad, y * s + pad, 3, s - pad * 2);
-  // シャドウ
-  context.fillStyle = 'rgba(0,0,0,0.2)';
-  context.fillRect(x * s + pad, y * s + s - 3 - pad, s - pad * 2, 3);
-  context.fillRect(x * s + s - 3 - pad, y * s + pad, 3, s - pad * 2);
+  context.fill();
+
+  // やさしいハイライト（上・左）
+  context.fillStyle = 'rgba(255,255,255,0.3)';
+  context.fillRect(cx + 2, cy + 2, w - 4, 3);
+  context.fillRect(cx + 2, cy + 2, 3, h - 4);
+  // やわらかシャドウ（下・右）
+  context.fillStyle = 'rgba(45,40,35,0.15)';
+  context.fillRect(cx + 2, cy + h - 4, w - 4, 2);
+  context.fillRect(cx + w - 4, cy + 2, 2, h - 4);
 }
 
 function drawBoard() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // 背景をリネン色でクリア
+  ctx.fillStyle = '#EFE8DC';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // グリッド
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  // やさしいグリッド線（ドット風）
+  ctx.strokeStyle = 'rgba(45,40,35,0.08)';
   ctx.lineWidth = 0.5;
+  ctx.setLineDash([2, 4]);
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
     ctx.moveTo(c * CELL, 0);
@@ -631,6 +668,7 @@ function drawBoard() {
     ctx.lineTo(canvas.width, r * CELL);
     ctx.stroke();
   }
+  ctx.setLineDash([]);
 
   // 固定ブロック
   for (let r = 0; r < ROWS; r++) {
@@ -639,15 +677,19 @@ function drawBoard() {
     }
   }
 
-  // ゴースト（落下先プレビュー）
+  // ゴースト（落下先プレビュー — 点線枠）
   if (current) {
     let ghostY = 0;
     while (valid({ ...current, y: current.y + ghostY + 1 }, 0, 0)) ghostY++;
-    ctx.globalAlpha = 0.2;
     for (const [bx, by] of current.blocks) {
-      drawCell(ctx, current.x + bx, current.y + by + ghostY, current.color, CELL);
+      const gx = (current.x + bx) * CELL + 2;
+      const gy = (current.y + by + ghostY) * CELL + 2;
+      ctx.strokeStyle = 'rgba(45,40,35,0.18)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(gx, gy, CELL - 4, CELL - 4);
+      ctx.setLineDash([]);
     }
-    ctx.globalAlpha = 1;
 
     // カレントピース
     for (const [bx, by] of current.blocks) {
@@ -659,7 +701,8 @@ function drawBoard() {
 }
 
 function drawNext() {
-  nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  nextCtx.fillStyle = '#EFE8DC';
+  nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
   if (!nextPiece) return;
   for (const [bx, by] of nextPiece.blocks) {
     drawCell(nextCtx, bx, by, nextPiece.color, NEXT_CELL);
