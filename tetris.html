@@ -366,9 +366,9 @@ const COMMENTS={
     '頑張れ！','大丈夫！','ここからや！',
   ],
   idle:[
-    {t:'応援してるで！',f:'hi'},{t:'どこに置く？',f:'hi'},{t:'頑張れ〜！',f:'ike'},
-    {t:'ファイト！',f:'ike'},{t:'いいペース！',f:'clap'},{t:'行ける行ける！',f:'hi'},
-    {t:'こっちかな？',f:'hi'},{t:'ブロック来るで！',f:'ike'},{t:'見てるで〜！',f:'hi'},
+    {t:'応援してるで！',f:'hi'},{t:'どこに置く？',f:'umm2'},{t:'頑張れ〜！',f:'ike'},
+    {t:'ファイト！',f:'ike'},{t:'いいペース！',f:'yatta'},{t:'行ける行ける！',f:'hi'},
+    {t:'こっちかな？',f:'umm2'},{t:'ブロック来るで！',f:'ike'},{t:'見てるで〜！',f:'hi'},
     {t:'ぷっ…おなら出た',f:'aseri'},{t:'お腹すいてきた…',f:'umm2'},{t:'あ、眠くなってきた…',f:'umm2'},
     {t:'今何時？',f:'umm2'},{t:'あ、よだれ出た',f:'aseri'},
     {t:'おしりかゆい…',f:'aseri'},{t:'ちょっとトイレ…',f:'aseri'},{t:'くしゃみ出そう…ふぇ…',f:'umm2'},
@@ -390,8 +390,8 @@ function rc(key){
 /* 開始前の説明セリフ（2行・長め）+ 表情 */
 const INTRO_SEQ=[
   {text:'テトリスで遊ぼ〜！<br>レッドが応援するで！', face:'hi'},
-  {text:'ブロックが上から落ちてくるから<br>横に動かして並べてな！', face:'normal'},
-  {text:'横一列揃えたら消えるで！<br>たくさん消すとすごい点が入るで！', face:'clap'},
+  {text:'ブロックが上から落ちてくるから<br>横に動かして並べてな！', face:'umm2'},
+  {text:'横一列揃えたら消えるで！<br>たくさん消すとすごい点が入るで！', face:'yatta'},
   {text:'←と→ で動かす、↓ で落とす<br>グルグルで回転や！', face:'ike'},
   {text:'準備はええか？<br>スタートボタンを押してな！', face:'hi'},
 ];
@@ -399,24 +399,24 @@ const INTRO_SEQ=[
 /* ゲームオーバー時のセリフ（2行・長め・動的） + 表情 */
 function buildGameOverSeq(sc,lv,ln){
   const s=[];
-  s.push({text:'ゲームオーバーや〜！<br>{name}お疲れさま！', face:'umm2'});
+  s.push({text:'ゲームオーバーや〜！<br>{name}お疲れさま！', face:'aseri'});
   if(sc===0) s.push({text:'0点…！？<br>次は頑張ろな！', face:'aseri'});
-  else if(sc<500) s.push({text:sc+'点や！<br>これからやで{name}！', face:'hi'});
-  else if(sc<1500) s.push({text:sc+'点！<br>ええ感じや{name}！', face:'clap'});
+  else if(sc<500) s.push({text:sc+'点や！<br>これからやで{name}！', face:'umm2'});
+  else if(sc<1500) s.push({text:sc+'点！<br>ええ感じや{name}！', face:'hi'});
   else if(sc<3000) s.push({text:sc+'点！<br>やるな〜{name}！', face:'yatta'});
   else if(sc<5000) s.push({text:sc+'点！<br>すごいやん{name}！', face:'yatta'});
-  else s.push({text:sc+'点！？<br>{name}天才ちゃう！？', face:'clap'});
-  if(lv<=1) s.push({text:'レベル1か〜<br>次は上目指そ{name}！', face:'hi'});
-  else if(lv<=3) s.push({text:'レベル'+lv+'まで行った！<br>ええ感じや{name}！', face:'clap'});
+  else s.push({text:sc+'点！？<br>{name}天才ちゃう！？', face:'yatta'});
+  if(lv<=1) s.push({text:'レベル1か〜<br>次は上目指そ{name}！', face:'umm2'});
+  else if(lv<=3) s.push({text:'レベル'+lv+'まで行った！<br>ええ感じや{name}！', face:'hi'});
   else if(lv<=5) s.push({text:'レベル'+lv+'！<br>うまいな〜{name}！', face:'yatta'});
   else if(lv<=7) s.push({text:'レベル'+lv+'！<br>上級者やん{name}！', face:'ike'});
-  else s.push({text:'レベル'+lv+'！？<br>{name}もう達人や！', face:'clap'});
+  else s.push({text:'レベル'+lv+'！？<br>{name}もう達人や！', face:'yatta'});
   if(ln===0) s.push({text:'1列も消せんかった…<br>次こそ行けるで！', face:'aseri'});
-  else if(ln<5) s.push({text:ln+'列消したで！<br>次はもっと消そな！', face:'hi'});
+  else if(ln<5) s.push({text:ln+'列消したで！<br>次はもっと消そな！', face:'umm2'});
   else if(ln<15) s.push({text:ln+'列も消した！<br>ナイスやで{name}！', face:'yatta'});
-  else if(ln<30) s.push({text:ln+'列も消した！<br>すごすぎ{name}！', face:'clap'});
-  else s.push({text:ln+'列！！<br>感動で涙出そうや…！', face:'clap'});
-  s.push({text:'めっちゃ楽しかった〜！<br>{name}ありがとな！', face:'yatta'});
+  else if(ln<30) s.push({text:ln+'列も消した！<br>すごすぎ{name}！', face:'yatta'});
+  else s.push({text:ln+'列！！<br>感動で涙出そうや…！', face:'yatta'});
+  s.push({text:'めっちゃ楽しかった〜！<br>{name}ありがとな！', face:'hi'});
   s.push({text:'また一緒に遊ぼな！<br>{name}待ってるで〜！', face:'hi'});
   return s;
 }
@@ -457,8 +457,8 @@ function say(key){
   bubbleText.innerHTML=c.text;
   idleTimer=0;
   const faceMap={
-    start:'ike', clear1:'yatta', clear2:'yatta', clear3:'clap', clear4:'clap',
-    danger:'aseri', gameover:'umm2', levelup:'ike', combo:'clap',
+    start:'ike', clear1:'yatta', clear2:'yatta', clear3:'yatta', clear4:'yatta',
+    danger:'aseri', gameover:'aseri', levelup:'ike', combo:'yatta',
   };
   /* idleはセリフごとの表情を使用、それ以外はfaceMap */
   const face = c.face || faceMap[key];
