@@ -6,10 +6,65 @@
 <title>テトリス｜レッドとあそぼう</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.tetris-wrapper { display:flex; flex-direction:column; align-items:center; width:100%; padding-bottom:8px; }
-.tetris-main { display:flex; align-items:flex-start; gap:10px; justify-content:center; }
+/* === 背景レイヤー === */
+.tetris-page { transition:background 3s ease; }
+#scene-layer {
+  position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+  transition:background 3s ease;
+}
+/* 天気パーティクル用 */
+.weather-p {
+  position:absolute; pointer-events:none; border-radius:50%;
+  animation-timing-function:linear; animation-fill-mode:forwards;
+}
+/* 雪 */
+.wp-snow { background:rgba(255,255,255,0.85); animation-name:wp-fall; }
+@keyframes wp-fall { 0%{transform:translateX(0) translateY(0)} 100%{transform:translateX(var(--wx)) translateY(var(--wy))} }
+/* 雨 */
+.wp-rain { background:rgba(150,180,220,0.6); width:2px!important; border-radius:1px; animation-name:wp-fall; }
+/* 桜 */
+.wp-sakura { background:radial-gradient(circle,#ffb7c5,#ff8fa3); border-radius:50% 0 50% 0; animation-name:wp-sakura-fall; }
+@keyframes wp-sakura-fall { 0%{transform:translate(0,0) rotate(0deg)} 100%{transform:translate(var(--wx),var(--wy)) rotate(var(--wr))} }
+/* オーロラ */
+.aurora-wave {
+  position:absolute; top:0; left:-50%; width:200%; height:40%;
+  background:linear-gradient(180deg,transparent,rgba(100,255,200,0.08),rgba(100,200,255,0.06),transparent);
+  animation:aurora-drift 8s ease-in-out infinite alternate;
+  filter:blur(30px);
+}
+@keyframes aurora-drift { 0%{transform:translateX(-10%) skewX(-5deg)} 100%{transform:translateX(10%) skewX(5deg)} }
 
-/* 左列：ボード+セリフ+操作ボタン */
+/* === お祝いエフェクト（画面全体） === */
+#celebrate-layer {
+  position:fixed; inset:0; pointer-events:none; z-index:100; overflow:hidden;
+}
+.confetti {
+  position:absolute; width:8px; height:12px; pointer-events:none;
+  animation:confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  0%{transform:translate(0,0) rotate(0deg) scale(1); opacity:1}
+  80%{opacity:1}
+  100%{transform:translate(var(--cx),var(--cy)) rotate(var(--cr)) scale(0.5); opacity:0}
+}
+.firework-dot {
+  position:absolute; border-radius:50%; pointer-events:none;
+  animation:fw-burst ease-out forwards;
+}
+@keyframes fw-burst {
+  0%{transform:translate(0,0) scale(1.5); opacity:1}
+  100%{transform:translate(var(--fx),var(--fy)) scale(0); opacity:0}
+}
+/* 背景全体フラッシュ */
+.bg-flash {
+  position:fixed; inset:0; pointer-events:none; z-index:99;
+  animation:bg-flash-anim 0.6s ease-out forwards;
+}
+@keyframes bg-flash-anim { 0%{opacity:0.5} 100%{opacity:0} }
+
+/* === メインレイアウト === */
+.tetris-wrapper { display:flex; flex-direction:column; align-items:center; width:100%; padding-bottom:8px; position:relative; z-index:1; }
+.tetris-main { display:flex; align-items:flex-start; gap:10px; justify-content:center; }
 .tetris-board-col { display:flex; flex-direction:column; align-items:center; }
 .tetris-board-area { position:relative; flex-shrink:0; }
 .tetris-canvas {
@@ -18,21 +73,27 @@
   box-shadow:var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
-/* レッド — 右外側、ちょっとだけ被る、1.5倍 */
+/* レッド — 右外側、サイズ固定コンテナ */
 .tetris-red-float {
   position:absolute; bottom:-20px; right:-115px;
   width:min(36vw,150px); z-index:8;
   pointer-events:none; animation:red-bob 3s ease-in-out infinite;
 }
-.tetris-red-float img { width:100%; height:auto; object-fit:contain; }
+.tetris-red-float img {
+  width:100%; height:auto; object-fit:contain;
+  /* 全画像をread2基準に統一するため、固定高さ指定 */
+  max-height:200px; min-height:120px;
+  object-position:bottom center;
+}
+.tetris-red-float.go-front { z-index:20; }
 @keyframes red-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 
 /* セリフ吹き出し */
 .tetris-comment { display:flex; align-items:center; justify-content:center; padding:6px 0 2px; min-height:44px; width:100%; }
 .tetris-bubble {
   background:var(--linen-soft); border:1px solid var(--border-mid); border-radius:var(--r-lg);
-  padding:6px 14px; font-size:var(--t-lg); font-weight:700; color:var(--ink);
-  width:100%; height:3em; display:flex; align-items:center; justify-content:center;
+  padding:6px 14px; font-size:clamp(12px,3.5vw,16px); font-weight:700; color:var(--ink);
+  width:100%; height:3.2em; display:flex; align-items:center; justify-content:center;
   text-align:center; box-shadow:var(--shadow-sm); overflow:hidden; line-height:1.4;
 }
 
@@ -63,7 +124,6 @@
   text-align:center; box-shadow:var(--shadow-xs); width:100%; white-space:nowrap;
 }
 
-/* もういちど・おしまい（サイドバー下に配置） */
 .sidebar-btns { display:flex; flex-direction:column; gap:8px; width:100%; margin-top:4px; }
 .sidebar-btns .sb-btn {
   display:flex; align-items:center; justify-content:center;
@@ -104,7 +164,7 @@
 }
 .tetris-gameover-overlay.active .gameover-score { opacity:1; }
 
-/* エフェクト */
+/* ボード内エフェクト */
 .line-clear-fx {
   position:absolute; left:3px; height:0; width:calc(100% - 6px);
   background:linear-gradient(90deg,transparent,rgba(255,220,120,0.9),rgba(200,90,77,0.6),rgba(255,220,120,0.9),transparent);
@@ -114,21 +174,17 @@
 
 .shake-sm { animation:shake-sm 0.25s ease-out; }
 @keyframes shake-sm { 0%{transform:translate(0,0)} 25%{transform:translate(-2px,1px)} 50%{transform:translate(2px,-1px)} 75%{transform:translate(-1px,1px)} 100%{transform:translate(0,0)} }
-
 .shake-md { animation:shake-md 0.4s ease-out; }
 @keyframes shake-md { 0%{transform:translate(0,0)} 15%{transform:translate(-4px,3px)} 30%{transform:translate(4px,-3px)} 45%{transform:translate(-3px,2px)} 60%{transform:translate(3px,-1px)} 80%{transform:translate(-1px,1px)} 100%{transform:translate(0,0)} }
-
 .shake-lg { animation:shake-lg 0.6s ease-out; }
 @keyframes shake-lg { 0%{transform:translate(0,0)} 10%{transform:translate(-6px,4px)} 20%{transform:translate(6px,-4px)} 30%{transform:translate(-5px,3px)} 40%{transform:translate(5px,-3px)} 50%{transform:translate(-3px,2px)} 65%{transform:translate(3px,-1px)} 80%{transform:translate(-1px,1px)} 100%{transform:translate(0,0)} }
 
-/* 背景フラッシュ */
 .board-flash { position:absolute; inset:0; border-radius:var(--r-md); pointer-events:none; z-index:4; opacity:0; }
 .flash-gold { animation:flash-gold 0.5s ease-out forwards; }
-@keyframes flash-gold { 0%{opacity:0.6;background:rgba(255,220,100,0.5)} 100%{opacity:0;background:rgba(255,220,100,0)} }
+@keyframes flash-gold { 0%{opacity:0.6;background:rgba(255,220,100,0.5)} 100%{opacity:0} }
 .flash-rainbow { animation:flash-rainbow 0.8s ease-out forwards; }
 @keyframes flash-rainbow { 0%{opacity:0.7;background:linear-gradient(135deg,rgba(255,100,100,0.4),rgba(255,200,50,0.4),rgba(100,200,255,0.4),rgba(200,100,255,0.4))} 100%{opacity:0} }
 
-/* 星パーティクル */
 .star-burst { position:absolute; width:12px; height:12px; pointer-events:none; z-index:7; }
 .star-burst::before { content:'★'; font-size:16px; color:#FFD700; text-shadow:0 0 6px rgba(255,200,0,0.8); }
 
@@ -141,9 +197,15 @@
   animation:combo-pop 1s ease-out forwards;
 }
 @keyframes combo-pop { 0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)} 20%{opacity:1;transform:translate(-50%,-50%) scale(1.3)} 40%{transform:translate(-50%,-50%) scale(1)} 100%{opacity:0;transform:translate(-50%,-80%) scale(1)} }
+
+/* 画面全体シェイク */
+.page-shake { animation:page-shake 0.5s ease-out; }
+@keyframes page-shake { 0%{transform:translate(0,0)} 10%{transform:translate(-8px,5px)} 20%{transform:translate(8px,-5px)} 30%{transform:translate(-6px,4px)} 40%{transform:translate(6px,-3px)} 50%{transform:translate(-4px,2px)} 70%{transform:translate(2px,-1px)} 100%{transform:translate(0,0)} }
 </style>
 </head>
 <body class="tetris-page">
+  <div id="scene-layer"></div>
+  <div id="celebrate-layer"></div>
   <a href="index.html#menu" class="back-link">← もどる</a>
   <div class="container">
     <div class="tetris-wrapper">
@@ -228,121 +290,86 @@ const honor=localStorage.getItem('red_honor')||'';
 const dName=pName+honor;
 function fn(s){return s.replace(/\{name\}/g,dName)}
 
-/* ===== セリフ（5倍に大幅増量） ===== */
+/* ===== セリフ（短めに統一） ===== */
 const COMMENTS={
   start:[
-    'テトリスやるで〜！{name}、いくで！',
-    '{name}！ブロック<ruby>積<rt>つ</rt></ruby>んでいこ〜！',
-    'よっしゃ{name}、テトリス<ruby>勝負<rt>しょうぶ</rt></ruby>や！',
-    '{name}、<ruby>準備<rt>じゅんび</rt></ruby>はええか？いくで！',
-    'テトリスタイムや！{name}、<ruby>気合<rt>きあい</rt></ruby>いれてこ！',
-    '{name}と<ruby>一緒<rt>いっしょ</rt></ruby>にテトリス！うれしいわ〜！',
-    'さあ{name}、ブロックの<ruby>雨<rt>あめ</rt></ruby>がふってくるで！',
-    'レッドが<ruby>応援<rt>おうえん</rt></ruby>するで！{name}がんばれ〜！',
-    '{name}、今日は何<ruby>点<rt>てん</rt></ruby>とれるかな〜？',
-    'ブロックの<ruby>達人<rt>たつじん</rt></ruby>{name}、スタートや！',
+    'テトリスやるで〜！','いくで{name}！',
+    'ブロック積んでいこ〜！','準備はええか？いくで！',
+    'テトリスタイムや！','一緒にテトリス！うれしいわ〜！',
+    'レッドが応援するで！','今日は何点とれるかな？',
+    '{name}、スタートや！','気合いれてこ！',
   ],
   clear1:[
-    'ナイス{name}！','おお〜！いいやん！','ええ<ruby>感<rt>かん</rt></ruby>じ〜！',
-    '{name}やるな〜！','その<ruby>調子<rt>ちょうし</rt></ruby>〜！',
-    '1れつ<ruby>消<rt>け</rt></ruby>し！いいぞ{name}！',
-    'うんうん、ええやん{name}！','おっ、きれいに<ruby>消<rt>き</rt></ruby>えたな！',
-    '{name}、うまいやん〜！','ナイスナイス〜！{name}！',
-    'よっしゃ！<ruby>消<rt>け</rt></ruby>したで！','いい<ruby>判断<rt>はんだん</rt></ruby>や{name}！',
-    'パチパチ〜！{name}すごい！','スムーズやな〜{name}！',
-    'ええぞ{name}！この<ruby>調子<rt>ちょうし</rt></ruby>！',
-    '{name}、さすがやな〜！','レッドもうれしいで！',
-    'いいね！{name}ノッてきたな！','キレイに<ruby>消<rt>け</rt></ruby>したな〜！',
-    'お〜！1れつスッキリ！','{name}、センスあるで！',
-    'ピカーン！きれいに<ruby>消<rt>け</rt></ruby>したで！','はい1れつ<ruby>消<rt>け</rt></ruby>し〜！',
-    'どんどんいこ{name}！','ナイスプレー{name}！',
+    'ナイス！','おお〜いいやん！','ええ感じ〜！',
+    'やるな〜！','その調子〜！','1れつ消し！いいぞ！',
+    'うまいやん〜！','ナイスナイス〜！',
+    'パチパチ〜！','スムーズやな〜！',
+    'さすがやな〜！','ノッてきたな！',
+    'キレイに消したな！','お〜スッキリ！',
+    'センスあるで！','いいね！',
+    'どんどんいこ！','ナイスプレー！',
+    'レッドもうれしい！','ピカーン！',
+    'はい1れつ消し〜！','いい判断や！',
+    'ええぞ！この調子！','がんばれ〜！',
   ],
   clear2:[
-    'ダブルや！すごいで{name}！','2れつ<ruby>消<rt>け</rt></ruby>し！やるやん！',
-    '{name}、かっこええ〜！','おおお！ダブル！{name}すご！',
-    '2れつ<ruby>一気<rt>いっき</rt></ruby>に！{name}やるなぁ！',
-    'ダブルきた〜！{name}ノリノリやん！',
-    '{name}、2れついっぺんに<ruby>消<rt>け</rt></ruby>すとか！',
-    'うおおダブル！気持ちええな〜！',
-    '{name}のダブル、サイコーや！','2れつ<ruby>消<rt>け</rt></ruby>し！テンション上がるわ〜！',
-    'ダブル<ruby>決<rt>き</rt></ruby>まった！{name}カッコええ！',
-    'やったー！ダブルや！{name}すごい！',
+    'ダブルや！すごい！','2れつ消し！やるやん！',
+    'かっこええ〜！','おおダブル！すご！',
+    '2れつ一気に！やるなぁ！','ダブルきた〜！',
+    'ダブル！テンション上がる！','気持ちええな〜！',
+    'ダブル決まった！','やったーダブルや！',
   ],
   clear3:[
-    'トリプル！！{name}すごすぎ！','3れつ<ruby>消<rt>け</rt></ruby>し！天才ちゃう！？',
-    'うおお！{name}すごい！！','トリプルきた！{name}、<ruby>神<rt>かみ</rt></ruby>ってるで！',
-    '3れつ！！{name}マジですごいわ！',
-    'トリプル<ruby>決<rt>き</rt></ruby>まった！レッド大<ruby>興奮<rt>こうふん</rt></ruby>や！',
-    '{name}、3れつ<ruby>消<rt>け</rt></ruby>しとか<ruby>半端<rt>はんぱ</rt></ruby>ないって！',
-    'うわあああ！トリプル！{name}すごすぎるわ！',
-    'レッド<ruby>感動<rt>かんどう</rt></ruby>や！{name}のトリプル！',
-    '3れつ一気に<ruby>消<rt>け</rt></ruby>すとかプロやん{name}！',
-    'きゃー！トリプル！{name}カッコよすぎ！',
-    'トリプルや！{name}、もうテトリスの<ruby>達人<rt>たつじん</rt></ruby>やな！',
+    'トリプル！！すごすぎ！','3れつ消し！天才ちゃう？',
+    'うおお！すごい！！','トリプル！神ってるで！',
+    '3れつ！マジですごい！','トリプル決まった！',
+    'レッド大興奮や！','トリプルやー！',
+    '感動や！トリプル！','プロやん！',
+    'きゃー！トリプル！','達人やな！',
   ],
   clear4:[
-    'テトリス！！！！{name}最高や！！',
-    '4れつ<ruby>消<rt>け</rt></ruby>し！！レッドも<ruby>感動<rt>かんどう</rt></ruby>や〜！！',
-    '{name}…<ruby>神<rt>かみ</rt></ruby>か！？すごすぎ！！',
-    'テトリスきたああ！{name}、<ruby>伝説<rt>でんせつ</rt></ruby>やで！',
-    '4れつ<ruby>一気<rt>いっき</rt></ruby>に！！{name}サイコー！！',
-    'テトリスや！レッド<ruby>泣<rt>な</rt></ruby>きそうやわ…すごい{name}！',
-    '{name}のテトリス！<ruby>歴史<rt>れきし</rt></ruby>に<ruby>残<rt>のこ</rt></ruby>るで！',
-    'うわあああ！テトリス！{name}天才！！',
-    '4れつ<ruby>消<rt>け</rt></ruby>し！{name}、もう<ruby>王者<rt>おうじゃ</rt></ruby>やな！',
-    'テトリスきた！{name}カッコよすぎて<ruby>震<rt>ふる</rt></ruby>えるわ！',
-    'すっっっごい！テトリス！{name}最強や！',
+    'テトリス！！最高や！！','4れつ消し！感動や〜！',
+    '神か！？すごすぎ！！','テトリスきたあ！伝説や！',
+    '4れつ一気に！サイコー！','泣きそうやわ…すごい！',
+    'テトリス！歴史に残る！','うわあテトリス！天才！',
+    '4れつ消し！王者やな！','テトリス！最強や！',
   ],
   danger:[
-    '{name}、やばいで！がんばれ〜！','おちついて{name}！','まだいける{name}！',
-    '{name}、ピンチやけど<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>！',
-    'あわわ…{name}、おちついてな！',
-    '{name}、ここが<ruby>勝負<rt>しょうぶ</rt></ruby>どころや！',
-    'うわ〜<ruby>積<rt>つ</rt></ruby>みあがってきた！{name}がんばれ！',
-    '{name}、あきらめんといてな！','ここからや{name}！<ruby>逆転<rt>ぎゃくてん</rt></ruby>できる！',
-    'レッドが<ruby>念<rt>ねん</rt></ruby>を<ruby>送<rt>おく</rt></ruby>るで！{name}がんばれ〜！',
-    '{name}、深<ruby>呼吸<rt>こきゅう</rt></ruby>して…いけるいける！',
-    'やばいやばい！でも{name}なら<ruby>大丈夫<rt>だいじょうぶ</rt></ruby>！',
+    'やばいで！がんばれ〜！','おちついて！','まだいける！',
+    'ピンチやけど大丈夫！','あわわ…おちついてな！',
+    'ここが勝負どころや！','あきらめんといてな！',
+    'ここからや！逆転できる！','深呼吸して…いける！',
+    'レッドが念を送るで！','やばい！でも大丈夫！',
   ],
   gameover:[
-    'ゲームオーバーや〜！{name}おつかれ！',
-    'ゲームオーバー！{name}がんばったな〜！',
-    'ゲームオーバーや！またやろな{name}！',
-    '{name}、おつかれさま！<ruby>楽<rt>たの</rt></ruby>しかったな〜！',
-    '{name}、ナイスプレーやったで！',
-    'いいゲームやったで{name}！','もう1回やる？{name}！',
-    '{name}、すごかったで！またチャレンジしよ！',
-    'おつかれ{name}！レッド<ruby>楽<rt>たの</rt></ruby>しかったわ〜！',
-    'ゲームオーバー！でも{name}かっこよかったで！',
-    '{name}、おつかれ！<ruby>次<rt>つぎ</rt></ruby>はもっといけるで！',
+    'ゲームオーバーや〜！','おつかれ！がんばったな！',
+    'またやろな！','楽しかったな〜！',
+    'ナイスプレーやったで！','いいゲームやったで！',
+    'もう1回やる？','またチャレンジしよ！',
+    'レッド楽しかったわ！','かっこよかったで！',
+    '次はもっといけるで！',
   ],
   idle:[
-    '{name}〜ブロック<ruby>落<rt>お</rt></ruby>ちてくるで〜',
-    'ここに<ruby>置<rt>お</rt></ruby>いたらええんちゃう？',
-    'レッド、おうえんしとるで〜！',
-    '{name}、<ruby>集中<rt>しゅうちゅう</rt></ruby>やで！',
-    '{name}〜どこに<ruby>置<rt>お</rt></ruby>く？','レッド、わくわくしてるで！',
-    '{name}、いい<ruby>感<rt>かん</rt></ruby>じやで〜！','ブロックくるで〜{name}！',
-    '{name}、<ruby>考<rt>かんが</rt></ruby>え<ruby>中<rt>ちゅう</rt></ruby>？',
-    'レッドも<ruby>一緒<rt>いっしょ</rt></ruby>に<ruby>考<rt>かんが</rt></ruby>えてるで！',
-    'うーん…こっちかな〜？','ファイト{name}！',
-    '{name}、テトリス<ruby>楽<rt>たの</rt></ruby>しいな〜！',
-    'がんばれがんばれ{name}！','レッドが見守っとるで〜！',
-    '{name}〜まだまだいけるで！','ブロックと<ruby>仲良<rt>なかよ</rt></ruby>くなろ！',
-    '{name}、リラックスしてな〜','次のブロック何かな〜？',
-    '{name}、いいペースやで！',
+    'ブロック落ちてくるで〜','ここに置いたら？',
+    'おうえんしとるで！','集中やで！',
+    'どこに置く？','わくわくしてるで！',
+    'いい感じやで〜！','ブロックくるで！',
+    '考え中？','一緒に考えてるで！',
+    'こっちかな〜？','ファイト！',
+    'テトリス楽しいな〜！','がんばれ〜！',
+    '見守っとるで〜！','まだまだいけるで！',
+    'リラックスしてな〜','次のブロック何かな？',
+    'いいペースやで！',
   ],
   levelup:[
-    'レベルアップ！{name}すごい！',
-    '{name}、レベルが<ruby>上<rt>あ</rt></ruby>がったで！',
-    'おお〜レベルアップや！{name}、<ruby>速<rt>はや</rt></ruby>くなるで！',
-    'レベルアップ！{name}、<ruby>気<rt>き</rt></ruby>をつけてな！',
-    '{name}、どんどん<ruby>強<rt>つよ</rt></ruby>くなってるで！',
+    'レベルアップ！すごい！','レベルが上がったで！',
+    'レベルアップ！速くなるで！','気をつけてな！',
+    'どんどん強くなってる！',
   ],
   combo:[
-    '{name}、コンボや！すごい！','コンボ<ruby>継続<rt>けいぞく</rt></ruby>！{name}ノリノリ！',
-    'つながった！{name}いいぞ！','コンボ！{name}、<ruby>止<rt>と</rt></ruby>まらんな！',
-    'レッドも<ruby>興奮<rt>こうふん</rt></ruby>してきたで！コンボ！',
+    'コンボや！すごい！','コンボ継続！ノリノリ！',
+    'つながった！いいぞ！','コンボ！止まらんな！',
+    'レッドも興奮や！コンボ！',
   ],
 };
 function rc(key){const a=COMMENTS[key];return fn(a[Math.floor(Math.random()*a.length)])}
@@ -350,12 +377,29 @@ function rc(key){const a=COMMENTS[key];return fn(a[Math.floor(Math.random()*a.le
 /* DOM */
 const bubbleText=document.getElementById('bubble-text');
 const charImg=document.getElementById('char-img');
+const charWrap=document.getElementById('char-wrap');
 const scoreVal=document.getElementById('score-val');
 const levelVal=document.getElementById('level-val');
 const boardArea=document.getElementById('board-area');
 const startOverlay=document.getElementById('start-overlay');
 const goOverlay=document.getElementById('gameover-overlay');
 const goScore=document.getElementById('gameover-score');
+const sceneLayer=document.getElementById('scene-layer');
+const celebLayer=document.getElementById('celebrate-layer');
+
+/* === read2基準の画像サイズ正規化 === */
+const baseImg=new Image();
+baseImg.onload=function(){
+  /* read2の自然サイズを基準に全表情画像を同じ表示サイズに固定 */
+  const ratio=this.naturalHeight/this.naturalWidth;
+  const cw=charWrap.offsetWidth||150;
+  charWrap.style.height=Math.round(cw*ratio)+'px';
+  charImg.style.width='100%';
+  charImg.style.height='100%';
+  charImg.style.objectFit='contain';
+  charImg.style.objectPosition='bottom center';
+};
+baseImg.src='images/read2.png';
 
 /* 表情変更 */
 function setFace(img){
@@ -375,7 +419,180 @@ function say(key){
   if(faceMap[key]) setFace(faceMap[key]);
 }
 
-/* ゲーム状態 */
+/* ===== レベル別背景テーマ ===== */
+const THEMES=[
+  {lv:1,bg:'',scene:''},                                              // デフォルト
+  {lv:3,bg:'linear-gradient(180deg,#FFD4A0 0%,#FFB07C 40%,#E8836A 100%)',scene:'sunset'},  // 夕焼け
+  {lv:5,bg:'linear-gradient(180deg,#4A3B6B 0%,#2D2255 50%,#1A1440 100%)',scene:'twilight'}, // 夕暮れ
+  {lv:7,bg:'linear-gradient(180deg,#0D1B2A 0%,#1B2838 50%,#0A1628 100%)',scene:'night'},    // 夜空
+  {lv:9,bg:'linear-gradient(180deg,#0A0A20 0%,#0D1530 50%,#050515 100%)',scene:'aurora'},   // オーロラ
+];
+let currentTheme='', weatherInterval=null;
+
+function updateTheme(lv){
+  let theme=THEMES[0];
+  for(let i=THEMES.length-1;i>=0;i--){if(lv>=THEMES[i].lv){theme=THEMES[i];break}}
+  if(theme.scene===currentTheme)return;
+  currentTheme=theme.scene;
+
+  /* 背景変更 */
+  const body=document.body;
+  if(theme.bg){
+    body.style.background=theme.bg;
+    sceneLayer.style.background='transparent';
+  } else {
+    body.style.background='';
+    sceneLayer.style.background='';
+  }
+
+  /* 天気エフェクトクリア */
+  if(weatherInterval){clearInterval(weatherInterval);weatherInterval=null}
+  sceneLayer.innerHTML='';
+
+  if(theme.scene==='night'||theme.scene==='aurora'){
+    /* 星を配置 */
+    for(let i=0;i<40;i++){
+      const s=document.createElement('div');
+      s.style.cssText=`position:absolute;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;background:#fff;border-radius:50%;top:${Math.random()*60}%;left:${Math.random()*100}%;opacity:${0.3+Math.random()*0.7};animation:twinkle ${2+Math.random()*3}s ease-in-out infinite alternate`;
+      sceneLayer.appendChild(s);
+    }
+    if(!document.getElementById('twinkle-style')){
+      const ts=document.createElement('style');ts.id='twinkle-style';
+      ts.textContent='@keyframes twinkle{0%{opacity:0.2;transform:scale(0.8)}100%{opacity:1;transform:scale(1.2)}}';
+      document.head.appendChild(ts);
+    }
+  }
+  if(theme.scene==='aurora'){
+    for(let i=0;i<3;i++){
+      const a=document.createElement('div');a.className='aurora-wave';
+      a.style.top=(5+i*12)+'%';
+      a.style.animationDelay=(i*2.5)+'s';
+      a.style.background=`linear-gradient(180deg,transparent,rgba(${100+i*50},${255-i*30},${200+i*20},0.08),transparent)`;
+      sceneLayer.appendChild(a);
+    }
+  }
+  /* 雪（夜レベル以降） */
+  if(theme.scene==='night'||theme.scene==='aurora'){
+    weatherInterval=setInterval(()=>{
+      const p=document.createElement('div');
+      const sz=2+Math.random()*4;
+      p.className='weather-p wp-snow';
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.left=Math.random()*100+'%';p.style.top='-10px';
+      p.style.setProperty('--wx',(Math.random()-0.5)*80+'px');
+      p.style.setProperty('--wy',(window.innerHeight+20)+'px');
+      p.style.animationDuration=(4+Math.random()*4)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),9000);
+    },theme.scene==='aurora'?80:200);
+  }
+  /* 夕焼け時は葉っぱ */
+  if(theme.scene==='sunset'){
+    weatherInterval=setInterval(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-sakura';
+      const sz=4+Math.random()*6;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.left=Math.random()*100+'%';p.style.top='-10px';
+      p.style.setProperty('--wx',(30+Math.random()*60)+'px');
+      p.style.setProperty('--wy',(window.innerHeight+20)+'px');
+      p.style.setProperty('--wr',(360+Math.random()*720)+'deg');
+      p.style.animationDuration=(5+Math.random()*4)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),10000);
+    },400);
+  }
+  /* 夕暮れ時は雨 */
+  if(theme.scene==='twilight'){
+    weatherInterval=setInterval(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-rain';
+      p.style.width='2px';p.style.height=(8+Math.random()*12)+'px';
+      p.style.left=Math.random()*100+'%';p.style.top='-15px';
+      p.style.setProperty('--wx',(Math.random()-0.3)*30+'px');
+      p.style.setProperty('--wy',(window.innerHeight+20)+'px');
+      p.style.animationDuration=(0.8+Math.random()*0.6)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),2000);
+    },30);
+  }
+}
+
+/* ===== 画面全体のお祝い演出 ===== */
+const CONFETTI_COLORS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#FF6FC8','#845EC2','#FF9671','#FFC75F'];
+
+function spawnConfetti(count){
+  for(let i=0;i<count;i++){
+    const c=document.createElement('div');c.className='confetti';
+    c.style.background=CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+    c.style.left=Math.random()*100+'%';c.style.top=(20+Math.random()*30)+'%';
+    c.style.width=(6+Math.random()*6)+'px';c.style.height=(8+Math.random()*8)+'px';
+    c.style.borderRadius=Math.random()>0.5?'50%':'2px';
+    c.style.setProperty('--cx',(Math.random()-0.5)*300+'px');
+    c.style.setProperty('--cy',(200+Math.random()*400)+'px');
+    c.style.setProperty('--cr',(360+Math.random()*720)+'deg');
+    c.style.animationDuration=(1+Math.random()*1.5)+'s';
+    c.style.animationDelay=(Math.random()*0.3)+'s';
+    celebLayer.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+}
+
+function spawnFireworks(x,y,count){
+  for(let i=0;i<count;i++){
+    const d=document.createElement('div');d.className='firework-dot';
+    const col=CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+    const sz=3+Math.random()*5;
+    d.style.width=sz+'px';d.style.height=sz+'px';d.style.background=col;
+    d.style.boxShadow=`0 0 6px ${col}`;
+    d.style.left=x+'%';d.style.top=y+'%';
+    const angle=Math.random()*Math.PI*2;
+    const dist=60+Math.random()*120;
+    d.style.setProperty('--fx',Math.cos(angle)*dist+'px');
+    d.style.setProperty('--fy',Math.sin(angle)*dist+'px');
+    d.style.animationDuration=(0.6+Math.random()*0.5)+'s';
+    d.style.animationDelay=(Math.random()*0.2)+'s';
+    celebLayer.appendChild(d);
+    setTimeout(()=>d.remove(),2000);
+  }
+}
+
+function bgFlash(color){
+  const f=document.createElement('div');f.className='bg-flash';
+  f.style.background=color;
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),700);
+}
+
+function celebrateClear(cnt){
+  if(cnt===2){
+    /* ダブル：紙吹雪 + ゴールドフラッシュ */
+    spawnConfetti(30);
+    bgFlash('rgba(255,220,100,0.3)');
+  } else if(cnt===3){
+    /* トリプル：大量紙吹雪 + 花火 + 虹フラッシュ */
+    spawnConfetti(60);
+    spawnFireworks(30,30,20);
+    spawnFireworks(70,25,20);
+    bgFlash('linear-gradient(135deg,rgba(255,100,150,0.3),rgba(100,200,255,0.3),rgba(255,230,100,0.3))');
+    /* 画面揺れ */
+    document.body.classList.add('page-shake');
+    setTimeout(()=>document.body.classList.remove('page-shake'),600);
+  } else if(cnt>=4){
+    /* テトリス：超大量紙吹雪 + 複数花火 + 虹フラッシュ + 大揺れ */
+    spawnConfetti(120);
+    spawnFireworks(20,20,30);
+    spawnFireworks(50,15,30);
+    spawnFireworks(80,25,30);
+    setTimeout(()=>{spawnFireworks(35,35,25);spawnFireworks(65,30,25)},400);
+    bgFlash('linear-gradient(135deg,rgba(255,50,100,0.4),rgba(255,200,50,0.4),rgba(50,200,255,0.4),rgba(200,50,255,0.4))');
+    setTimeout(()=>bgFlash('rgba(255,255,200,0.25)'),300);
+    document.body.classList.add('page-shake');
+    setTimeout(()=>document.body.classList.remove('page-shake'),700);
+  }
+}
+
+/* ===== ゲーム状態 ===== */
 let board=[], current=null, nextPiece=null;
 let score=0, level=1, lines=0, prevLevel=1;
 let dropInterval=800, dropTimer=0, lastTime=0;
@@ -416,13 +633,16 @@ function clearLines(rows){
   const cb=combo>1?50*(combo-1)*level:0;
   score+=ls+cb; lines+=cnt;
   const newLv=Math.floor(lines/10)+1;
-  if(newLv>level){level=newLv;dropInterval=Math.max(100,800-(level-1)*60);say('levelup')}
+  if(newLv>level){level=newLv;dropInterval=Math.max(100,800-(level-1)*60);say('levelup');updateTheme(level)}
   else level=newLv;
   dropInterval=Math.max(100,800-(level-1)*60);
   scoreVal.textContent=score; levelVal.textContent=level;
 
-  /* 演出 */
+  /* ボード内演出 */
   showLineFx(rows,cnt);
+  /* 画面全体演出 */
+  if(cnt>=2) celebrateClear(cnt);
+
   if(cnt>=4){showPopup('テトリス！！');say('clear4')}
   else if(cnt===3){showPopup('トリプル！');say('clear3')}
   else if(cnt===2){showPopup('ダブル！');say('clear2')}
@@ -437,7 +657,7 @@ function spawnNext(){
 }
 function getDanger(){for(let r=0;r<ROWS;r++)if(board[r].some(c=>c!==null))return 1-(r/ROWS);return 0}
 
-/* エフェクト */
+/* ボード内エフェクト */
 function showLineFx(rows,cnt){
   const shakeClass=cnt>=4?'shake-lg':cnt>=2?'shake-md':'shake-sm';
   boardArea.classList.remove('shake-sm','shake-md','shake-lg');
@@ -450,12 +670,10 @@ function showLineFx(rows,cnt){
     el.style.top=(r*CELL+3)+'px';el.style.height=CELL+'px';
     boardArea.appendChild(el);setTimeout(()=>el.remove(),500);
   }
-  /* 背景フラッシュ */
   if(cnt>=2){
     const fl=document.createElement('div');fl.className='board-flash '+(cnt>=4?'flash-rainbow':'flash-gold');
     boardArea.appendChild(fl);setTimeout(()=>fl.remove(),800);
   }
-  /* 星パーティクル（3列以上） */
   if(cnt>=3){
     for(let i=0;i<(cnt>=4?12:6);i++){
       const st=document.createElement('div');st.className='star-burst';
@@ -467,7 +685,6 @@ function showLineFx(rows,cnt){
     }
   }
 }
-/* 星パーティクルアニメ */
 if(!document.getElementById('star-style')){
   const ss=document.createElement('style');ss.id='star-style';
   ss.textContent='@keyframes star-fly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0.3) rotate(360deg)}}';
@@ -532,6 +749,10 @@ function startGame(){
   scoreVal.textContent='0';levelVal.textContent='1';
   startOverlay.classList.add('hidden');
   goOverlay.classList.remove('active');
+  charWrap.classList.remove('go-front');
+  /* テーマリセット */
+  currentTheme='';document.body.style.background='';sceneLayer.innerHTML='';
+  if(weatherInterval){clearInterval(weatherInterval);weatherInterval=null}
   current=rp();nextPiece=rp();drawNext();say('start');
   lastTime=performance.now();requestAnimationFrame(gameLoop);
 }
@@ -541,7 +762,8 @@ function triggerGameOver(){
   say('gameover');
   goScore.textContent='スコア: '+score;
   goOverlay.classList.add('active');
-  /* 盤面をグレーアウト */
+  /* レッドを前面に */
+  charWrap.classList.add('go-front');
   boardArea.classList.remove('shake-sm','shake-md','shake-lg');
   boardArea.classList.add('shake-lg');
   setTimeout(()=>boardArea.classList.remove('shake-lg'),600);
