@@ -7,24 +7,59 @@
 <link rel="stylesheet" href="style.css">
 <style>
 /* === 背景レイヤー === */
-.tetris-page { transition:background 3s ease; }
+.tetris-page { transition:background 2s ease; }
 #scene-layer {
   position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
-  transition:background 3s ease;
+  transition:background 2s ease;
 }
 /* 天気パーティクル用 */
 .weather-p {
   position:absolute; pointer-events:none; border-radius:50%;
   animation-timing-function:linear; animation-fill-mode:forwards;
 }
-/* 雪 */
-.wp-snow { background:rgba(255,255,255,0.85); animation-name:wp-fall; }
+/* 落下系（雪・綿毛・花びら・紅葉・火の粉・泡・虹粒・カオス） */
 @keyframes wp-fall { 0%{transform:translateX(0) translateY(0)} 100%{transform:translateX(var(--wx)) translateY(var(--wy))} }
-/* 雨 */
+@keyframes wp-spin-fall { 0%{transform:translate(0,0) rotate(0deg)} 100%{transform:translate(var(--wx),var(--wy)) rotate(var(--wr))} }
+/* 上昇系（火の粉） */
+@keyframes wp-rise { 0%{transform:translate(0,0) scale(1);opacity:1} 100%{transform:translate(var(--wx),var(--wy)) scale(0.3);opacity:0} }
+/* 泡 */
+@keyframes wp-bubble { 0%{transform:translate(0,0) scale(1);opacity:0.7} 100%{transform:translate(var(--wx),var(--wy)) scale(1.5);opacity:0} }
+/* マトリックス文字落下 */
+@keyframes wp-matrix { 0%{transform:translateY(0);opacity:1} 80%{opacity:1} 100%{transform:translateY(var(--wy));opacity:0} }
+/* 渦巻き吸い込み */
+@keyframes wp-vortex { 0%{transform:translate(0,0) scale(1);opacity:0.9} 100%{transform:translate(var(--vx),var(--vy)) scale(0);opacity:0} }
+/* 爆発拡散 */
+@keyframes wp-explode { 0%{transform:translate(0,0) scale(0);opacity:1} 50%{opacity:1} 100%{transform:translate(var(--ex),var(--ey)) scale(1);opacity:0} }
+
+.wp-snow { background:rgba(255,255,255,0.85); animation-name:wp-fall; }
 .wp-rain { background:rgba(150,180,220,0.6); width:2px!important; border-radius:1px; animation-name:wp-fall; }
-/* 桜 */
-.wp-sakura { background:radial-gradient(circle,#ffb7c5,#ff8fa3); border-radius:50% 0 50% 0; animation-name:wp-sakura-fall; }
-@keyframes wp-sakura-fall { 0%{transform:translate(0,0) rotate(0deg)} 100%{transform:translate(var(--wx),var(--wy)) rotate(var(--wr))} }
+.wp-sakura { background:radial-gradient(circle,#ffb7c5,#ff8fa3); border-radius:50% 0 50% 0; animation-name:wp-spin-fall; }
+.wp-fluff { background:radial-gradient(circle,rgba(255,255,255,0.9),rgba(255,255,240,0.3)); animation-name:wp-fall; }
+.wp-leaf { border-radius:50% 0 50% 0; animation-name:wp-spin-fall; }
+.wp-spark { animation-name:wp-fall; }
+.wp-ember { border-radius:50%; animation-name:wp-rise; }
+.wp-bubble-p { border:1px solid rgba(150,220,255,0.4); background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.5),rgba(100,200,255,0.15)); animation-name:wp-bubble; }
+.wp-matrix-ch { font-family:monospace; color:#0f0; position:absolute; animation-name:wp-matrix; animation-fill-mode:forwards; pointer-events:none; }
+.wp-rainbow { border-radius:50%; animation-name:wp-fall; filter:blur(1px); }
+.wp-vortex { border-radius:50%; animation-name:wp-vortex; }
+.wp-explode { border-radius:50%; animation-name:wp-explode; }
+
+/* 雲 */
+.cloud-el {
+  position:absolute; background:rgba(255,255,255,0.6); border-radius:50%;
+  filter:blur(8px); animation:cloud-drift linear infinite;
+}
+@keyframes cloud-drift { 0%{transform:translateX(0)} 100%{transform:translateX(var(--cdx))} }
+
+/* 光のカーテン */
+.light-curtain {
+  position:absolute; width:40%; height:100%; top:0;
+  background:linear-gradient(180deg,transparent 0%,var(--lc-color) 40%,transparent 100%);
+  filter:blur(40px); opacity:0.12;
+  animation:curtain-sway 6s ease-in-out infinite alternate;
+}
+@keyframes curtain-sway { 0%{transform:translateX(-30%) skewX(-8deg)} 100%{transform:translateX(30%) skewX(8deg)} }
+
 /* オーロラ */
 .aurora-wave {
   position:absolute; top:0; left:-50%; width:200%; height:40%;
@@ -33,6 +68,40 @@
   filter:blur(30px);
 }
 @keyframes aurora-drift { 0%{transform:translateX(-10%) skewX(-5deg)} 100%{transform:translateX(10%) skewX(5deg)} }
+
+/* 星 */
+@keyframes twinkle { 0%{opacity:0.2;transform:scale(0.8)} 100%{opacity:1;transform:scale(1.2)} }
+
+/* 光の筋（海底） */
+.light-ray {
+  position:absolute; top:-10%; width:2px; height:120%;
+  background:linear-gradient(180deg,transparent,rgba(100,200,255,0.08),transparent);
+  filter:blur(4px); animation:ray-sway 8s ease-in-out infinite alternate;
+}
+@keyframes ray-sway { 0%{transform:rotate(-5deg) translateX(-20px)} 100%{transform:rotate(5deg) translateX(20px)} }
+
+/* 稲妻フラッシュ */
+@keyframes lightning-flash { 0%{opacity:0} 5%{opacity:0.9} 10%{opacity:0.1} 15%{opacity:0.7} 25%{opacity:0} 100%{opacity:0} }
+
+/* 星雲渦 */
+.nebula-cloud {
+  position:absolute; border-radius:50%; filter:blur(50px);
+  animation:nebula-rotate 20s linear infinite;
+}
+@keyframes nebula-rotate { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+/* グリッチ */
+@keyframes glitch-shift {
+  0%,90%,100%{transform:translate(0)} 92%{transform:translate(-4px,2px)} 94%{transform:translate(4px,-2px)} 96%{transform:translate(-2px,4px)} 98%{transform:translate(2px,-4px)}
+}
+.glitch-line {
+  position:absolute; width:100%; pointer-events:none;
+  animation:glitch-line-anim 0.3s linear infinite;
+}
+@keyframes glitch-line-anim { 0%{opacity:0} 50%{opacity:0.6} 100%{opacity:0} }
+
+/* カオス背景アニメ */
+@keyframes chaos-bg { 0%{filter:hue-rotate(0deg)} 100%{filter:hue-rotate(360deg)} }
 
 /* === お祝いエフェクト（画面全体） === */
 #celebrate-layer {
@@ -471,15 +540,50 @@ function sayLong(text, face){
   if(face) setFace(face, true);
 }
 
-/* ===== レベル別背景テーマ ===== */
+/* ===== レベル別背景テーマ (Lv1〜21) ===== */
 const THEMES=[
-  {lv:1,bg:'',scene:''},                                              // デフォルト
-  {lv:3,bg:'linear-gradient(180deg,#FFD4A0 0%,#FFB07C 40%,#E8836A 100%)',scene:'sunset'},  // 夕焼け
-  {lv:5,bg:'linear-gradient(180deg,#4A3B6B 0%,#2D2255 50%,#1A1440 100%)',scene:'twilight'}, // 夕暮れ
-  {lv:7,bg:'linear-gradient(180deg,#0D1B2A 0%,#1B2838 50%,#0A1628 100%)',scene:'night'},    // 夜空
-  {lv:9,bg:'linear-gradient(180deg,#0A0A20 0%,#0D1530 50%,#050515 100%)',scene:'aurora'},   // オーロラ
+  {lv:1, bg:'',scene:'default'},
+  {lv:2, bg:'linear-gradient(180deg,#D4EDFC 0%,#F5F5F0 40%,#D6EDCE 100%)',scene:'meadow'},
+  {lv:3, bg:'linear-gradient(180deg,#FDE2E4 0%,#D4EDFC 100%)',scene:'flowers'},
+  {lv:4, bg:'linear-gradient(180deg,#6BB3F0 0%,#A8D8F0 40%,#D4EDFC 100%)',scene:'bluesky'},
+  {lv:5, bg:'linear-gradient(180deg,#FFF3B0 0%,#FFD88A 50%,#FFB347 100%)',scene:'predusk'},
+  {lv:6, bg:'linear-gradient(180deg,#FF9A56 0%,#E8685A 50%,#C74B8A 100%)',scene:'sunset'},
+  {lv:7, bg:'linear-gradient(180deg,#A855A0 0%,#5B3A8C 50%,#2A2068 100%)',scene:'magic'},
+  {lv:8, bg:'linear-gradient(180deg,#6B5B7B 0%,#3A3060 50%,#1E1848 100%)',scene:'rain'},
+  {lv:9, bg:'linear-gradient(180deg,#0F1B3D 0%,#0A1128 50%,#060818 100%)',scene:'stars'},
+  {lv:10,bg:'linear-gradient(180deg,#1A1A3A 0%,#2A2050 50%,#10082A 100%)',scene:'blizzard'},
+  {lv:11,bg:'linear-gradient(180deg,#0A0A20 0%,#0D1530 50%,#050515 100%)',scene:'aurora'},
+  {lv:12,bg:'linear-gradient(180deg,#0A2E38 0%,#0A1A2E 50%,#050D18 100%)',scene:'ocean'},
+  {lv:13,bg:'linear-gradient(180deg,#1A0A0A 0%,#3D1010 50%,#2A0800 100%)',scene:'lava'},
+  {lv:14,bg:'linear-gradient(180deg,#0A0A0A 0%,#0A1A0A 50%,#001000 100%)',scene:'matrix'},
+  {lv:15,bg:'linear-gradient(135deg,#FF006E,#8338EC,#3A86FF,#06D6A0,#FFD166)',scene:'rainbow'},
+  {lv:16,bg:'linear-gradient(180deg,#0A0510 0%,#1A0830 50%,#080410 100%)',scene:'thunder'},
+  {lv:17,bg:'linear-gradient(180deg,#0A0018 0%,#18063A 50%,#0A0020 100%)',scene:'galaxy'},
+  {lv:18,bg:'radial-gradient(circle at 50% 50%,#1A0030 0%,#0A0010 60%,#000 100%)',scene:'blackhole'},
+  {lv:19,bg:'radial-gradient(circle at 50% 40%,#FF4500 0%,#8B0000 30%,#1A0000 60%,#000 100%)',scene:'supernova'},
+  {lv:20,bg:'linear-gradient(135deg,#2A003A 0%,#FF00FF 30%,#000 60%,#0FF 100%)',scene:'rift'},
+  {lv:21,bg:'linear-gradient(135deg,#FF0050,#FF8800,#FFFF00,#00FF88,#0088FF,#AA00FF)',scene:'chaos'},
 ];
-let currentTheme='', weatherInterval=null;
+let currentTheme='', weatherIntervals=[];
+const VH=()=>window.innerHeight+20;
+
+function clearEffects(){
+  weatherIntervals.forEach(id=>clearInterval(id));
+  weatherIntervals=[];
+  sceneLayer.innerHTML='';
+}
+
+/* 星を生成 */
+function addStars(n,maxTop){
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div');
+    s.style.cssText=`position:absolute;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;background:#fff;border-radius:50%;top:${Math.random()*(maxTop||60)}%;left:${Math.random()*100}%;opacity:${0.3+Math.random()*0.7};animation:twinkle ${2+Math.random()*3}s ease-in-out infinite alternate`;
+    sceneLayer.appendChild(s);
+  }
+}
+
+/* パーティクル生成ヘルパー */
+function spawnLoop(fn,ms){const id=setInterval(fn,ms);weatherIntervals.push(id);return id}
 
 function updateTheme(lv){
   let theme=THEMES[0];
@@ -487,86 +591,455 @@ function updateTheme(lv){
   if(theme.scene===currentTheme)return;
   currentTheme=theme.scene;
 
-  /* 背景変更 */
   const body=document.body;
-  if(theme.bg){
-    body.style.background=theme.bg;
-    sceneLayer.style.background='transparent';
-  } else {
-    body.style.background='';
-    sceneLayer.style.background='';
-  }
+  if(theme.bg){body.style.background=theme.bg;sceneLayer.style.background='transparent';}
+  else{body.style.background='';sceneLayer.style.background='';}
+  body.style.animation='';
 
-  /* 天気エフェクトクリア */
-  if(weatherInterval){clearInterval(weatherInterval);weatherInterval=null}
-  sceneLayer.innerHTML='';
+  clearEffects();
+  const sc=theme.scene;
 
-  if(theme.scene==='night'||theme.scene==='aurora'){
-    /* 星を配置 */
-    for(let i=0;i<40;i++){
-      const s=document.createElement('div');
-      s.style.cssText=`position:absolute;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;background:#fff;border-radius:50%;top:${Math.random()*60}%;left:${Math.random()*100}%;opacity:${0.3+Math.random()*0.7};animation:twinkle ${2+Math.random()*3}s ease-in-out infinite alternate`;
-      sceneLayer.appendChild(s);
-    }
-    if(!document.getElementById('twinkle-style')){
-      const ts=document.createElement('style');ts.id='twinkle-style';
-      ts.textContent='@keyframes twinkle{0%{opacity:0.2;transform:scale(0.8)}100%{opacity:1;transform:scale(1.2)}}';
-      document.head.appendChild(ts);
-    }
-  }
-  if(theme.scene==='aurora'){
-    for(let i=0;i<3;i++){
-      const a=document.createElement('div');a.className='aurora-wave';
-      a.style.top=(5+i*12)+'%';
-      a.style.animationDelay=(i*2.5)+'s';
-      a.style.background=`linear-gradient(180deg,transparent,rgba(${100+i*50},${255-i*30},${200+i*20},0.08),transparent)`;
-      sceneLayer.appendChild(a);
-    }
-  }
-  /* 雪（夜レベル以降） */
-  if(theme.scene==='night'||theme.scene==='aurora'){
-    weatherInterval=setInterval(()=>{
+  /* === Lv2 草原の朝 — 綿毛 === */
+  if(sc==='meadow'){
+    spawnLoop(()=>{
       const p=document.createElement('div');
-      const sz=2+Math.random()*4;
-      p.className='weather-p wp-snow';
+      const sz=3+Math.random()*5;
+      p.className='weather-p wp-fluff';
       p.style.width=sz+'px';p.style.height=sz+'px';
       p.style.left=Math.random()*100+'%';p.style.top='-10px';
-      p.style.setProperty('--wx',(Math.random()-0.5)*80+'px');
-      p.style.setProperty('--wy',(window.innerHeight+20)+'px');
-      p.style.animationDuration=(4+Math.random()*4)+'s';
+      p.style.setProperty('--wx',(Math.random()-0.5)*120+'px');
+      p.style.setProperty('--wy',VH()+'px');
+      p.style.animationDuration=(6+Math.random()*5)+'s';
       sceneLayer.appendChild(p);
-      setTimeout(()=>p.remove(),9000);
-    },theme.scene==='aurora'?80:200);
+      setTimeout(()=>p.remove(),12000);
+    },500);
   }
-  /* 夕焼け時は葉っぱ */
-  if(theme.scene==='sunset'){
-    weatherInterval=setInterval(()=>{
+
+  /* === Lv3 花畑 — 桜の花びら === */
+  if(sc==='flowers'){
+    spawnLoop(()=>{
       const p=document.createElement('div');
       p.className='weather-p wp-sakura';
       const sz=4+Math.random()*6;
       p.style.width=sz+'px';p.style.height=sz+'px';
       p.style.left=Math.random()*100+'%';p.style.top='-10px';
       p.style.setProperty('--wx',(30+Math.random()*60)+'px');
-      p.style.setProperty('--wy',(window.innerHeight+20)+'px');
+      p.style.setProperty('--wy',VH()+'px');
       p.style.setProperty('--wr',(360+Math.random()*720)+'deg');
       p.style.animationDuration=(5+Math.random()*4)+'s';
       sceneLayer.appendChild(p);
       setTimeout(()=>p.remove(),10000);
-    },400);
+    },350);
   }
-  /* 夕暮れ時は雨 */
-  if(theme.scene==='twilight'){
-    weatherInterval=setInterval(()=>{
+
+  /* === Lv4 晴天 — 雲 === */
+  if(sc==='bluesky'){
+    for(let i=0;i<5;i++){
+      const c=document.createElement('div');c.className='cloud-el';
+      const w=80+Math.random()*120;
+      c.style.width=w+'px';c.style.height=(w*0.4)+'px';
+      c.style.top=(5+Math.random()*40)+'%';
+      c.style.left=(Math.random()*100)+'%';
+      c.style.opacity=0.4+Math.random()*0.3;
+      c.style.setProperty('--cdx',(window.innerWidth+200)+'px');
+      c.style.animationDuration=(30+Math.random()*30)+'s';
+      c.style.animationDelay=(-Math.random()*30)+'s';
+      sceneLayer.appendChild(c);
+    }
+  }
+
+  /* === Lv5 夕暮れ前 — 光の粒キラキラ === */
+  if(sc==='predusk'){
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-spark';
+      const sz=2+Math.random()*3;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.background=`rgba(255,${200+Math.random()*55},${100+Math.random()*100},${0.5+Math.random()*0.5})`;
+      p.style.borderRadius='50%';
+      p.style.left=Math.random()*100+'%';p.style.top='-5px';
+      p.style.setProperty('--wx',(Math.random()-0.5)*60+'px');
+      p.style.setProperty('--wy',VH()+'px');
+      p.style.animationDuration=(3+Math.random()*4)+'s';
+      p.style.filter='blur(0.5px)';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),8000);
+    },120);
+  }
+
+  /* === Lv6 夕焼け — 紅葉 === */
+  if(sc==='sunset'){
+    const leafColors=['#D4451A','#E86830','#C9370E','#F0A030','#B8420F'];
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-leaf';
+      const sz=5+Math.random()*7;
+      p.style.width=sz+'px';p.style.height=(sz*0.7)+'px';
+      p.style.background=leafColors[Math.floor(Math.random()*leafColors.length)];
+      p.style.left=Math.random()*100+'%';p.style.top='-10px';
+      p.style.setProperty('--wx',(40+Math.random()*80)+'px');
+      p.style.setProperty('--wy',VH()+'px');
+      p.style.setProperty('--wr',(360+Math.random()*1080)+'deg');
+      p.style.animationDuration=(4+Math.random()*4)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),9000);
+    },300);
+  }
+
+  /* === Lv7 マジックアワー — 光のカーテン === */
+  if(sc==='magic'){
+    const colors=['rgba(200,100,255,0.15)','rgba(100,150,255,0.12)','rgba(255,150,200,0.1)'];
+    for(let i=0;i<3;i++){
+      const c=document.createElement('div');c.className='light-curtain';
+      c.style.left=(i*30)+'%';
+      c.style.setProperty('--lc-color',colors[i]);
+      c.style.animationDelay=(i*2)+'s';
+      c.style.animationDuration=(5+i*2)+'s';
+      sceneLayer.appendChild(c);
+    }
+    addStars(15,30);
+  }
+
+  /* === Lv8 小雨 — 雨粒 === */
+  if(sc==='rain'){
+    spawnLoop(()=>{
       const p=document.createElement('div');
       p.className='weather-p wp-rain';
-      p.style.width='2px';p.style.height=(8+Math.random()*12)+'px';
+      p.style.height=(8+Math.random()*12)+'px';
       p.style.left=Math.random()*100+'%';p.style.top='-15px';
       p.style.setProperty('--wx',(Math.random()-0.3)*30+'px');
-      p.style.setProperty('--wy',(window.innerHeight+20)+'px');
+      p.style.setProperty('--wy',VH()+'px');
       p.style.animationDuration=(0.8+Math.random()*0.6)+'s';
       sceneLayer.appendChild(p);
       setTimeout(()=>p.remove(),2000);
     },30);
+  }
+
+  /* === Lv9 星空 — 星チカチカ === */
+  if(sc==='stars'){
+    addStars(60,80);
+    /* 流れ星を時々 */
+    spawnLoop(()=>{
+      const s=document.createElement('div');
+      s.style.cssText=`position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;top:${Math.random()*40}%;left:${Math.random()*80}%;box-shadow:0 0 6px #fff;`;
+      s.style.setProperty('--wx',(100+Math.random()*150)+'px');
+      s.style.setProperty('--wy',(100+Math.random()*150)+'px');
+      s.className='weather-p';s.style.animationName='wp-fall';
+      s.style.animationDuration='0.6s';
+      sceneLayer.appendChild(s);
+      setTimeout(()=>s.remove(),800);
+    },3000);
+  }
+
+  /* === Lv10 吹雪 — 激しい雪 === */
+  if(sc==='blizzard'){
+    addStars(30,50);
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      const sz=2+Math.random()*5;
+      p.className='weather-p wp-snow';
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.left=Math.random()*100+'%';p.style.top='-10px';
+      p.style.setProperty('--wx',(Math.random()-0.3)*150+'px');
+      p.style.setProperty('--wy',VH()+'px');
+      p.style.animationDuration=(1.5+Math.random()*2)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),5000);
+    },40);
+  }
+
+  /* === Lv11 オーロラ — オーロラ波+星+雪 === */
+  if(sc==='aurora'){
+    addStars(50,60);
+    for(let i=0;i<4;i++){
+      const a=document.createElement('div');a.className='aurora-wave';
+      a.style.top=(5+i*10)+'%';
+      a.style.animationDelay=(i*2)+'s';
+      a.style.background=`linear-gradient(180deg,transparent,rgba(${80+i*50},${255-i*20},${180+i*25},0.1),transparent)`;
+      sceneLayer.appendChild(a);
+    }
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      const sz=2+Math.random()*4;
+      p.className='weather-p wp-snow';
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.left=Math.random()*100+'%';p.style.top='-10px';
+      p.style.setProperty('--wx',(Math.random()-0.5)*80+'px');
+      p.style.setProperty('--wy',VH()+'px');
+      p.style.animationDuration=(4+Math.random()*4)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),9000);
+    },100);
+  }
+
+  /* === Lv12 海底 — 泡+光の筋 === */
+  if(sc==='ocean'){
+    for(let i=0;i<5;i++){
+      const r=document.createElement('div');r.className='light-ray';
+      r.style.left=(10+i*18)+'%';
+      r.style.animationDelay=(i*1.5)+'s';
+      r.style.animationDuration=(6+Math.random()*4)+'s';
+      sceneLayer.appendChild(r);
+    }
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-bubble-p';
+      const sz=4+Math.random()*10;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.left=Math.random()*100+'%';p.style.bottom='-10px';p.style.top='auto';
+      p.style.setProperty('--wx',(Math.random()-0.5)*40+'px');
+      p.style.setProperty('--wy',(-VH())+'px');
+      p.style.animationDuration=(4+Math.random()*5)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),10000);
+    },200);
+  }
+
+  /* === Lv13 溶岩洞窟 — 火の粉が下から上 === */
+  if(sc==='lava'){
+    /* 溶岩の赤い光 */
+    const glow=document.createElement('div');
+    glow.style.cssText='position:absolute;bottom:0;left:0;width:100%;height:30%;background:linear-gradient(0deg,rgba(255,60,0,0.2),transparent);filter:blur(20px);';
+    sceneLayer.appendChild(glow);
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-ember';
+      const sz=2+Math.random()*4;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      const hue=Math.random()>0.3?`rgba(255,${60+Math.random()*100},0,${0.6+Math.random()*0.4})`:`rgba(255,200,50,${0.5+Math.random()*0.5})`;
+      p.style.background=hue;
+      p.style.boxShadow=`0 0 ${3+Math.random()*5}px ${hue}`;
+      p.style.left=Math.random()*100+'%';p.style.bottom='-5px';p.style.top='auto';
+      p.style.setProperty('--wx',(Math.random()-0.5)*80+'px');
+      p.style.setProperty('--wy',(-VH()*0.8)+'px');
+      p.style.animationDuration=(2+Math.random()*3)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),6000);
+    },60);
+  }
+
+  /* === Lv14 電脳空間 — マトリックス文字 === */
+  if(sc==='matrix'){
+    const chars='ｱｲｳｴｵｶｷｸｹｺ01サシスセソ';
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='wp-matrix-ch';
+      p.textContent=chars[Math.floor(Math.random()*chars.length)];
+      p.style.left=Math.random()*100+'%';p.style.top='-20px';
+      p.style.fontSize=(10+Math.random()*14)+'px';
+      p.style.opacity=0.4+Math.random()*0.6;
+      p.style.textShadow='0 0 8px #0f0';
+      p.style.setProperty('--wy',VH()+'px');
+      p.style.animationDuration=(1.5+Math.random()*2)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),4000);
+    },50);
+  }
+
+  /* === Lv15 虹嵐 — カラフル光粒が全方向 === */
+  if(sc==='rainbow'){
+    body.style.backgroundSize='400% 400%';
+    body.style.animation='chaos-bg 6s linear infinite';
+    const rc=()=>`hsl(${Math.random()*360},100%,65%)`;
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-rainbow';
+      const sz=3+Math.random()*6;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.background=rc();
+      p.style.boxShadow=`0 0 8px ${p.style.background}`;
+      p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';
+      p.style.setProperty('--wx',((Math.random()-0.5)*300)+'px');
+      p.style.setProperty('--wy',((Math.random()-0.5)*300)+'px');
+      p.style.animationDuration=(1+Math.random()*2)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),3500);
+    },40);
+  }
+
+  /* === Lv16 雷雲 — 稲妻+激しい雨 === */
+  if(sc==='thunder'){
+    /* 激しい雨 */
+    spawnLoop(()=>{
+      for(let j=0;j<3;j++){
+        const p=document.createElement('div');
+        p.className='weather-p wp-rain';
+        p.style.height=(12+Math.random()*16)+'px';
+        p.style.left=Math.random()*100+'%';p.style.top='-15px';
+        p.style.background='rgba(180,200,240,0.7)';
+        p.style.setProperty('--wx',(Math.random()-0.2)*40+'px');
+        p.style.setProperty('--wy',VH()+'px');
+        p.style.animationDuration=(0.5+Math.random()*0.4)+'s';
+        sceneLayer.appendChild(p);
+        setTimeout(()=>p.remove(),1500);
+      }
+    },20);
+    /* 稲妻フラッシュ */
+    spawnLoop(()=>{
+      const fl=document.createElement('div');
+      fl.style.cssText=`position:absolute;inset:0;background:rgba(200,200,255,0.3);animation:lightning-flash 0.5s ease-out forwards;pointer-events:none;`;
+      sceneLayer.appendChild(fl);
+      setTimeout(()=>fl.remove(),600);
+    },2000+Math.random()*3000);
+  }
+
+  /* === Lv17 銀河 — 渦巻く星雲+流れ星 === */
+  if(sc==='galaxy'){
+    addStars(80,100);
+    /* 星雲 */
+    const nebColors=['rgba(120,50,200,0.15)','rgba(50,100,200,0.12)','rgba(200,50,120,0.1)'];
+    for(let i=0;i<3;i++){
+      const n=document.createElement('div');n.className='nebula-cloud';
+      const sz=150+Math.random()*200;
+      n.style.width=sz+'px';n.style.height=sz+'px';
+      n.style.background=`radial-gradient(circle,${nebColors[i]},transparent 70%)`;
+      n.style.top=(20+i*25)+'%';n.style.left=(10+i*30)+'%';
+      n.style.animationDuration=(15+i*5)+'s';
+      n.style.animationDirection=i%2?'reverse':'normal';
+      sceneLayer.appendChild(n);
+    }
+    /* 流れ星 */
+    spawnLoop(()=>{
+      const s=document.createElement('div');
+      s.className='weather-p';
+      s.style.cssText=`position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;top:${Math.random()*50}%;left:${Math.random()*70}%;box-shadow:0 0 8px #fff,-4px 0 12px rgba(150,180,255,0.6);`;
+      s.style.setProperty('--wx',(120+Math.random()*180)+'px');
+      s.style.setProperty('--wy',(80+Math.random()*120)+'px');
+      s.style.animationName='wp-fall';
+      s.style.animationDuration='0.5s';
+      sceneLayer.appendChild(s);
+      setTimeout(()=>s.remove(),700);
+    },1500);
+  }
+
+  /* === Lv18 ブラックホール — 中心に吸い込まれる渦 === */
+  if(sc==='blackhole'){
+    addStars(40,100);
+    const cx=50, cy=50;
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-vortex';
+      const sz=2+Math.random()*4;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      const hue=`hsl(${260+Math.random()*60},80%,${50+Math.random()*30}%)`;
+      p.style.background=hue;
+      p.style.boxShadow=`0 0 6px ${hue}`;
+      const startX=Math.random()*100, startY=Math.random()*100;
+      p.style.left=startX+'%';p.style.top=startY+'%';
+      const dx=(cx-startX)*window.innerWidth/100;
+      const dy=(cy-startY)*window.innerHeight/100;
+      p.style.setProperty('--vx',dx+'px');
+      p.style.setProperty('--vy',dy+'px');
+      p.style.animationDuration=(1.5+Math.random()*2)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),4000);
+    },50);
+    /* 中心の光 */
+    const core=document.createElement('div');
+    core.style.cssText=`position:absolute;top:50%;left:50%;width:20px;height:20px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(200,150,255,0.4),transparent 70%);box-shadow:0 0 60px 20px rgba(150,100,255,0.2);`;
+    sceneLayer.appendChild(core);
+  }
+
+  /* === Lv19 超新星爆発 — 爆発的に広がる光の波+火花 === */
+  if(sc==='supernova'){
+    /* 中心からの爆発パルス */
+    const pulse=document.createElement('div');
+    pulse.style.cssText='position:absolute;top:40%;left:50%;width:10px;height:10px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,200,50,0.6),rgba(255,80,0,0.3),transparent 70%);box-shadow:0 0 80px 30px rgba(255,100,0,0.3);animation:supernova-pulse 3s ease-in-out infinite alternate;';
+    sceneLayer.appendChild(pulse);
+    if(!document.getElementById('supernova-style')){
+      const ss=document.createElement('style');ss.id='supernova-style';
+      ss.textContent='@keyframes supernova-pulse{0%{transform:translate(-50%,-50%) scale(1);box-shadow:0 0 80px 30px rgba(255,100,0,0.3)}100%{transform:translate(-50%,-50%) scale(3);box-shadow:0 0 120px 50px rgba(255,100,0,0.15)}}';
+      document.head.appendChild(ss);
+    }
+    /* 飛び散る火花 */
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-explode';
+      const sz=2+Math.random()*4;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      const c=`hsl(${Math.random()*60},100%,${50+Math.random()*30}%)`;
+      p.style.background=c;p.style.boxShadow=`0 0 8px ${c}`;
+      p.style.left='50%';p.style.top='40%';
+      const angle=Math.random()*Math.PI*2;
+      const dist=100+Math.random()*300;
+      p.style.setProperty('--ex',Math.cos(angle)*dist+'px');
+      p.style.setProperty('--ey',Math.sin(angle)*dist+'px');
+      p.style.animationDuration=(1+Math.random()*1.5)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),3000);
+    },30);
+  }
+
+  /* === Lv20 次元の裂け目 — ヒビ光線+グリッチ === */
+  if(sc==='rift'){
+    sceneLayer.style.animation='glitch-shift 4s linear infinite';
+    /* ネオンのヒビ線 */
+    for(let i=0;i<6;i++){
+      const line=document.createElement('div');line.className='glitch-line';
+      const y=10+Math.random()*80;
+      line.style.cssText+=`top:${y}%;height:2px;background:linear-gradient(90deg,transparent,${Math.random()>0.5?'#f0f':'#0ff'},transparent);filter:blur(1px);opacity:0.6;animation-delay:${Math.random()*2}s;animation-duration:${0.2+Math.random()*0.5}s;`;
+      sceneLayer.appendChild(line);
+    }
+    /* ランダムグリッチフラッシュ */
+    spawnLoop(()=>{
+      const fl=document.createElement('div');
+      fl.style.cssText=`position:absolute;inset:0;background:rgba(${Math.random()>0.5?'255,0,255':'0,255,255'},0.08);pointer-events:none;`;
+      sceneLayer.appendChild(fl);
+      setTimeout(()=>fl.remove(),100);
+    },300);
+    /* 飛び散る粒 */
+    spawnLoop(()=>{
+      const p=document.createElement('div');
+      p.className='weather-p wp-rainbow';
+      const sz=2+Math.random()*4;
+      p.style.width=sz+'px';p.style.height=sz+'px';
+      p.style.background=Math.random()>0.5?'#f0f':'#0ff';
+      p.style.boxShadow=`0 0 10px ${p.style.background}`;
+      p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';
+      p.style.setProperty('--wx',((Math.random()-0.5)*200)+'px');
+      p.style.setProperty('--wy',((Math.random()-0.5)*200)+'px');
+      p.style.animationDuration=(0.5+Math.random()*1)+'s';
+      sceneLayer.appendChild(p);
+      setTimeout(()=>p.remove(),2000);
+    },60);
+  }
+
+  /* === Lv21 カオスフィナーレ — 全部入り === */
+  if(sc==='chaos'){
+    body.style.backgroundSize='600% 600%';
+    body.style.animation='chaos-bg 3s linear infinite';
+    /* 花火 */
+    spawnLoop(()=>{
+      spawnFireworks(Math.random()*100,Math.random()*60,15);
+    },800);
+    /* 紙吹雪 */
+    spawnLoop(()=>{spawnConfetti(5)},200);
+    /* オーロラ */
+    for(let i=0;i<3;i++){
+      const a=document.createElement('div');a.className='aurora-wave';
+      a.style.top=(5+i*12)+'%';a.style.animationDelay=(i*2)+'s';
+      a.style.background=`linear-gradient(180deg,transparent,hsla(${i*120},100%,60%,0.1),transparent)`;
+      sceneLayer.appendChild(a);
+    }
+    /* 流れ星 */
+    spawnLoop(()=>{
+      const s=document.createElement('div');
+      s.className='weather-p';
+      s.style.cssText=`position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;top:${Math.random()*40}%;left:${Math.random()*70}%;box-shadow:0 0 8px #fff;`;
+      s.style.setProperty('--wx',(150+Math.random()*200)+'px');
+      s.style.setProperty('--wy',(100+Math.random()*150)+'px');
+      s.style.animationName='wp-fall';s.style.animationDuration='0.4s';
+      sceneLayer.appendChild(s);
+      setTimeout(()=>s.remove(),600);
+    },500);
+    /* 稲妻 */
+    spawnLoop(()=>{
+      const fl=document.createElement('div');
+      fl.style.cssText=`position:absolute;inset:0;background:rgba(255,255,200,0.2);animation:lightning-flash 0.4s ease-out forwards;pointer-events:none;`;
+      sceneLayer.appendChild(fl);
+      setTimeout(()=>fl.remove(),500);
+    },3000);
+    addStars(40,100);
   }
 }
 
@@ -685,9 +1158,9 @@ function clearLines(rows){
   const cb=combo>1?50*(combo-1)*level:0;
   score+=ls+cb; lines+=cnt;
   const newLv=Math.floor(lines/10)+1;
-  if(newLv>level){level=newLv;dropInterval=Math.max(100,800-(level-1)*60);say('levelup');updateTheme(level)}
+  if(newLv>level){level=newLv;dropInterval=Math.max(80,800-(level-1)*36);say('levelup');updateTheme(level)}
   else level=newLv;
-  dropInterval=Math.max(100,800-(level-1)*60);
+  dropInterval=Math.max(80,800-(level-1)*36);
   scoreVal.textContent=score; levelVal.textContent=level;
 
   /* ボード内演出 */
@@ -805,7 +1278,9 @@ function startGame(){
   goOverlay.classList.remove('active');
   charWrap.classList.remove('go-front');
   /* テーマリセット */
-  currentTheme='';document.body.style.background='';sceneLayer.innerHTML='';
+  currentTheme='';document.body.style.background='';document.body.style.animation='';
+  clearEffects();
+  updateTheme(1);
   if(weatherInterval){clearInterval(weatherInterval);weatherInterval=null}
   current=rp();nextPiece=rp();drawNext();
   setBubbleMode(false);
