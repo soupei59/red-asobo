@@ -278,6 +278,10 @@ body::before {
   display: flex;
   align-items: center;
 }
+.bubble.side > span {
+  display: block;
+  width: 100%;
+}
 .bubble.side::before {
   bottom: auto;
   left: -9px;
