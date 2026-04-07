@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>レッドとあそぼう</title>
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 <style>
 /* ===== レッド登場演出（派手版） ===== */
 .entrance-overlay {
@@ -220,7 +220,7 @@
         <div class="character" id="greet-char">
           <img src="images/normal.png" alt="シブ・レッド">
         </div>
-        <div class="bubble side" id="greeting-bubble"></div>
+        <div class="bubble side" id="greeting-bubble"><span id="greeting-text"></span></div>
       </div>
       <button type="button" class="btn warm hidden" id="to-menu-btn">つぎへ すすむ</button>
     </section>
@@ -329,6 +329,7 @@ const nameSection  = document.getElementById('name-section');
 const greetSection = document.getElementById('greeting-section');
 const menuSection  = document.getElementById('menu-section');
 const greetBubble  = document.getElementById('greeting-bubble');
+const greetText    = document.getElementById('greeting-text');
 const toMenuBtn    = document.getElementById('to-menu-btn');
 const greetChar    = document.getElementById('greet-char');
 const backLink     = document.getElementById('back-link');
@@ -420,9 +421,9 @@ startBtn.addEventListener('click', () => {
 
       // 自己紹介 → 挨拶 → メニュー
       const introLine = 'オレはシブレンジャー・レッド！<br>レッドって<ruby>呼<rt>よ</rt></ruby>んでな〜！';
-      typeWrite(greetBubble, introLine, 70, () => {
+      typeWrite(greetText, introLine, 70, () => {
         setTimeout(() => {
-          typeWrite(greetBubble, fullLine, 70, () => {
+          typeWrite(greetText, fullLine, 70, () => {
             setTimeout(() => goTo('menu'), 2200);
           });
         }, 1200);
