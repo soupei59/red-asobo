@@ -271,7 +271,7 @@ body::before {
   width: clamp(300px, 60vw, 520px);
   min-height: 160px;
   text-align: left;
-  font-size: var(--t-xl);
+  font-size: var(--t-lg);
   padding: var(--s-5) var(--s-6);
   box-sizing: border-box;
   overflow: hidden;
