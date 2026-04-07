@@ -603,9 +603,10 @@ body::before {
   transition: transform 0.25s var(--ease-soft);
 }
 .menu-img-item img {
-  width: 100%;
+  width: 75%;
   height: auto;
   display: block;
+  margin: 0 auto;
   filter: drop-shadow(0 4px 10px rgba(45, 40, 35, 0.18));
   transition: filter 0.25s ease;
 }
