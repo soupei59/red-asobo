@@ -292,7 +292,7 @@ const OPPONENTS = {
     },
     comments: {
       intro: [
-        "オセロやろ〜{name}！",
+        "オセロ<ruby>遊<rt>あそ</rt></ruby>ろ〜{name}！",
         "{name}！オセロ<ruby>対決<rt>たいけつ</rt></ruby>や！",
         "よっしゃ{name}！<br>レッドとオセロ<ruby>勝負<rt>しょうぶ</rt></ruby>やで〜！",
         "{name}きた〜！<br>レッド<ruby>待<rt>ま</rt></ruby>っとったで！",
@@ -340,7 +340,7 @@ const OPPONENTS = {
       ],
       playerBad: [
         "あれ〜{name}、<br>そこでええの？ふふふ",
-        "レッド、ちょっと<ruby>嬉<rt>うれ</rt></ruby>しいかも〜！",
+        "レッド、ちょっとうれしいかも〜！",
         "ほほ〜、{name}、<br>レッドにチャンスくれるん？",
         "{name}、おもしろいとこ<ruby>置<rt>お</rt></ruby>くな〜！",
         "ありがと{name}！<br>レッドもらうで〜",
@@ -363,16 +363,16 @@ const OPPONENTS = {
         "ここぞ！って<ruby>感<rt>かん</rt></ruby>じや！<br>レッドいけいけ〜！"
       ],
       playerLeading: [
-        "{name}、つよいな〜！<br>レッドがんばらな！",
+        "{name}、<ruby>強<rt>つよ</rt></ruby>いな〜！<br>レッドがんばらな！",
         "うわ〜{name}<ruby>優勢<rt>ゆうせい</rt></ruby>やん！",
         "{name}リードしてる！<br>レッドピンチや〜！",
-        "え〜！{name}つよ！<br>レッドどうしよ〜！",
+        "え〜！{name}<ruby>強<rt>つよ</rt></ruby>！<br>レッドどうしよ〜！",
         "{name}がいっぱいや〜！<br>レッド<ruby>巻<rt>ま</rt></ruby>きかえすで！",
         "うう〜{name}<ruby>強<rt>つよ</rt></ruby>すぎ〜！<br>でもレッドあきらめへん！"
       ],
       aiLeading: [
         "レッドちょっとリードかな〜<br>でも{name}ならいけるで！",
-        "レッド<ruby>調子<rt>ちょうし</rt></ruby>ええで〜<br>でも{name}もつよい！",
+        "レッド<ruby>調子<rt>ちょうし</rt></ruby>ええで〜<br>でも{name}も<ruby>強<rt>つよ</rt></ruby>い！",
         "レッドリードや！<br>でも<ruby>油断<rt>ゆだん</rt></ruby>したらあかんな〜",
         "おっ、レッドがんばってるやろ？<br>でも{name}こわいわ〜",
         "レッドいい<ruby>感<rt>かん</rt></ruby>じやけど<br>{name}のこと<ruby>油断<rt>ゆだん</rt></ruby>でけへんわ〜",
@@ -388,11 +388,11 @@ const OPPONENTS = {
         "レッド<ruby>置<rt>お</rt></ruby>けへん！<br>パスするわ〜くやし！",
         "えっ！レッド<ruby>置<rt>お</rt></ruby>けへんの！？<br>パスや〜！",
         "うそ〜ん！<br>レッドどこにも<ruby>置<rt>お</rt></ruby>けへん！<br>パスや〜！",
-        "くっ…レッドパスや！<br>{name}つよいわ〜！"
+        "くっ…レッドパスや！<br>{name}<ruby>強<rt>つよ</rt></ruby>いわ〜！"
       ],
       winPlayer: [
         "{name}の<ruby>勝<rt>か</rt></ruby>ち〜！<br>すごいやん！<br>レッド<ruby>完敗<rt>かんぱい</rt></ruby>やわ〜！",
-        "まけた〜！{name}つよすぎ！<br>レッド<ruby>悔<rt>くや</rt></ruby>しいけど<br>すごいわ！",
+        "<ruby>負<rt>ま</rt></ruby>けた〜！{name}<ruby>強<rt>つよ</rt></ruby>すぎ！<br>レッド<ruby>悔<rt>くや</rt></ruby>しいけど<br>すごいわ！",
         "やられた〜！<br>{name}、めっちゃかっこええ！<br>つぎこそレッドが<ruby>勝<rt>か</rt></ruby>つで！",
         "{name}の<ruby>圧勝<rt>あっしょう</rt></ruby>や！<br>レッド<ruby>脱帽<rt>だつぼう</rt></ruby>やで〜！<br>またやろな！",
         "うわ〜ん<ruby>負<rt>ま</rt></ruby>けた〜！<br>でも{name}が<ruby>強<rt>つよ</rt></ruby>いんやから<br>しゃあないな〜！",
@@ -402,7 +402,7 @@ const OPPONENTS = {
         "やった〜レッドの<ruby>勝<rt>か</rt></ruby>ち！<br>でも{name}もがんばったで！<br>またやろな！",
         "レッド<ruby>勝<rt>か</rt></ruby>っちゃった〜！<br>{name}のあの<ruby>一手<rt>いって</rt></ruby>はよかったで〜",
         "レッドがんばった〜！<br>{name}もナイスファイトやったで！",
-        "えへへ〜レッドの<ruby>勝<rt>か</rt></ruby>ち！<br>でもな、{name}もつよかったで！<br>いい<ruby>勝負<rt>しょうぶ</rt></ruby>やったわ〜！",
+        "えへへ〜レッドの<ruby>勝<rt>か</rt></ruby>ち！<br>でもな、{name}も<ruby>強<rt>つよ</rt></ruby>かったで！<br>いい<ruby>勝負<rt>しょうぶ</rt></ruby>やったわ〜！",
         "レッドの<ruby>勝<rt>か</rt></ruby>ちや〜！<br>でも{name}にはドキドキしたわ〜<br>リベンジ<ruby>待<rt>ま</rt></ruby>ってるで！",
         "やった〜！<br>でも{name}のあの<ruby>攻<rt>せ</rt></ruby>めはこわかった〜<br>つぎはもっとすごい<ruby>勝負<rt>しょうぶ</rt></ruby>になるで！"
       ],
@@ -506,7 +506,7 @@ const OPPONENTS = {
         "{name}リードだね。<br>ブラック、ここからだ。",
         "{name}がリードしてる…<br>でもボクはあきらめないよ。",
         "ちょっとまずいかな…<br>でも{name}、<ruby>最後<rt>さいご</rt></ruby>までわからないよ？",
-        "{name}つよいなあ…<br>ブラック、<ruby>本気<rt>ほんき</rt></ruby><ruby>出<rt>だ</rt></ruby>すよ。"
+        "{name}<ruby>強<rt>つよ</rt></ruby>いなあ…<br>ブラック、<ruby>本気<rt>ほんき</rt></ruby><ruby>出<rt>だ</rt></ruby>すよ。"
       ],
       aiLeading: [
         "ブラック、少しリードかな。<br>でも{name}はあなどれない。",
@@ -540,7 +540,7 @@ const OPPONENTS = {
         "ブラックの<ruby>勝<rt>か</rt></ruby>ちだ。<br>でも{name}、<ruby>強<rt>つよ</rt></ruby>かったよ。<br>いい<ruby>勝負<rt>しょうぶ</rt></ruby>だった。",
         "<ruby>勝<rt>か</rt></ruby>っちゃった。<br>でも{name}のあの<ruby>一手<rt>いって</rt></ruby>は<br>ドキッとしたよ。",
         "ブラックの<ruby>勝<rt>か</rt></ruby>ちだね。<br>{name}もナイスファイト。<br>リベンジ<ruby>待<rt>ま</rt></ruby>ってるよ。",
-        "ボクの<ruby>勝<rt>か</rt></ruby>ちだ。<br>でも{name}、キミはつよい。<br>またやろう。",
+        "ボクの<ruby>勝<rt>か</rt></ruby>ちだ。<br>でも{name}、キミは<ruby>強<rt>つよ</rt></ruby>い。<br>またやろう。",
         "ブラック、<ruby>勝<rt>か</rt></ruby>たせてもらったよ。<br>{name}のあの<ruby>攻<rt>せ</rt></ruby>めは<br>ほんとにヒヤッとした。",
         "<ruby>勝<rt>か</rt></ruby>ったけど…<br>ギリギリだったよ{name}。<br><ruby>次<rt>つぎ</rt></ruby>はわからないね。"
       ],
@@ -579,7 +579,7 @@ const OPPONENTS = {
       ],
       yourTurn: [
         "{name}の<ruby>番<rt>ばん</rt></ruby>だぜ。<br>さあ、どう<ruby>出<rt>で</rt></ruby>る？",
-        "ほら{name}、<ruby>次<rt>つぎ</rt></ruby>はキミだぜ。<br><ruby>悩<rt>なや</rt></ruby>んでるヒマはないぜ？",
+        "ほら{name}、<ruby>次<rt>つぎ</rt></ruby>はキミだぜ。<br>なやんでるヒマはないぜ？",
         "{name}のターンだ。<br>オレを<ruby>驚<rt>おどろ</rt></ruby>かせてくれよ。",
         "さあ{name}、<ruby>見<rt>み</rt></ruby>せてくれ。<br>キミの<ruby>本気<rt>ほんき</rt></ruby>ってやつをさ。",
         "{name}、どこに<ruby>置<rt>お</rt></ruby>く？<br>じっくり<ruby>考<rt>かんが</rt></ruby>えな。",
@@ -679,11 +679,11 @@ const OPPONENTS = {
       ],
       winAI: [
         "フッ、オレの<ruby>勝<rt>か</rt></ruby>ちだぜ。<br>オレは<ruby>無敵<rt>むてき</rt></ruby>だからな。<br>でも{name}、<ruby>悪<rt>わる</rt></ruby>くなかったぜ。<br>またかかってきな。",
-        "オレに<ruby>勝<rt>か</rt></ruby>てるやつはいねえ。<br>でも{name}、なかなかいい<ruby>勝負<rt>しょうぶ</rt></ruby>だったぜ。<br><ruby>次<rt>つぎ</rt></ruby>はもっとつよくなってこいよ。",
+        "オレに<ruby>勝<rt>か</rt></ruby>てるやつはいねえ。<br>でも{name}、なかなかいい<ruby>勝負<rt>しょうぶ</rt></ruby>だったぜ。<br><ruby>次<rt>つぎ</rt></ruby>はもっと<ruby>強<rt>つよ</rt></ruby>くなってこいよ。",
         "やっぱりオレが<ruby>最強<rt>さいきょう</rt></ruby>だぜ。<br>でも{name}のあの<ruby>一手<rt>いって</rt></ruby>はドキッとした。<br>リベンジ、<ruby>待<rt>ま</rt></ruby>ってるぜ。",
         "フフ…オレの<ruby>勝<rt>か</rt></ruby>ちだ。<br><ruby>当然<rt>とうぜん</rt></ruby>だぜ。<br>でも{name}、キミはいい<ruby>勝負<rt>しょうぶ</rt></ruby>をしてくれた。<br>またやろうぜ。",
         "オレの<ruby>勝<rt>か</rt></ruby>ちだぜ。<br>でも{name}、おまえはすごいやつだ。<br><ruby>次<rt>つぎ</rt></ruby>はもっとつよくなって<br>かかってこいよ。",
-        "フッ、<ruby>勝<rt>か</rt></ruby>ったぜ。<br>でも{name}、おまえは<ruby>弱<rt>よわ</rt></ruby>くない。<br>もっとつよくなれるぜ。<br>またいつでもかかってきな。"
+        "フッ、<ruby>勝<rt>か</rt></ruby>ったぜ。<br>でも{name}、おまえは<ruby>弱<rt>よわ</rt></ruby>くない。<br>もっと<ruby>強<rt>つよ</rt></ruby>くなれるぜ。<br>またいつでもかかってきな。"
       ],
       draw: [
         "ひきわけ…だと！？<br>{name}、オレと<ruby>互角<rt>ごかく</rt></ruby>とはやるじゃねえか。",
@@ -695,7 +695,7 @@ const OPPONENTS = {
         "フッ…もう<ruby>行<rt>い</rt></ruby>くのか{name}。<br>いつでもかかってこいよ。<br>オレはここで<ruby>待<rt>ま</rt></ruby>ってるぜ。",
         "じゃあな{name}。<br>おまえとの<ruby>勝負<rt>しょうぶ</rt></ruby>、<ruby>悪<rt>わる</rt></ruby>くなかったぜ。<br>またいつでも<ruby>来<rt>こ</rt></ruby>いよ。",
         "ばいばいだぜ{name}。<br>オレは<ruby>逃<rt>に</rt></ruby>げも<ruby>隠<rt>かく</rt></ruby>れもしねえ。<br>いつでも<ruby>相手<rt>あいて</rt></ruby>してやるぜ。",
-        "またな{name}。<br>つぎ<ruby>会<rt>あ</rt></ruby>うときは<br>もっとつよくなってこいよ。<br>…<ruby>待<rt>ま</rt></ruby>ってるぜ。"
+        "またな{name}。<br>つぎ<ruby>会<rt>あ</rt></ruby>うときは<br>もっと<ruby>強<rt>つよ</rt></ruby>くなってこいよ。<br>…<ruby>待<rt>ま</rt></ruby>ってるぜ。"
       ]
     }
   }

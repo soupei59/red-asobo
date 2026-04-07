@@ -24,7 +24,7 @@
     <!-- ボタンエリア -->
     <div class="quiz-buttons hidden" id="quiz-buttons">
       <button type="button" class="btn small" id="hint-btn" style="background:var(--mustard); color:#fff;">ヒント</button>
-      <button type="button" class="btn small" id="answer-btn" style="background:var(--sage-deep); color:#fff;">こたえ</button>
+      <button type="button" class="btn small" id="answer-btn" style="background:var(--sage-deep); color:#fff;"><ruby>答<rt>こた</rt></ruby>え</button>
     </div>
 
     <!-- 感想ボタン -->
@@ -36,13 +36,13 @@
 
     <!-- つぎへ / おしまい -->
     <div class="quiz-buttons hidden" id="next-buttons">
-      <button type="button" class="btn small" id="next-btn">つぎのもんだい</button>
+      <button type="button" class="btn small" id="next-btn">つぎの<ruby>問題<rt>もんだい</rt></ruby></button>
       <button type="button" class="btn small" id="end-btn" style="background:var(--sage); color:#fff;">おしまい</button>
     </div>
 
     <!-- スコア -->
     <div class="score" id="score-bar">
-      もんだい <span class="num" id="score-current">0</span> / <span id="score-total">10</span>
+      <ruby>問題<rt>もんだい</rt></ruby> <span class="num" id="score-current">0</span> / <span id="score-total">10</span>
     </div>
 
   </div>
@@ -54,344 +54,344 @@ const RIDDLES = [
     q: "てがブルブルふるえちゃう<br>かぐは？",
     hint: "「て」が「ぶるぶる」だよ",
     answer: "テーブル",
-    explain: "せいかいは「テーブル」やで！<br>「て」＋「ブル」で「テーブル」になるねん。<br>てがブルブルって、レッドもさむい<ruby>日<rt>ひ</rt></ruby>はそうなるわ〜！",
-    followups: ["{name}、わかったかな〜？", "{name}、せいかいしたかな？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「テーブル」やで！<br>「て」＋「ブル」で「テーブル」になるねん。<br>てがブルブルって、レッドもさむい<ruby>日<rt>ひ</rt></ruby>はそうなるわ〜！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな〜？", "{name}、<ruby>正解<rt>せいかい</rt></ruby>したかな？"]
   },
   {
     q: "カメとラクダとサイが<br>かったものは？",
     hint: "なまえを つなげて よんでみて",
     answer: "カメラ",
-    explain: "せいかいは「カメラ」！<br>「カメ・ラクダ・サイ」をつなげてよむと<br>「カメラください」になるんやで。<br>どうぶつたちも<ruby>写真<rt>しゃしん</rt></ruby>とりたいんやな〜パシャ！",
-    followups: ["{name}、これはわかった？", "{name}、むずかしかったかな〜？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「カメラ」！<br>「カメ・ラクダ・サイ」をつなげてよむと<br>「カメラください」になるんやで。<br>どうぶつたちも<ruby>写真<rt>しゃしん</rt></ruby>とりたいんやな〜パシャ！",
+    followups: ["{name}、これは<ruby>解<rt>わ</rt></ruby>かった？", "{name}、むずかしかったかな〜？"]
   },
   {
     q: "くちから でてくる<br>「くび」ってなんだ？",
     hint: "ふぁ〜〜〜あ……",
     answer: "あくび",
-    explain: "せいかいは「あくび」や！<br>「あ・くび」のなかに「くび」がかくれてるねん。<br>レッドもねむいとき おっきいあくびでるわ〜<br>ふぁ〜あ！",
-    followups: ["{name}、わかった？", "{name}、ねむくなってきた？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「あくび」や！<br>「あ・くび」のなかに「くび」がかくれてるねん。<br>レッドもねむいとき おっきいあくび<ruby>出<rt>で</rt></ruby>るわ〜<br>ふぁ〜あ！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かった？", "{name}、ねむくなってきた？"]
   },
   {
     q: "ニラが はいっている<br>アイスって なにあじ？",
     hint: "アイスのあじを おもいだしてみて",
     answer: "バニラ",
-    explain: "せいかいは「バニラ」！<br>「バ・ニラ」のなかに「ニラ」がかくれてるんや。<br>でもほんまにニラ<ruby>味<rt>あじ</rt></ruby>のアイスあったら…<br>レッドはちょっと<ruby>遠慮<rt>えんりょ</rt></ruby>するわ〜！",
-    followups: ["{name}、せいかいした？", "{name}、ニラアイスたべてみたい？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「バニラ」！<br>「バ・ニラ」のなかに「ニラ」がかくれてるんや。<br>でもほんまにニラ<ruby>味<rt>あじ</rt></ruby>のアイスあったら…<br>レッドはちょっと<ruby>遠慮<rt>えんりょ</rt></ruby>するわ〜！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}、ニラアイス<ruby>食<rt>た</rt></ruby>べてみたい？"]
   },
   {
     q: "めのまえに あるのに<br>ないものは？",
     hint: "くだものだよ",
     answer: "なし（<ruby>梨<rt>なし</rt></ruby>）",
-    explain: "せいかいは「なし（<ruby>梨<rt>なし</rt></ruby>）」やで！<br>「ない」→「なし」→くだものの「<ruby>梨<rt>なし</rt></ruby>」ってことやねん。<br>ことばのマジックやな〜<br>レッドもびっくりや！",
-    followups: ["{name}、これはひらめいた？", "{name}、なしすきやろ〜？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「なし（<ruby>梨<rt>なし</rt></ruby>）」やで！<br>「ない」→「なし」→くだものの「<ruby>梨<rt>なし</rt></ruby>」ってことやねん。<br><ruby>言葉<rt>ことば</rt></ruby>のマジックやな〜<br>レッドもびっくりや！",
+    followups: ["{name}、これは<ruby>閃<rt>ひらめ</rt></ruby>いた？", "{name}、なし<ruby>好<rt>す</rt></ruby>きやろ〜？"]
   },
   {
-    q: "いつでも ちかくにある<br>たべものは？",
+    q: "いつでも ちかくにある<br><ruby>食<rt>た</rt></ruby>べものは？",
     hint: "「ちかく」を べつの いいかたにすると？",
     answer: "そば",
-    explain: "せいかいは「そば」！<br>「ちかく」のことを「そば（<ruby>側<rt>そば</rt></ruby>）」っていうやろ？<br>それが たべものの「そば」とおなじなんや。<br>レッド、そば<ruby>大好<rt>だいす</rt></ruby>きやねん〜ズルズル！",
-    followups: ["{name}、わかったかな？", "{name}もそば好き？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「そば」！<br>「ちかく」のことを「そば（<ruby>側<rt>そば</rt></ruby>）」って<ruby>言<rt>い</rt></ruby>うやろ？<br>それが <ruby>食<rt>た</rt></ruby>べものの「そば」とおなじなんや。<br>レッド、そば<ruby>大好<rt>だいす</rt></ruby>きやねん〜ズルズル！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな？", "{name}もそば好き？"]
   },
   {
     q: "あらっても あらっても<br>しろくならないものは？",
     hint: "おふろで あらうよ",
     answer: "かみ（<ruby>髪<rt>かみ</rt></ruby>）",
-    explain: "せいかいは「かみ（<ruby>髪<rt>かみ</rt></ruby>）」やで！<br>かみのけは あらっても<ruby>色<rt>いろ</rt></ruby>はかわらんよね〜。<br>レッドも<ruby>毎日<rt>まいにち</rt></ruby>あらうけど、<br>ずっとおんなじ<ruby>色<rt>いろ</rt></ruby>やわ！",
-    followups: ["{name}、あたった？", "{name}、かみ<ruby>毎日<rt>まいにち</rt></ruby>あらってる〜？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「かみ（<ruby>髪<rt>かみ</rt></ruby>）」やで！<br>かみのけは あらっても<ruby>色<rt>いろ</rt></ruby>はかわらんよね〜。<br>レッドも<ruby>毎日<rt>まいにち</rt></ruby>あらうけど、<br><ruby>図<rt>ず</rt></ruby>っとおんなじ<ruby>色<rt>いろ</rt></ruby>やわ！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}、かみ<ruby>毎日<rt>まいにち</rt></ruby>あらってる〜？"]
   },
   {
     q: "つかうと すぐ こわれちゃう<br>ちょうみりょうは？",
-    hint: "こしょうしちゃうよ",
-    answer: "こしょう",
-    explain: "せいかいは「こしょう」！<br>「こわれる」のことを「<ruby>故障<rt>こしょう</rt></ruby>（こしょう）」っていうやろ？<br>それがちょうみりょうの「こしょう」とおなじなんやで。<br>レッド、このなぞなぞ<ruby>好<rt>す</rt></ruby>きやわ〜くしゅん！",
-    followups: ["{name}、せいかいしたかな？", "{name}、くしゃみ出えへんかった？"]
+    hint: "こ<ruby>笑<rt>しょう</rt></ruby>しちゃうよ",
+    answer: "こ<ruby>笑<rt>しょう</rt></ruby>",
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「こ<ruby>笑<rt>しょう</rt></ruby>」！<br>「こわれる」のことを「<ruby>故障<rt>こ<ruby>笑<rt>しょう</rt></ruby></rt></ruby>（こ<ruby>笑<rt>しょう</rt></ruby>）」って<ruby>言<rt>い</rt></ruby>うやろ？<br>それがちょうみりょうの「こ<ruby>笑<rt>しょう</rt></ruby>」とおなじなんやで。<br>レッド、このなぞなぞ<ruby>好<rt>す</rt></ruby>きやわ〜くしゅん！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>したかな？", "{name}、くしゃみ出えへんかった？"]
   },
   {
     q: "おいしいのに「くさい」って<br>いわれちゃう やさいは？",
-    hint: "「くさい」が なまえにはいる やさいだよ",
+    hint: "「くさい」が なまえに<ruby>入<rt>は</rt></ruby>いる やさいだよ",
     answer: "はくさい（<ruby>白菜<rt>はくさい</rt></ruby>）",
-    explain: "せいかいは「はくさい（<ruby>白菜<rt>はくさい</rt></ruby>）」！<br>「は・くさい」のなかに「くさい」がはいってるねん。<br>はくさい、ほんまはめっちゃおいしいのにかわいそうやな〜。<br>おなべにいれたら<ruby>最高<rt>さいこう</rt></ruby>やで！",
-    followups: ["{name}、わかった〜？", "{name}、おなべ好き？レッドは大好きやで！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「はくさい（<ruby>白菜<rt>はくさい</rt></ruby>）」！<br>「は・くさい」のなかに「くさい」がはいってるねん。<br>はくさい、ほんまはめっちゃおいしいのにかわいそうやな〜。<br>おなべにいれたら<ruby>最高<rt>さいこう</rt></ruby>やで！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かった〜？", "{name}、おなべ好き？レッドは大好きやで！"]
   },
   {
-    q: "まんなかが どうしても<br>たべられない おかしは？",
-    hint: "たべられないってことは……",
+    q: "まんなかが どうしても<br><ruby>食<rt>た</rt></ruby>べられない おかしは？",
+    hint: "<ruby>食<rt>た</rt></ruby>べられないってことは……",
     answer: "ドーナツ",
-    explain: "せいかいは「ドーナツ」やで！<br>ドーナツはまんなかに あながあいてるから、<br>まんなかだけはどうやってもたべられへんねん。<br>レッド、あのあなの<ruby>部分<rt>ぶぶん</rt></ruby>もったいないな〜っていつもおもうわ！",
-    followups: ["{name}、ドーナツ好き？", "{name}、せいかいやった？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ドーナツ」やで！<br>ドーナツはまんなかに あながあいてるから、<br>まんなかだけはどうやっても<ruby>食<rt>た</rt></ruby>べられへんねん。<br>レッド、あのあなの<ruby>部分<rt>ぶぶん</rt></ruby>もったいないな〜っていつも<ruby>思<rt>おも</rt></ruby>うわ！",
+    followups: ["{name}、ドーナツ好き？", "{name}、<ruby>正解<rt>せいかい</rt></ruby>やった？"]
   },
   {
-    q: "せんすいかんの なかにある<br>たべものは？",
-    hint: "「せんすいかん」のなかに<br>たべもの あるかな？",
+    q: "せんすいかんの なかにある<br><ruby>食<rt>た</rt></ruby>べものは？",
+    hint: "「せんすいかん」のなかに<br><ruby>食<rt>た</rt></ruby>べもの あるかな？",
     answer: "すいか",
-    explain: "せいかいは「すいか」！<br>「せん・すいか・ん」のなかに「すいか」がかくれてるんやで。<br>せんすいかんのなかで すいかたべたら<ruby>最高<rt>さいこう</rt></ruby>やろな〜<br>パクパク！",
-    followups: ["{name}、みつけられた？", "{name}、すいか食べたくなってきた？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「すいか」！<br>「せん・すいか・ん」のなかに「すいか」がかくれてるんやで。<br>せんすいかんのなかで すいか<ruby>食<rt>た</rt></ruby>べたら<ruby>最高<rt>さいこう</rt></ruby>やろな〜<br>パクパク！",
+    followups: ["{name}、<ruby>見<rt>み</rt></ruby>つけられた？", "{name}、すいか食べたくなってきた？"]
   },
   {
     q: "ぼんやりしながら のる<br>のりものは？",
     hint: "ボーッとしているよ",
     answer: "ボート",
-    explain: "せいかいは「ボート」や！<br>「ボーッと」しているから「ボート」！<br>みずのうえで ボーッとボートにのったら<ruby>気持<rt>きも</rt></ruby>ちええやろな〜<br>レッドもやってみたいわ！",
-    followups: ["{name}、ひらめいた？", "{name}もボートのりたい？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ボート」や！<br>「ボーッと」しているから「ボート」！<br>みずのうえで ボーッとボートにのったら<ruby>気持<rt>きも</rt></ruby>ちええやろな〜<br>レッドもやってみたいわ！",
+    followups: ["{name}、<ruby>閃<rt>ひらめ</rt></ruby>いた？", "{name}もボートのりたい？"]
   },
   {
-    q: "みんな だいすきな<br>スポーツは？",
+    q: "みんな だい<ruby>好<rt>す</rt></ruby>きな<br>スポーツは？",
     hint: "ふゆに よくやるよ",
     answer: "スキー",
-    explain: "せいかいは「スキー」！<br>「すき（<ruby>好<rt>す</rt></ruby>き）」→「スキー」ってことやねん。<br>みんながすきなスポーツやから「スキー」！<br>レッドもゲレンデ<ruby>行<rt>い</rt></ruby>ってみたいな〜シャーッ！",
-    followups: ["{name}、わかったかな？", "{name}はスキーやったことある？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「スキー」！<br>「<ruby>好<rt>す</rt></ruby>き（<ruby>好<rt>す</rt></ruby>き）」→「スキー」ってことやねん。<br>みんなが<ruby>好<rt>す</rt></ruby>きなスポーツやから「スキー」！<br>レッドもゲレンデ<ruby>行<rt>い</rt></ruby>ってみたいな〜シャーッ！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな？", "{name}はスキーやったことある？"]
   },
   {
-    q: "コロコロ ころがる<br>けがある たべものは？",
+    q: "コロコロ ころがる<br>けがある <ruby>食<rt>た</rt></ruby>べものは？",
     hint: "あげものだよ",
     answer: "コロッケ",
-    explain: "せいかいは「コロッケ」やで！<br>「コロコロ」＋「ケ（<ruby>毛<rt>け</rt></ruby>）」で「コロッケ」になるねん。<br>ころもの<ruby>部分<rt>ぶぶん</rt></ruby>がケ（<ruby>毛<rt>け</rt></ruby>）みたいやろ？<br>あつあつコロッケ、レッド<ruby>大好物<rt>だいこうぶつ</rt></ruby>や〜！",
-    followups: ["{name}、あたった？", "{name}もコロッケ好きやろ〜？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「コロッケ」やで！<br>「コロコロ」＋「ケ（<ruby>毛<rt>け</rt></ruby>）」で「コロッケ」になるねん。<br>ころもの<ruby>部分<rt>ぶぶん</rt></ruby>がケ（<ruby>毛<rt>け</rt></ruby>）みたいやろ？<br>あつあつコロッケ、レッド<ruby>大好物<rt>だいこうぶつ</rt></ruby>や〜！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}もコロッケ好きやろ〜？"]
   },
   {
     q: "まいにち きるけど<br>じゃまな ふくは？",
     hint: "ねるときに きるよ",
     answer: "パジャマ",
-    explain: "せいかいは「パジャマ」！<br>「パ・ジャマ」のなかに「じゃま（<ruby>邪魔<rt>じゃま</rt></ruby>）」がかくれてるんやで。<br>でもパジャマきたらぬくぬくで<ruby>最高<rt>さいこう</rt></ruby>やん〜<br>レッドは<ruby>毎日<rt>まいにち</rt></ruby>パジャマ<ruby>楽<rt>たの</rt></ruby>しみにしてるわ！",
-    followups: ["{name}、せいかいした？", "{name}もパジャマ好き？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「パジャマ」！<br>「パ・ジャマ」のなかに「じゃま（<ruby>邪魔<rt>じゃま</rt></ruby>）」がかくれてるんやで。<br>でもパジャマきたらぬくぬくで<ruby>最高<rt>さいこう</rt></ruby>やん〜<br>レッドは<ruby>毎日<rt>まいにち</rt></ruby>パジャマ<ruby>楽<rt>たの</rt></ruby>しみにしてるわ！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}もパジャマ好き？"]
   },
   {
-    q: "ようちえんや がっこうで たべる<br>9つの いろの たべものは？",
+    q: "ようちえんや がっこうで <ruby>食<rt>た</rt></ruby>べる<br>9つの いろの <ruby>食<rt>た</rt></ruby>べものは？",
     hint: "9つのいろを いいかえてみてね",
     answer: "きゅうしょく（<ruby>給食<rt>きゅうしょく</rt></ruby>）",
-    explain: "せいかいは「きゅうしょく（<ruby>給食<rt>きゅうしょく</rt></ruby>）」！<br>9つの<ruby>色<rt>いろ</rt></ruby>→「きゅう・しょく」→「<ruby>給食<rt>きゅうしょく</rt></ruby>」ってことやねん。<br>すうじと<ruby>漢字<rt>かんじ</rt></ruby>のダブルなぞなぞやで〜<br>レッドも<ruby>給食<rt>きゅうしょく</rt></ruby>なつかしいな〜！",
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「きゅうしょく（<ruby>給食<rt>きゅうしょく</rt></ruby>）」！<br>9つの<ruby>色<rt>いろ</rt></ruby>→「きゅう・しょく」→「<ruby>給食<rt>きゅうしょく</rt></ruby>」ってことやねん。<br>すうじと<ruby>漢字<rt>かんじ</rt></ruby>のダブルなぞなぞやで〜<br>レッドも<ruby>給食<rt>きゅうしょく</rt></ruby>なつかしいな〜！",
     followups: ["{name}、むずかしかった？", "{name}の給食でなにが好き？"]
   },
   {
-    q: "ママはママでも<br>いうことを きいてくれない ママは？",
+    q: "ママはママでも<br><ruby>言<rt>い</rt></ruby>うことを きいてくれない ママは？",
     hint: "「○○まま いわないの！」<br>って おこられたことない？",
     answer: "わがまま",
-    explain: "せいかいは「わがまま」やで！<br>「わが・まま」のなかに「ママ」がかくれてるねん。<br>レッドもたまにわがまま<ruby>言<rt>い</rt></ruby>いたくなるけど、<br>がまんしてるで〜…たぶん！",
-    followups: ["{name}、わかった〜？", "{name}はわがまま言う〜？ レッドはちょっとだけ！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「わがまま」やで！<br>「わが・まま」のなかに「ママ」がかくれてるねん。<br>レッドもたまにわがまま<ruby>言<rt>い</rt></ruby>いたくなるけど、<br>がまんしてるで〜…たぶん！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かった〜？", "{name}はわがまま言う〜？ レッドはちょっとだけ！"]
   },
   {
-    q: "たべると 3かい かてる<br>りょうりは？",
+    q: "<ruby>食<rt>た</rt></ruby>べると 3かい かてる<br>りょうりは？",
     hint: "3かいは「さんど」と いいかえてね",
     answer: "カツサンド",
-    explain: "せいかいは「カツサンド」！<br>「かつ（<ruby>勝<rt>か</rt></ruby>つ）」＋「さんど（3<ruby>度<rt>ど</rt></ruby>）」で「カツサンド」になるんや。<br>しあいのまえにカツサンドたべたら3<ruby>回<rt>かい</rt></ruby>かてるかもな〜！<br>レッドもたべよ！",
-    followups: ["{name}、せいかいしたかな？", "{name}、しょうぶのまえにカツサンド食べよな！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「カツサンド」！<br>「かつ（<ruby>勝<rt>か</rt></ruby>つ）」＋「さんど（3<ruby>度<rt>ど</rt></ruby>）」で「カツサンド」になるんや。<br>しあいのまえにカツサンド<ruby>食<rt>た</rt></ruby>べたら3<ruby>回<rt>かい</rt></ruby>かてるかもな〜！<br>レッドも<ruby>食<rt>た</rt></ruby>べよ！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>したかな？", "{name}、<ruby>笑<rt>しょう</rt></ruby>ぶのまえにカツサンド食べよな！"]
   },
   {
-    q: "パンはパンでも<br>たべられない パンは？",
+    q: "パンはパンでも<br><ruby>食<rt>た</rt></ruby>べられない パンは？",
     hint: "おりょうりで つかうよ",
     answer: "フライパン",
-    explain: "せいかいは「フライパン」やで！<br>「フライパン」にも「パン」がついてるけど、<br>かじったらアカンで〜はが<ruby>折<rt>お</rt></ruby>れるわ！<br>なぞなぞの<ruby>王道<rt>おうどう</rt></ruby>やな、これは！",
-    followups: ["{name}、これはわかったやろ？", "{name}、かんたんやった？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「フライパン」やで！<br>「フライパン」にも「パン」がついてるけど、<br>かじったらアカンで〜はが<ruby>折<rt>お</rt></ruby>れるわ！<br>なぞなぞの<ruby>王道<rt>おうどう</rt></ruby>やな、これは！",
+    followups: ["{name}、これは<ruby>解<rt>わ</rt></ruby>かったやろ？", "{name}、かんたんやった？"]
   },
   {
     q: "ひっくりかえすと かるくなる<br>どうぶつは？",
     hint: "うみの にんきものだよ",
     answer: "いるか",
-    explain: "せいかいは「いるか」！<br>「いるか」をさかさまによむと「かるい」になるねん。<br>いるかってかしこくてかわいいし、<br>ことばあそびでもすごいやつやな〜！",
-    followups: ["{name}、あたった？", "{name}、いるか見たことある？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「いるか」！<br>「いるか」をさかさまによむと「かるい」になるねん。<br>いるかってかしこくてかわいいし、<br><ruby>言葉<rt>ことば</rt></ruby><ruby>遊<rt>あそ</rt></ruby>びでもすごいやつやな〜！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}、いるか見たことある？"]
   },
   {
     q: "れいぞうこの なかにいる<br>どうぶつは？",
     hint: "ひらがなに なおしてみて",
     answer: "ぞう",
-    explain: "せいかいは「ぞう」やで！<br>「れい・ぞう・こ」のなかに「ぞう」がかくれてるねん。<br>れいぞうこ<ruby>開<rt>あ</rt></ruby>けたらぞうがおったら<br>ビックリするやろな〜<ruby>入<rt>はい</rt></ruby>らんけど！",
-    followups: ["{name}、みつけた？", "{name}、ぞうはさすがにれいぞうこ入らんな〜！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ぞう」やで！<br>「れい・ぞう・こ」のなかに「ぞう」がかくれてるねん。<br>れいぞうこ<ruby>開<rt>あ</rt></ruby>けたらぞうがおったら<br>ビックリするやろな〜<ruby>入<rt>はい</rt></ruby>らんけど！",
+    followups: ["{name}、<ruby>見<rt>み</rt></ruby>つけた？", "{name}、ぞうはさすがにれいぞうこ入らんな〜！"]
   },
   {
-    q: "たべると あんしんする<br>ケーキは？",
+    q: "<ruby>食<rt>た</rt></ruby>べると あんしんする<br>ケーキは？",
     hint: "「あんしんする」を<br>べつの いいかたにすると？",
     answer: "ホットケーキ",
-    explain: "せいかいは「ホットケーキ」！<br>「あんしんする」→「ほっとする」→「ホットケーキ」ってことやねん。<br>ほっとしたいとき、ホットケーキたべたら<br>ダブルでほっとするな〜！",
-    followups: ["{name}、せいかいした？", "{name}、ホットケーキ食べたくなってきたやろ〜？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ホットケーキ」！<br>「あんしんする」→「ほっとする」→「ホットケーキ」ってことやねん。<br>ほっとしたいとき、ホットケーキ<ruby>食<rt>た</rt></ruby>べたら<br>ダブルでほっとするな〜！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}、ホットケーキ食べたくなってきたやろ〜？"]
   },
   {
-    q: "おとうさんが きらいな<br>くだものは？",
+    q: "おとうさんが <ruby>嫌<rt>きら</rt></ruby>いな<br>くだものは？",
     hint: "おとうさんの べつの よびかたは？",
     answer: "パパイヤ",
-    explain: "せいかいは「パパイヤ」！<br>「パパ」＋「いや」で「パパイヤ」になるんやで。<br>パパかわいそう〜でもパパイヤはあまくておいしいから、<br>ほんまはパパも<ruby>好<rt>す</rt></ruby>きやとおもうで！",
-    followups: ["{name}、わかった？", "{name}のパパは元気〜？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「パパイヤ」！<br>「パパ」＋「いや」で「パパイヤ」になるんやで。<br>パパかわいそう〜でもパパイヤはあまくておいしいから、<br>ほんまはパパも<ruby>好<rt>す</rt></ruby>きやと<ruby>思<rt>おも</rt></ruby>うで！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かった？", "{name}のパパは元気〜？"]
   },
   {
-    q: "「ん」が きらいな とりって<br>どんなとり？",
-    hint: "「ん」がついたら まけちゃう あそびだよ",
+    q: "「ん」が <ruby>嫌<rt>きら</rt></ruby>いな とりって<br>どんなとり？",
+    hint: "「ん」がついたら まけちゃう <ruby>遊<rt>あそ</rt></ruby>びだよ",
     answer: "しりとり",
-    explain: "せいかいは「しりとり」！<br>しりとりは「ん」がついたらまけやもんな〜。<br>「ん」がだいっきらいなあそびやで！<br>レッドもしりとりでよく「ん」ついてまうわ〜くやし！",
-    followups: ["{name}、あたった？", "{name}、しりとり得意？レッドはちょっと苦手やねん…"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「しりとり」！<br>しりとりは「ん」がついたらまけやもんな〜。<br>「ん」がだいっ<ruby>嫌<rt>きら</rt></ruby>いな<ruby>遊<rt>あそ</rt></ruby>びやで！<br>レッドもしりとりでよく「ん」ついてまうわ〜くやし！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}、しりとり得意？レッドはちょっと苦手やねん…"]
   },
   {
     q: "よんでも よんでも<br>へんじを しないものは？",
     hint: "としょかんに いっぱいあるよ",
     answer: "ほん（<ruby>本<rt>ほん</rt></ruby>）",
-    explain: "せいかいは「ほん（<ruby>本<rt>ほん</rt></ruby>）」やで！<br>「よんでも」には「<ruby>読<rt>よ</rt></ruby>んでも」と「<ruby>呼<rt>よ</rt></ruby>んでも」のふたつの<ruby>意味<rt>いみ</rt></ruby>があるねん。<br>ほんは<ruby>読<rt>よ</rt></ruby>んでもへんじせえへんし、<br><ruby>呼<rt>よ</rt></ruby>んでも<ruby>来<rt>こ</rt></ruby>えへん。シーンってしてるだけや〜！",
-    followups: ["{name}、わかったかな？", "{name}は本読むの好き？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ほん（<ruby>本<rt>ほん</rt></ruby>）」やで！<br>「よんでも」には「<ruby>読<rt>よ</rt></ruby>んでも」と「<ruby>呼<rt>よ</rt></ruby>んでも」のふたつの<ruby>意味<rt>いみ</rt></ruby>があるねん。<br>ほんは<ruby>読<rt>よ</rt></ruby>んでもへんじせえへんし、<br><ruby>呼<rt>よ</rt></ruby>んでも<ruby>来<rt>こ</rt></ruby>えへん。シーンってしてるだけや〜！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな？", "{name}は本読むの好き？"]
   },
   {
     q: "わたる「はし」ではなく<br>のぼったりおりたりする「はし」は？",
     hint: "たかいところに のぼるときに つかうよ",
     answer: "はしご",
-    explain: "せいかいは「はしご」！<br>かわをわたる「<ruby>橋<rt>はし</rt></ruby>（はし）」とちがって、<br>「はしご」はのぼったりおりたりするもんやな。<br>レッド、<ruby>高<rt>たか</rt></ruby>いところちょっとこわいけど…がんばるで！",
-    followups: ["{name}、せいかいした？", "{name}、高いところ平気？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「はしご」！<br>かわをわたる「<ruby>橋<rt>はし</rt></ruby>（はし）」とちがって、<br>「はしご」はのぼったりおりたりするもんやな。<br>レッド、<ruby>高<rt>たか</rt></ruby>いところちょっとこわいけど…がんばるで！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}、高いところ平気？"]
   },
   {
-    q: "なにを たべても「おいしい」と<br>よろこぶ どうぶつは？",
+    q: "なにを <ruby>食<rt>た</rt></ruby>べても「おいしい」と<br><ruby>喜<rt>よろこ</rt></ruby>ぶ どうぶつは？",
     hint: "「おいしい」を<br>べつの いいかたにすると？",
     answer: "うま（<ruby>馬<rt>うま</rt></ruby>）",
-    explain: "せいかいは「うま（<ruby>馬<rt>うま</rt></ruby>）」やで！<br>「おいしい」って「うまい！」ともいうやろ？<br>それが「うま（<ruby>馬<rt>うま</rt></ruby>）」とおなじなんやな。<br>うまはなに<ruby>食<rt>た</rt></ruby>べてもうまいって<ruby>言<rt>い</rt></ruby>ってるかもな〜ヒヒーン！",
-    followups: ["{name}、ひらめいたかな？", "{name}、うまいもん食べたいな〜！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「うま（<ruby>馬<rt>うま</rt></ruby>）」やで！<br>「おいしい」って「うまい！」とも<ruby>言<rt>い</rt></ruby>うやろ？<br>それが「うま（<ruby>馬<rt>うま</rt></ruby>）」とおなじなんやな。<br>うまはなに<ruby>食<rt>た</rt></ruby>べてもうまいって<ruby>言<rt>い</rt></ruby>ってるかもな〜ヒヒーン！",
+    followups: ["{name}、<ruby>閃<rt>ひらめ</rt></ruby>いたかな？", "{name}、うまいもん食べたいな〜！"]
   },
   {
     q: "いえの なかで ロバが<br>いるばしょは？",
     hint: "「ロバ」が かくれている ばしょだよ",
     answer: "ふろば（<ruby>風呂場<rt>ふろば</rt></ruby>）",
-    explain: "せいかいは「ふろば（<ruby>風呂場<rt>ふろば</rt></ruby>）」！<br>「ふ・ロバ」のなかに「ロバ」がかくれてるんやで。<br>おふろにロバがおったらせまいやろな〜<br>いっしょに<ruby>温<rt>あたた</rt></ruby>まりたいけど！",
-    followups: ["{name}、みつけた？", "{name}、おふろ好き〜？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ふろば（<ruby>風呂場<rt>ふろば</rt></ruby>）」！<br>「ふ・ロバ」のなかに「ロバ」がかくれてるんやで。<br>おふろにロバがおったらせまいやろな〜<br>いっしょに<ruby>温<rt>あたた</rt></ruby>まりたいけど！",
+    followups: ["{name}、<ruby>見<rt>み</rt></ruby>つけた？", "{name}、おふろ好き〜？"]
   },
   {
-    q: "あさになると おおごえを だす<br>はなは？",
+    q: "あさになると おおごえを <ruby>出<rt>だ</rt></ruby>す<br>はなは？",
     hint: "「あさ」に「ガオー！」",
     answer: "あさがお",
-    explain: "せいかいは「あさがお」！<br>「あさ」＋「ガオー！」で「あさがお」になるねん。<br>まいあさ「ガオー！」って<ruby>元気<rt>げんき</rt></ruby>にさくはな、<br>レッドも<ruby>見習<rt>みなら</rt></ruby>いたいわ〜！",
-    followups: ["{name}、わかった？", "{name}もあさはガオー！って元気にいこな！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「あさがお」！<br>「あさ」＋「ガオー！」で「あさがお」になるねん。<br>まいあさ「ガオー！」って<ruby>元気<rt>げんき</rt></ruby>にさくはな、<br>レッドも<ruby>見習<rt>みなら</rt></ruby>いたいわ〜！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かった？", "{name}もあさはガオー！って元気にいこな！"]
   },
   {
     q: "いわの あいだに シカが<br>かくれている けんは？",
     hint: "「い○かわ」のなかに なにがいる？",
     answer: "いしかわけん（<ruby>石川県<rt>いしかわけん</rt></ruby>）",
-    explain: "せいかいは「いしかわけん（<ruby>石川県<rt>いしかわけん</rt></ruby>）」！<br>「い・わ」のあいだに「しか」をいれると<br>「い・しか・わ」→「<ruby>石川<rt>いしかわ</rt></ruby>」になるんやで。<br><ruby>石川県<rt>いしかわけん</rt></ruby>にシカおるんかな〜おったらおもろいな！",
-    followups: ["{name}、むずかしかった？", "{name}、石川県いったことある？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「いしかわけん（<ruby>石川県<rt>いしかわけん</rt></ruby>）」！<br>「い・わ」のあいだに「しか」をいれると<br>「い・しか・わ」→「<ruby>石川<rt>いしかわ</rt></ruby>」になるんやで。<br><ruby>石川県<rt>いしかわけん</rt></ruby>にシカおるんかな〜おったらおもろいな！",
+    followups: ["{name}、むずかしかった？", "{name}、石川県<ruby>言<rt>い</rt></ruby>ったことある？"]
   },
   {
     q: "みせの なかに スリが<br>かくれている おみせは？",
     hint: "「スリ」がはいっている おみせだよ",
     answer: "くすりや（クスリ<ruby>屋<rt>や</rt></ruby>）",
-    explain: "せいかいは「くすりや」やで！<br>「く・スリ・や」のなかに「スリ」がかくれてるねん。<br>でもクスリ<ruby>屋<rt>や</rt></ruby>さんはみんなを<ruby>元気<rt>げんき</rt></ruby>にしてくれるええお<ruby>店<rt>みせ</rt></ruby>やで〜<br>スリとはちがうからな！",
-    followups: ["{name}、せいかいした？", "{name}、クスリ屋さんにはお世話になってるな〜"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「くすりや」やで！<br>「く・スリ・や」のなかに「スリ」がかくれてるねん。<br>でもクスリ<ruby>屋<rt>や</rt></ruby>さんはみんなを<ruby>元気<rt>げんき</rt></ruby>にしてくれるええお<ruby>店<rt>みせ</rt></ruby>やで〜<br>スリとはちがうからな！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}、クスリ屋さんにはお世話になってるな〜"]
   },
   {
     q: "せかいの まんなかに いる<br>むしは？",
     hint: "「せかい」の まんなかの もじは？",
     answer: "か（<ruby>蚊<rt>か</rt></ruby>）",
-    explain: "せいかいは「か（<ruby>蚊<rt>か</rt></ruby>）」！<br>「せ・か・い」の3もじのまんなかは「か」やろ？<br>それが<ruby>虫<rt>むし</rt></ruby>の「<ruby>蚊<rt>か</rt></ruby>（か）」やねん。<br><ruby>世界<rt>せかい</rt></ruby>のまんなかにおる<ruby>虫<rt>むし</rt></ruby>ってスケールでかいな〜！",
-    followups: ["{name}、わかったかな〜？", "{name}、蚊にさされたことある？レッドはめっちゃある！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「か（<ruby>蚊<rt>か</rt></ruby>）」！<br>「せ・か・い」の3もじのまんなかは「か」やろ？<br>それが<ruby>虫<rt>むし</rt></ruby>の「<ruby>蚊<rt>か</rt></ruby>（か）」やねん。<br><ruby>世界<rt>せかい</rt></ruby>のまんなかにおる<ruby>虫<rt>むし</rt></ruby>ってスケールでかいな〜！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな〜？", "{name}、蚊にさされたことある？レッドはめっちゃある！"]
   },
   {
     q: "くるまが おとしても<br>ひろえないものは？",
     hint: "はやさに かんけいするよ",
     answer: "スピード",
-    explain: "せいかいは「スピード」やで！<br>くるまが「スピードを<ruby>落<rt>お</rt></ruby>とす」の「おとす」は、<br>ひろえるほうの「おとす」とちがうねん。<br>ことばっておもしろいよな〜レッド<ruby>感心<rt>かんしん</rt></ruby>するわ！",
-    followups: ["{name}、あたった？", "{name}、これはちょっとむずかしかったかな？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「スピード」やで！<br>くるまが「スピードを<ruby>落<rt>お</rt></ruby>とす」の「おとす」は、<br>ひろえるほうの「おとす」とちがうねん。<br><ruby>言葉<rt>ことば</rt></ruby>っておもしろいよな〜レッド<ruby>感心<rt>かんしん</rt></ruby>するわ！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}、これはちょっとむずかしかったかな？"]
   },
   {
-    q: "がっこうを やすんだ ひにだけ<br>でる「せき」は？",
-    hint: "やすむことを なんという？",
+    q: "がっこうを やすんだ ひにだけ<br><ruby>出<rt>で</rt></ruby>る「せき」は？",
+    hint: "やすむことを なんと<ruby>言<rt>い</rt></ruby>う？",
     answer: "けっせき（<ruby>欠席<rt>けっせき</rt></ruby>）",
-    explain: "せいかいは「けっせき（<ruby>欠席<rt>けっせき</rt></ruby>）」やで！<br>ゴホンゴホンの「せき」じゃなくて、<br>やすんだときの「<ruby>欠席<rt>けっせき</rt></ruby>」のほうの「せき」やねん。<br>ひっかけ<ruby>問題<rt>もんだい</rt></ruby>やな〜やられた！",
-    followups: ["{name}、せいかいした？", "{name}、ひっかからんかった？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「けっせき（<ruby>欠席<rt>けっせき</rt></ruby>）」やで！<br>ゴホンゴホンの「せき」じゃなくて、<br>やすんだときの「<ruby>欠席<rt>けっせき</rt></ruby>」のほうの「せき」やねん。<br>ひっかけ<ruby>問題<rt>もんだい</rt></ruby>やな〜やられた！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}、ひっかからんかった？"]
   },
   {
     q: "おかいもの するとき<br>もっていないと こまる サイは？",
     hint: "おかねが はいっているものだよ",
     answer: "さいふ（<ruby>財布<rt>さいふ</rt></ruby>）",
-    explain: "せいかいは「さいふ（<ruby>財布<rt>さいふ</rt></ruby>）」！<br>「さいふ」のなかに「サイ」がかくれてるんやで。<br>おかいものにサイつれていったらおもろいけど、<br>さいふのほうが<ruby>大事<rt>だいじ</rt></ruby>やな〜！",
-    followups: ["{name}、わかったかな？", "{name}、おこづかいはさいふに入れてる？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「さいふ（<ruby>財布<rt>さいふ</rt></ruby>）」！<br>「さいふ」のなかに「サイ」がかくれてるんやで。<br>おかいものにサイつれて<ruby>言<rt>い</rt></ruby>ったらおもろいけど、<br>さいふのほうが<ruby>大事<rt>だいじ</rt></ruby>やな〜！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな？", "{name}、おこづかいはさいふに入れてる？"]
   },
   {
     q: "つかわないと くろいけど<br>つかうと しろくなるものは？",
     hint: "がっこうの きょうしつにあるよ",
     answer: "こくばん（<ruby>黒板<rt>こくばん</rt></ruby>）",
-    explain: "せいかいは「こくばん（<ruby>黒板<rt>こくばん</rt></ruby>）」やで！<br>チョークでかくと<ruby>白<rt>しろ</rt></ruby>くなるやろ？<br>つかえばつかうほど<ruby>白<rt>しろ</rt></ruby>くなっていくねん。<br><ruby>先生<rt>せんせい</rt></ruby>がいっぱい<ruby>書<rt>か</rt></ruby>いたあとの<ruby>黒板<rt>こくばん</rt></ruby>、まっしろやもんな〜！",
-    followups: ["{name}、あたった？", "{name}の<ruby>学校<rt>がっこう</rt></ruby>にも黒板ある？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「こくばん（<ruby>黒板<rt>こくばん</rt></ruby>）」やで！<br>チョークでかくと<ruby>白<rt>しろ</rt></ruby>くなるやろ？<br>つかえばつかうほど<ruby>白<rt>しろ</rt></ruby>くなっていくねん。<br><ruby>先生<rt>せんせい</rt></ruby>がいっぱい<ruby>書<rt>か</rt></ruby>いたあとの<ruby>黒板<rt>こくばん</rt></ruby>、まっしろやもんな〜！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}の<ruby>学校<rt>がっこう</rt></ruby>にも黒板ある？"]
   },
   {
     q: "きれいにすればするほど<br>よごれるものは？",
     hint: "おそうじで つかうよ",
     answer: "ぞうきん",
-    explain: "せいかいは「ぞうきん」！<br>ゆかをきれいにするたびに、<br>ぞうきんのほうがどんどんよごれていくんやで。<br>ぞうきんってけなげやな〜レッド、ちょっと<ruby>感動<rt>かんどう</rt></ruby>するわ！",
-    followups: ["{name}、わかった〜？", "{name}、おそうじ好き？レッドはまあまあ！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ぞうきん」！<br>ゆかをきれいにするたびに、<br>ぞうきんのほうがどんどんよごれていくんやで。<br>ぞうきんってけなげやな〜レッド、ちょっと<ruby>感動<rt>かんどう</rt></ruby>するわ！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かった〜？", "{name}、おそうじ好き？レッドはまあまあ！"]
   },
   {
-    q: "そうじの すきな「とり」って<br>どんなとり？",
+    q: "そうじの <ruby>好<rt>す</rt></ruby>きな「とり」って<br>どんなとり？",
     hint: "おそうじどうぐだよ",
     answer: "ちりとり",
-    explain: "せいかいは「ちりとり」やで！<br>「ちり・とり」のなかに「とり」がかくれてるねん。<br>ちりとりが<ruby>空<rt>そら</rt></ruby>をとんだらおもろいな〜<br>ゴミもいっしょに<ruby>飛<rt>と</rt></ruby>んでいくわ！",
-    followups: ["{name}、ひらめいた？", "{name}、ちりとりが飛んだらおもしろいよな〜！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ちりとり」やで！<br>「ちり・とり」のなかに「とり」がかくれてるねん。<br>ちりとりが<ruby>空<rt>そら</rt></ruby>をとんだらおもろいな〜<br>ゴミもいっしょに<ruby>飛<rt>と</rt></ruby>んでいくわ！",
+    followups: ["{name}、<ruby>閃<rt>ひらめ</rt></ruby>いた？", "{name}、ちりとりが飛んだらおもしろいよな〜！"]
   },
   {
-    q: "さかさまにしても おなじ<br>たべものは？",
+    q: "さかさまにしても おなじ<br><ruby>食<rt>た</rt></ruby>べものは？",
     hint: "まっかで おいしいアレだよ",
     answer: "トマト",
-    explain: "せいかいは「トマト」！<br>「トマト」をさかさまによんでも「トマト」やねん。<br>まえからよんでも うしろからよんでも おなじって<br>すごいよな〜レッドの<ruby>名前<rt>なまえ</rt></ruby>はムリやわ！",
-    followups: ["{name}、せいかいした？", "{name}の名前はさかさまにしたらどうなる？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「トマト」！<br>「トマト」をさかさまによんでも「トマト」やねん。<br>まえからよんでも うしろからよんでも おなじって<br>すごいよな〜レッドの<ruby>名前<rt>なまえ</rt></ruby>はムリやわ！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}の名前はさかさまにしたらどうなる？"]
   },
   {
     q: "さかさまにしても よめるものは？",
     hint: "<ruby>大人<rt>おとな</rt></ruby>が よくよんでいるかな",
     answer: "しんぶんし（<ruby>新聞紙<rt>しんぶんし</rt></ruby>）",
-    explain: "せいかいは「しんぶんし（<ruby>新聞紙<rt>しんぶんし</rt></ruby>）」やで！<br>「し・ん・ぶ・ん・し」はさかさまによんでもおなじになるねん。<br>こういうの「<ruby>回文<rt>かいぶん</rt></ruby>（かいぶん）」っていうんやで〜<br>レッド<ruby>物知<rt>ものし</rt></ruby>りやろ！",
-    followups: ["{name}、わかったかな？", "{name}、回文ってしってた？レッドは今知ったけどな！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「しんぶんし（<ruby>新聞紙<rt>しんぶんし</rt></ruby>）」やで！<br>「し・ん・ぶ・ん・し」はさかさまによんでもおなじになるねん。<br>こう<ruby>言<rt>い</rt></ruby>うの「<ruby>回文<rt>かいぶん</rt></ruby>（かいぶん）」って<ruby>言<rt>い</rt></ruby>うんやで〜<br>レッド<ruby>物知<rt>ものし</rt></ruby>りやろ！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな？", "{name}、回文ってしってた？レッドは今知ったけどな！"]
   },
   {
     q: "アリが10ぴきで<br>なにか いっているよ、なにかな？",
     hint: "「10」は「とお」と よめるよね",
     answer: "ありがとう",
-    explain: "せいかいは「ありがとう」！<br>「アリ」＋「が」＋「10（とう）」で「ありがとう」になるんやで。<br>アリさんたちが「ありがとう」って<ruby>言<rt>い</rt></ruby>ってるなんて、<br>なんかほっこりするな〜！",
-    followups: ["{name}、あたった？", "{name}、ありがとう〜ってええ言葉やんな！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ありがとう」！<br>「アリ」＋「が」＋「10（とう）」で「ありがとう」になるんやで。<br>アリさんたちが「ありがとう」って<ruby>言<rt>い</rt></ruby>ってるなんて、<br>なんかほっこりするな〜！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}、ありがとう〜ってええ言葉やんな！"]
   },
   {
     q: "「たちつみと」って なに？",
-    hint: "「て」がはいるところに<br>べつのもじが はいってるよ",
+    hint: "「て」が<ruby>入<rt>は</rt></ruby>いるところに<br>べつのもじが はいってるよ",
     answer: "てがみ（<ruby>手紙<rt>てがみ</rt></ruby>）",
-    explain: "せいかいは「てがみ（<ruby>手紙<rt>てがみ</rt></ruby>）」やで！<br>「た・ち・つ・て・と」のなかで<br>「て」のところが「み」になってるやろ？<br>つまり「て」が「み」→「てがみ」！<br>これはむずかしいな〜レッドも<ruby>最初<rt>さいしょ</rt></ruby>わからんかったわ！",
-    followups: ["{name}、せいかいした？これはむずいで〜！", "{name}、<ruby>手紙<rt>てがみ</rt></ruby>もらったことある？レッドからも書こかな！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「てがみ（<ruby>手紙<rt>てがみ</rt></ruby>）」やで！<br>「た・ち・つ・て・と」のなかで<br>「て」のところが「み」になってるやろ？<br>つまり「て」が「み」→「てがみ」！<br>これは<ruby>難<rt>むずか</rt></ruby>しいな〜レッドも<ruby>最初<rt>さいしょ</rt></ruby>わからんかったわ！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？これはむずいで〜！", "{name}、<ruby>手紙<rt>てがみ</rt></ruby>もらったことある？レッドからも書こかな！"]
   },
   {
-    q: "あかは とまって<br>あおは すすむものは？",
+    q: "あかは と<ruby>待<rt>ま</rt></ruby>って<br>あおは すすむものは？",
     hint: "がっこうに いくとき みるものだよ",
     answer: "しんごうき（<ruby>信号機<rt>しんごうき</rt></ruby>）",
-    explain: "せいかいは「しんごうき（<ruby>信号機<rt>しんごうき</rt></ruby>）」！<br>あかは「とまれ」、あおは「すすめ」やもんね。<br>みんな<ruby>信号<rt>しんごう</rt></ruby>はちゃんとまもってな〜<br>レッドとの<ruby>約束<rt>やくそく</rt></ruby>やで！",
-    followups: ["{name}、わかったかな？", "{name}、信号ちゃんと守ってるやんな？レッドとの約束やで！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「しんごうき（<ruby>信号機<rt>しんごうき</rt></ruby>）」！<br>あかは「とまれ」、あおは「すすめ」やもんね。<br>みんな<ruby>信号<rt>しんごう</rt></ruby>はちゃんとまもってな〜<br>レッドとの<ruby>約束<rt>やくそく</rt></ruby>やで！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな？", "{name}、信号ちゃんと守ってるやんな？レッドとの約束やで！"]
   },
   {
     q: "ぼうは ぼうでも<br>あさ なかなかおきない ぼうは？",
     hint: "しまった！がっこうへ いくじかんだ！",
     answer: "あさねぼう（<ruby>朝寝坊<rt>あさねぼう</rt></ruby>）",
-    explain: "せいかいは「あさねぼう（<ruby>朝寝坊<rt>あさねぼう</rt></ruby>）」！<br>「あさね・ぼう」のなかに「ぼう」がかくれてるんやで。<br>レッドもあさねぼう、けっこうするねん…<br>おふとん<ruby>気持<rt>きも</rt></ruby>ちよすぎるんよ〜！",
-    followups: ["{name}、あたった？", "{name}も朝寝坊する？レッドはしょっちゅうやで！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「あさねぼう（<ruby>朝寝坊<rt>あさねぼう</rt></ruby>）」！<br>「あさね・ぼう」のなかに「ぼう」がかくれてるんやで。<br>レッドもあさねぼう、けっこうするねん…<br>おふとん<ruby>気持<rt>きも</rt></ruby>ちよすぎるんよ〜！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たった？", "{name}も朝寝坊する？レッドはしょっちゅうやで！"]
   },
   {
-    q: "ぜったいに うそを つかない<br>「き」ってなに？",
-    hint: "うそをつかないことを なんという？",
-    answer: "しょうじき（<ruby>正直<rt>しょうじき</rt></ruby>）",
-    explain: "せいかいは「しょうじき（<ruby>正直<rt>しょうじき</rt></ruby>）」やで！<br>「しょうじ・き」のなかに「き」がはいってるねん。<br>しょうじきはウソつかへんから、<br>みんなも<ruby>正直<rt>しょうじき</rt></ruby>がいちばんやで〜<br>レッドもいつも<ruby>正直<rt>しょうじき</rt></ruby>や！…たぶん！",
-    followups: ["{name}、わかった？", "{name}も<ruby>正直<rt>しょうじき</rt></ruby>もんやろ〜？レッドはそう思ってるで！"]
+    q: "<ruby>絶対<rt>ぜったい</rt></ruby>に うそを つかない<br>「き」ってなに？",
+    hint: "うそをつかないことを なんと<ruby>言<rt>い</rt></ruby>う？",
+    answer: "<ruby>正直<rt>しょうじき</rt></ruby>",
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「<ruby>正直<rt>しょうじき</rt></ruby>」やで！<br>「<ruby>笑<rt>しょう</rt></ruby>じ・き」のなかに「き」がはいってるねん。<br><ruby>正直<rt>しょうじき</rt></ruby>はウソつかへんから、<br>みんなも<ruby>正直<rt>しょうじき</rt></ruby>がいちばんやで〜<br>レッドもいつも<ruby>正直<rt>しょうじき</rt></ruby>や！…たぶん！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かった？", "{name}も<ruby>正直<rt>しょうじき</rt></ruby>もんやろ〜？レッドはそう思ってるで！"]
   },
   {
     q: "スミはスミでも<br>ねるときに でてくる スミは？",
     hint: "ねるときに なんて あいさつする？",
     answer: "おやすみ",
-    explain: "せいかいは「おやすみ」！<br>「おや・スミ」のなかに「スミ」がかくれてるんやで。<br>みんな、ねるまえには「おやすみ」ちゃんと<ruby>言<rt>い</rt></ruby>うてな〜<br>レッドも<ruby>毎日<rt>まいにち</rt></ruby>いうてるで！",
-    followups: ["{name}、せいかいした？", "{name}、おやすみ〜…って、まだ寝えへんか！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「おやすみ」！<br>「おや・スミ」のなかに「スミ」がかくれてるんやで。<br>みんな、ねるまえには「おやすみ」ちゃんと<ruby>言<rt>い</rt></ruby>うてな〜<br>レッドも<ruby>毎日<rt>まいにち</rt></ruby><ruby>言<rt>い</rt></ruby>うてるで！",
+    followups: ["{name}、<ruby>正解<rt>せいかい</rt></ruby>した？", "{name}、おやすみ〜…って、まだ寝えへんか！"]
   },
   {
     q: "しろと くろの シマシマがある<br>いきものは？",
     hint: "なまえにも「シマ」がつくよ",
     answer: "シマウマ",
-    explain: "せいかいは「シマウマ」やで！<br>「シマ」＋「ウマ」で「シマウマ」。<br>そのまんまやんっておもうやろ？<br>でもシマシマのウマってよう<ruby>考<rt>かんが</rt></ruby>えたら<br>すごいデザインやな〜おしゃれやわ！",
-    followups: ["{name}、これはわかったやろ？", "{name}、シマウマ見たことある？かっこええよな〜！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「シマウマ」やで！<br>「シマ」＋「ウマ」で「シマウマ」。<br>そのまんまやんって<ruby>思<rt>おも</rt></ruby>うやろ？<br>でもシマシマのウマってよう<ruby>考<rt>かんが</rt></ruby>えたら<br>すごいデザインやな〜おしゃれやわ！",
+    followups: ["{name}、これは<ruby>解<rt>わ</rt></ruby>かったやろ？", "{name}、シマウマ見たことある？かっこええよな〜！"]
   },
   {
-    q: "あたまの うえと しっぽを<br>グルグル まわして とぶものは？",
-    hint: "あたまのうえにあるのは プロペラだよ",
+    q: "<ruby>頭<rt>あたま</rt></ruby>の うえと しっぽを<br>グルグル まわして とぶものは？",
+    hint: "<ruby>頭<rt>あたま</rt></ruby>のうえにあるのは プロペラだよ",
     answer: "ヘリコプター",
-    explain: "せいかいは「ヘリコプター」！<br>あたまのうえのプロペラと、しっぽのプロペラを<br>グルグルまわして<ruby>飛<rt>と</rt></ruby>ぶんやで。<br>レッドもいつかヘリコプターのってみたいな〜<br><ruby>空<rt>そら</rt></ruby>からみんなにバイバイしたいわ！",
-    followups: ["{name}、あたったかな？", "{name}もヘリコプター乗ってみたい？"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「ヘリコプター」！<br><ruby>頭<rt>あたま</rt></ruby>のうえのプロペラと、しっぽのプロペラを<br>グルグルまわして<ruby>飛<rt>と</rt></ruby>ぶんやで。<br>レッドもいつかヘリコプターのってみたいな〜<br><ruby>空<rt>そら</rt></ruby>からみんなにバイバイしたいわ！",
+    followups: ["{name}、<ruby>当<rt>あ</rt></ruby>たったかな？", "{name}もヘリコプター乗ってみたい？"]
   },
   {
     q: "でんしゃや バスの なかにある<br>「かわ」って どんなかわ？",
     hint: "つかまるものだよ",
     answer: "つりかわ",
-    explain: "せいかいは「つりかわ」やで！<br>でんしゃのなかでゆれたとき、<br>つりかわにつかまるやろ？<br>レッドはちっちゃいから、<br>つりかわにとどかへんときあるねん…ジャンプや！",
-    followups: ["{name}、わかったかな〜？", "{name}はつりかわ届く？レッドは背伸びがんばるで！"]
+    explain: "<ruby>正解<rt>せいかい</rt></ruby>は「つりかわ」やで！<br>でんしゃのなかでゆれたとき、<br>つりかわにつかまるやろ？<br>レッドはちっちゃいから、<br>つりかわにとどかへんときあるねん…ジャンプや！",
+    followups: ["{name}、<ruby>解<rt>わ</rt></ruby>かったかな〜？", "{name}はつりかわ届く？レッドは背伸びがんばるで！"]
   }
 ];
 
@@ -483,49 +483,49 @@ let hintUsed = false;
 
 /* ===== 感想リアクション セリフ（各20パターン） ===== */
 const REACT_EASY = [
-  "おおっ、{name}には<ruby>簡単<rt>かんたん</rt></ruby>やったか！<br>さすがやな〜！",
-  "{name}、あたまええな〜！<br>レッドびっくりやわ！",
+  "おおっ、{name}にはかんたんやったか！<br>さすがやな〜！",
+  "{name}、<ruby>頭<rt>あたま</rt></ruby>ええな〜！<br>レッドびっくりやわ！",
   "かんたんやった？<br>{name}、<ruby>天才<rt>てんさい</rt></ruby>ちゃう？",
   "すごいな{name}！<br>レッドは<ruby>最初<rt>さいしょ</rt></ruby>わからんかったで〜",
   "{name}、よゆうやん！<br>かっこええ〜！",
-  "さすが{name}！<br>つぎはもうちょいむずかしいの<ruby>出<rt>だ</rt></ruby>すで〜！",
-  "ほんまに？<ruby>簡単<rt>かんたん</rt></ruby>やった？<br>{name}すごすぎるわ〜！",
+  "さすが{name}！<br>つぎはもうちょい<ruby>難<rt>むずか</rt></ruby>しいの<ruby>出<rt>だ</rt></ruby>すで〜！",
+  "ほんまに？かんたんやった？<br>{name}すごすぎるわ〜！",
   "{name}にはかなわんな〜！<br>レッド、<ruby>尊敬<rt>そんけい</rt></ruby>するわ！",
-  "らくしょうやん{name}！<br>この<ruby>調子<rt>ちょうし</rt></ruby>でいこな〜！",
+  "らく<ruby>笑<rt>しょう</rt></ruby>やん{name}！<br>この<ruby>調子<rt>ちょうし</rt></ruby>でいこな〜！",
   "かんたん！って<ruby>言<rt>い</rt></ruby>えるんすごいで？<br>{name}、じまんしてええで！",
-  "{name}のあたまの<ruby>回転<rt>かいてん</rt></ruby>、<br>はやすぎるわ〜！",
+  "{name}の<ruby>頭<rt>あたま</rt></ruby>の<ruby>回転<rt>かいてん</rt></ruby>、<br>はやすぎるわ〜！",
   "おお〜{name}よゆうの<ruby>表情<rt>ひょうじょう</rt></ruby>やな！<br>たのもしいわ〜！",
   "{name}、なぞなぞマスターやん！<br>レッドが<ruby>弟子<rt>でし</rt></ruby>にしてほしいわ！",
   "かんたんって<ruby>言<rt>い</rt></ruby>われると<br>レッドもうれしいねん〜{name}！",
-  "{name}はほんまにかしこいな〜！<br>つぎもたのしみにしてて！",
+  "{name}はほんまにかしこいな〜！<br>つぎも<ruby>楽<rt>たの</rt></ruby>しみにしてて！",
   "すらすら〜って<ruby>解<rt>と</rt></ruby>いたんやろ？<br>{name}すごいわ！",
   "{name}、その<ruby>調子<rt>ちょうし</rt></ruby>！<br>レッドも<ruby>負<rt>ま</rt></ruby>けてられへんな！",
   "よゆうやったんか〜{name}！<br>レッドもっとがんばって<ruby>問題<rt>もんだい</rt></ruby><ruby>出<rt>だ</rt></ruby>すわ！",
   "{name}、かんたんやったか〜！<br>ほな、つぎこそ<ruby>本気<rt>ほんき</rt></ruby><ruby>出<rt>だ</rt></ruby>すで〜！",
-  "えっ、かんたん！？<br>レッドの<ruby>問題<rt>もんだい</rt></ruby>が<ruby>簡単<rt>かんたん</rt></ruby>って…<br>{name}つよすぎ！"
+  "えっ、かんたん！？<br>レッドの<ruby>問題<rt>もんだい</rt></ruby>がかんたんって…<br>{name}つよすぎ！"
 ];
 
 const REACT_HARD = [
-  "むずかしかった？<br>だいじょうぶ、{name}はがんばったで！",
+  "むずかしかった？<br><ruby>大丈夫<rt>だいじょう</rt></ruby>ぶ、{name}はがんばったで！",
   "{name}、むずかしくてもチャレンジしたんがえらいねん！",
-  "むずかしいのに<ruby>挑戦<rt>ちょうせん</rt></ruby>する{name}、<br>かっこええで〜！",
-  "むずかしいやつは<br>レッドもなやんだで〜{name}！",
-  "なぞなぞはむずかしいから<ruby>楽<rt>たの</rt></ruby>しいねん！<br>{name}もそうおもわへん？",
+  "<ruby>難<rt>むずか</rt></ruby>しいのに<ruby>挑戦<rt>ちょうせん</rt></ruby>する{name}、<br>かっこええで〜！",
+  "<ruby>難<rt>むずか</rt></ruby>しいやつは<br>レッドもなやんだで〜{name}！",
+  "なぞなぞは<ruby>難<rt>むずか</rt></ruby>しいから<ruby>楽<rt>たの</rt></ruby>しいねん！<br>{name}もそうおもわへん？",
   "むずかしかったな〜{name}！<br>でもひとつかしこくなったで！",
-  "{name}、むずかしいのは<ruby>当<rt>あ</rt></ruby>たりまえや！<br>つぎはわかるようになるで！",
-  "むずかしかったぶん、<br><ruby>答<rt>こた</rt></ruby>えきいて「なるほど！」ってなったやろ？<br>{name}！",
+  "{name}、<ruby>難<rt>むずか</rt></ruby>しいのは<ruby>当<rt>あ</rt></ruby>たりまえや！<br>つぎはわかるようになるで！",
+  "むずかしかったぶん、<br><ruby>答<rt>こた</rt></ruby>えきいて「<ruby>成<rt>な</rt></ruby>るほど！」ってなったやろ？<br>{name}！",
   "レッドもこれ<ruby>最初<rt>さいしょ</rt></ruby>わからんかったから<br>{name}のこと<ruby>責<rt>せ</rt></ruby>めへんで〜！",
-  "むずかしいもんはむずかしい！<br>{name}、しょうじきでええわ〜！",
+  "<ruby>難<rt>むずか</rt></ruby>しいもんは<ruby>難<rt>むずか</rt></ruby>しい！<br>{name}、<ruby>正直<rt>しょうじき</rt></ruby>でええわ〜！",
   "{name}、つぎは<ruby>解<rt>と</rt></ruby>けるで！<br>レッドが<ruby>保証<rt>ほしょう</rt></ruby>するわ！",
   "むずかしかったな〜！<br>でも{name}が<ruby>考<rt>かんが</rt></ruby>えてくれただけで<br>レッドうれしいわ！",
-  "むずかしいなぞなぞこそ<br>おもしろいねん！<br>{name}もそのうちハマるで〜！",
-  "{name}、むずかしいって<ruby>感<rt>かん</rt></ruby>じるのは<br>ちゃんと<ruby>考<rt>かんが</rt></ruby>えてるしょうこやで！",
-  "レッドがまたヒントいっぱいだすから<br>{name}、いっしょにがんばろな！",
+  "<ruby>難<rt>むずか</rt></ruby>しいなぞなぞこそ<br>おもしろいねん！<br>{name}もそのうちハマるで〜！",
+  "{name}、<ruby>難<rt>むずか</rt></ruby>しいって<ruby>感<rt>かん</rt></ruby>じるのは<br>ちゃんと<ruby>考<rt>かんが</rt></ruby>えてるしょうこやで！",
+  "レッドがまたヒントいっぱい<ruby>出<rt>だ</rt></ruby>すから<br>{name}、いっしょにがんばろな！",
   "むずかしかったか〜！<br>でも{name}はあきらめんかったやろ？<br>それがいちばん<ruby>大事<rt>だいじ</rt></ruby>や！",
-  "{name}、むずかしいのに<br>さいごまでつきあってくれて<br>おおきにな〜！",
-  "つぎやるときは<br>もっとわかるようになってるで！<br>{name}、<ruby>成長<rt>せいちょう</rt></ruby>ってそういうもんや！",
-  "むずかしかった{name}！<br>でもそのぶん<ruby>答<rt>こた</rt></ruby>えが<ruby>印象<rt>いんしょう</rt></ruby>にのこるやろ？<br>ええことや！",
-  "レッドもむずかしいのは<ruby>苦手<rt>にがて</rt></ruby>やけどな〜<br>{name}といっしょなら<ruby>楽<rt>たの</rt></ruby>しいわ！"
+  "{name}、<ruby>難<rt>むずか</rt></ruby>しいのに<br>さいごまで<ruby>付<rt>つ</rt></ruby>きあってくれて<br>おおきにな〜！",
+  "つぎやるときは<br>もっとわかるようになってるで！<br>{name}、<ruby>成長<rt>せいちょう</rt></ruby>ってそう<ruby>言<rt>い</rt></ruby>うもんや！",
+  "むずかしかった{name}！<br>でもそのぶん<ruby>答<rt>こた</rt></ruby>えが<ruby>印象<rt>いん<ruby>笑<rt>しょう</rt></ruby></rt></ruby>にのこるやろ？<br>ええことや！",
+  "レッドも<ruby>難<rt>むずか</rt></ruby>しいのは<ruby>苦手<rt>にがて</rt></ruby>やけどな〜<br>{name}といっしょなら<ruby>楽<rt>たの</rt></ruby>しいわ！"
 ];
 
 const REACT_WOW = [
@@ -533,43 +533,43 @@ const REACT_WOW = [
   "そやんな〜{name}！<br>こんなん わかるか〜い！って<br>レッドも<ruby>思<rt>おも</rt></ruby>ったで！",
   "{name}の<ruby>気持<rt>きも</rt></ruby>ち、めっちゃわかるわ〜！<br>なぞなぞって たまに<br>むちゃくちゃやもんな〜！",
   "ええ〜！？って<ruby>言<rt>い</rt></ruby>いたくなるよな{name}！<br>レッドも「それはズルいやろ！」って<br><ruby>思<rt>おも</rt></ruby>ったもん！",
-  "そうそう！{name}！<br>「そんなんアリ！？」ってなるやんな〜！<br>なぞなぞってそういうもんやねん！",
-  "{name}、わかる〜！<br>レッドも「ええ加減にせえ！」って<br>ツッコんだことあるわ〜！",
+  "そうそう！{name}！<br>「そんなんアリ！？」ってなるやんな〜！<br>なぞなぞってそう<ruby>言<rt>い</rt></ruby>うもんやねん！",
+  "{name}、わかる〜！<br>レッドも「ええ加減にせえ！」って<br><ruby>突<rt>つ</rt></ruby>っ<ruby>込<rt>こ</rt></ruby>んだことあるわ〜！",
   "そやねん{name}！<br>こじつけやん！って<ruby>思<rt>おも</rt></ruby>うよな〜！<br>でもそこがなぞなぞのおもろいとこやねん！",
-  "「ええ〜！？」って<ruby>声<rt>こえ</rt></ruby>でるよな〜{name}！<br>レッドも<ruby>何回<rt>なんかい</rt></ruby>もでたわ！<br>しゃあないしゃあない！",
-  "{name}、その<ruby>気持<rt>きも</rt></ruby>ち<ruby>大事<rt>だいじ</rt></ruby>にしてな！<br>「なんでやねん！」ってツッコむのも<br>なぞなぞの<ruby>楽<rt>たの</rt></ruby>しみ方やで！",
+  "「ええ〜！？」って<ruby>声<rt>こえ</rt></ruby><ruby>出<rt>で</rt></ruby>るよな〜{name}！<br>レッドも<ruby>何回<rt>なんかい</rt></ruby>もでたわ！<br>しゃあないしゃあない！",
+  "{name}、その<ruby>気持<rt>きも</rt></ruby>ち<ruby>大事<rt>だいじ</rt></ruby>にしてな！<br>「<ruby>何<rt>なん</rt></ruby>でやねん！」って<ruby>突<rt>つ</rt></ruby>っ<ruby>込<rt>こ</rt></ruby>むのも<br>なぞなぞの<ruby>楽<rt>たの</rt></ruby>しみ方やで！",
   "あはは！{name}、<br>そのリアクション<ruby>最高<rt>さいこう</rt></ruby>やわ！<br>レッドもそう<ruby>思<rt>おも</rt></ruby>うもん！",
-  "えええ〜ってなるよな{name}！<br>でもな、あとから<br>「あ〜なるほどな」ってなるで〜…たぶん！",
+  "えええ〜ってなるよな{name}！<br>でもな、あとから<br>「あ〜<ruby>成<rt>な</rt></ruby>るほどな」ってなるで〜…たぶん！",
   "{name}！そやろ！？<br>レッドも「いやいやいや！」って<br><ruby>手<rt>て</rt></ruby>ふって<ruby>否定<rt>ひてい</rt></ruby>したわ！",
   "わかるで〜{name}！<br>「そんなんわかるわけないやん！」やろ？<br>レッドもおんなじこと<ruby>言<rt>い</rt></ruby>うたわ！",
   "ええ〜！？って{name}が<ruby>言<rt>い</rt></ruby>うの、<br>めっちゃ<ruby>気持<rt>きも</rt></ruby>ちわかるねん！<br>レッドは<ruby>味方<rt>みかた</rt></ruby>やからな！",
-  "{name}、モヤモヤするよな〜！<br>でもそれがクセになるねん…<br>なぞなぞのワナやで！",
+  "{name}、<ruby>靄<rt>もや</rt></ruby>モヤするよな〜！<br>でもそれがクセになるねん…<br>なぞなぞのワナやで！",
   "そうやんな{name}！<br>こんなん<ruby>知<rt>し</rt></ruby>らんかったら<br>でてこーへんって！しゃあないわ！",
   "「ええ〜！？」は<ruby>正<rt>ただ</rt></ruby>しいリアクションやで{name}！<br>レッドが<ruby>保証<rt>ほしょう</rt></ruby>するわ！",
   "{name}、ツッコみたくなるよな〜！<br>レッドもな、<ruby>出題者<rt>しゅつだいしゃ</rt></ruby>に<br>「ちょっとまてや！」って<ruby>言<rt>い</rt></ruby>いたいわ！",
-  "あはは！そやんな{name}！<br>でもこういうムチャなやつほど<br>あとから<ruby>覚<rt>おぼ</rt></ruby>えてるもんやで〜！",
+  "あはは！そやんな{name}！<br>でもこう<ruby>言<rt>い</rt></ruby>うムチャなやつほど<br>あとから<ruby>覚<rt>おぼ</rt></ruby>えてるもんやで〜！",
   "{name}、ごめんな〜！<br>レッドもちょっとイジワルやったかも！<br>つぎはもうちょいマシなのいくわ！"
 ];
 
 /* ===== BYEセリフ（jankenと共通） ===== */
 const BYE = [
   "{name}、<ruby>今日<rt>きょう</rt></ruby>は あそんでくれて<br>おおきに〜！<br>また いつでも <ruby>来<rt>き</rt></ruby>てな〜！",
-  "たのしかった〜{name}！<br>レッド、いつでも ここで<br><ruby>待<rt>ま</rt></ruby>っとるからな〜！",
+  "<ruby>楽<rt>たの</rt></ruby>しかった〜{name}！<br>レッド、いつでも ここで<br><ruby>待<rt>ま</rt></ruby>っとるからな〜！",
   "{name}、ありがとな〜！<br>さみしなるけど、<br>また あそぼな〜！",
-  "バイバイ{name}！<br>レッド、{name}が<ruby>来<rt>く</rt></ruby>るの<br>いつも たのしみにしてるで〜！",
-  "{name}〜！おつかれさま！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに あそべて<br>レッド、しあわせやったわ〜",
+  "バイバイ{name}！<br>レッド、{name}が<ruby>来<rt>く</rt></ruby>るの<br>いつも <ruby>楽<rt>たの</rt></ruby>しみにしてるで〜！",
+  "{name}〜！おつかれさま！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに <ruby>遊<rt>あそ</rt></ruby>べて<br>レッド、<ruby>幸<rt>しあわ</rt></ruby>せやったわ〜",
   "またな〜{name}！<br>レッド、いつでも<br>スタンバイOKやで〜！",
-  "{name}、おおきに！<br>いつ <ruby>来<rt>き</rt></ruby>ても ええからな〜<br>レッドは ずっと ここにおるで！",
-  "じゃあね{name}！<br>レッド、{name}のこと<br><ruby>忘<rt>わす</rt></ruby>れへんで〜、ぜったいな！",
+  "{name}、おおきに！<br>いつ <ruby>来<rt>き</rt></ruby>ても ええからな〜<br>レッドは <ruby>図<rt>ず</rt></ruby>っと ここにおるで！",
+  "じゃあね{name}！<br>レッド、{name}のこと<br><ruby>忘<rt>わす</rt></ruby>れへんで〜、<ruby>絶対<rt>ぜったい</rt></ruby>な！",
   "バイバイ〜！<br>{name}が また <ruby>来<rt>き</rt></ruby>てくれる<ruby>日<rt>ひ</rt></ruby>を<br>レッド、<ruby>指折<rt>ゆびお</rt></ruby>り<ruby>数<rt>かぞ</rt></ruby>えて<ruby>待<rt>ま</rt></ruby>っとくわ〜",
-  "{name}！<ruby>今日<rt>きょう</rt></ruby>は ほんまに<br>たのしかった〜！<br>また いつでも あそびにおいで〜"
+  "{name}！<ruby>今日<rt>きょう</rt></ruby>は ほんまに<br><ruby>楽<rt>たの</rt></ruby>しかった〜！<br>また いつでも <ruby>遊<rt>あそ</rt></ruby>びにおいで〜"
 ];
 
 /* ===== イントロセリフ ===== */
 const INTROS = [
-  "レッドなぞなぞ〜！<br>{name}、ぜんぶわかるかな〜？<br>レッドがもんだいだすで！",
-  "なぞなぞタイム〜！<br>{name}、<ruby>頭<rt>あたま</rt></ruby>やわらかくしてな〜<br>レッドのもんだい、いくで！",
-  "{name}！なぞなぞしよ〜！<br>レッドが出すもんだい、<br>ぜんぶとけるかな〜？ふふふ！",
+  "レッドなぞなぞ〜！<br>{name}、<ruby>全部<rt>ぜんぶ</rt></ruby>わかるかな〜？<br>レッドが<ruby>問題<rt>もんだい</rt></ruby><ruby>出<rt>だ</rt></ruby>すで！",
+  "なぞなぞタイム〜！<br>{name}、<ruby>頭<rt>あたま</rt></ruby>やわらかくしてな〜<br>レッドの<ruby>問題<rt>もんだい</rt></ruby>、いくで！",
+  "{name}！なぞなぞしよ〜！<br>レッドが出す<ruby>問題<rt>もんだい</rt></ruby>、<br><ruby>全部<rt>ぜんぶ</rt></ruby><ruby>解<rt>と</rt></ruby>けるかな〜？ふふふ！",
   "レッドクイズ〜！<br>{name}、じゅんびはええか〜？<br>ほな、いっくで〜！"
 ];
 
@@ -607,7 +607,7 @@ function showQuestion() {
   hintBtn.style.display = '';
   answerBtn.style.display = '';
 
-  const qText = "もんだい！<br><br>" + riddle.q;
+  const qText = "<ruby>問題<rt>もんだい</rt></ruby>！<br><br>" + riddle.q;
   typeWrite(qText, 70);
 }
 
@@ -623,7 +623,7 @@ hintBtn.addEventListener('click', () => {
   typeWrite(hintText, 70);
 });
 
-/* ===== こたえ ===== */
+/* ===== <ruby>答<rt>こた</rt></ruby>え ===== */
 answerBtn.addEventListener('click', () => {
   if (typing) { completeTyping(); return; }
   const riddle = RIDDLES[questions[currentQ - 1]];
@@ -660,7 +660,7 @@ reactEasy.addEventListener('click', () => handleReaction(REACT_EASY));
 reactHard.addEventListener('click', () => handleReaction(REACT_HARD));
 reactWow.addEventListener('click',  () => handleReaction(REACT_WOW));
 
-/* ===== つぎのもんだい ===== */
+/* ===== つぎの<ruby>問題<rt>もんだい</rt></ruby> ===== */
 nextBtn.addEventListener('click', () => {
   nextButtons.classList.add('hidden');
   showQuestion();

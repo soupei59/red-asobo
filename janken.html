@@ -51,7 +51,7 @@
 
     <!-- スコア -->
     <div class="score">
-      かった <span class="num" id="score-win">0</span>　・
+      <ruby>勝<rt>か</rt></ruby>った <span class="num" id="score-win">0</span>　・
       まけた <span class="num" id="score-lose">0</span>　・
       あいこ <span class="num" id="score-draw">0</span>
     </div>
@@ -73,17 +73,17 @@ const INTRO_BRAG = [
   "じつはレッド、<br>じゃんけん<ruby>五段<rt>ごだん</rt></ruby> <ruby>持<rt>も</rt></ruby>ってるねん。<br>そんな<ruby>段位<rt>だんい</rt></ruby> ないけどな〜",
   "レッドな、じゃんけんで<br><ruby>負<rt>ま</rt></ruby>けたこと ないねん。<br>…<ruby>記憶<rt>きおく</rt></ruby>にないだけやけど。",
   "レッドのグー、<br><ruby>岩<rt>いわ</rt></ruby>より<ruby>硬<rt>かた</rt></ruby>いって<ruby>有名<rt>ゆうめい</rt></ruby>やねん。<br>レッドの<ruby>中<rt>なか</rt></ruby>だけで。",
-  "じゃんけん<ruby>研究<rt>けんきゅう</rt></ruby><ruby>歴<rt>れき</rt></ruby> 15<ruby>年<rt>ねん</rt></ruby>やで。<br>まあ、<ruby>研究<rt>けんきゅう</rt></ruby>っていうか<br>あそんでただけやけどな〜",
+  "じゃんけん<ruby>研究<rt>けんきゅう</rt></ruby><ruby>歴<rt>れき</rt></ruby> 15<ruby>年<rt>ねん</rt></ruby>やで。<br>まあ、<ruby>研究<rt>けんきゅう</rt></ruby>っていうか<br><ruby>遊<rt>あそ</rt></ruby>んでただけやけどな〜",
   "レッドな、じゃんけんのとき<br><ruby>相手<rt>あいて</rt></ruby>の<ruby>心<rt>こころ</rt></ruby>が<ruby>読<rt>よ</rt></ruby>めるねん。<br>…<ruby>読<rt>よ</rt></ruby>めてたら<ruby>負<rt>ま</rt></ruby>けへんか。",
   "レッドのパー、<br>ぺらっぺらに<ruby>薄<rt>うす</rt></ruby>いから<br>どんなグーも つつめるで〜。しらんけど。",
   "じゃんけんの<ruby>神様<rt>かみさま</rt></ruby>が<br>レッドに ほほえんどるわ〜。<br>たぶん あくびしとるだけやけど。",
   "レッドのチョキ、<br><ruby>切<rt>き</rt></ruby>れ<ruby>味<rt>あじ</rt></ruby>バツグンやねん。<br>ハサミ<ruby>代<rt>か</rt></ruby>わりになるで。ならんけど。",
-  "じつはレッド、<br>じゃんけんの<ruby>特許<rt>とっきょ</rt></ruby> もっとるねん。<br>もってへんけど。",
+  "じつはレッド、<br>じゃんけんの<ruby>特許<rt>とっきょ</rt></ruby> もっとるねん。<br><ruby>持<rt>も</rt></ruby>ってへんけど。",
   "レッドがじゃんけんすると<br>まわりに<ruby>風<rt>かぜ</rt></ruby>が <ruby>吹<rt>ふ</rt></ruby>くらしいで。<br>エアコンやったけど。",
   "レッドのじゃんけん、<br>テレビ<ruby>出演<rt>しゅつえん</rt></ruby> オファー<ruby>来<rt>き</rt></ruby>とるねん。<br><ruby>来<rt>き</rt></ruby>てへんけど。"
 ];
 const INTRO = [
-  "レッドとじゃんけん あそぼうや〜！",
+  "レッドとじゃんけん <ruby>遊<rt>あそ</rt></ruby>ぼうや〜！",
   INTRO_BRAG[Math.floor(Math.random() * INTRO_BRAG.length)],
   "ほな いくで〜！"
 ];
@@ -106,7 +106,7 @@ const RED_WIN = [
   "<ruby>勝<rt>か</rt></ruby>ったで〜！{name}、<br>レッド この<ruby>喜<rt>よろこ</rt></ruby>びを<br>だれかに<ruby>伝<rt>つた</rt></ruby>えたいわ〜！あ、{name}に<ruby>伝<rt>つた</rt></ruby>えてるか！",
   "よっしゃぁ{name}！<br>レッド、うれしすぎて<br>ちょっと スキップしてくるわ〜たったっ！",
   "レッドの<ruby>勝<rt>か</rt></ruby>ちやで{name}！<br>この<ruby>調子<rt>ちょうし</rt></ruby>で <ruby>世界征服<rt>せかいせいふく</rt></ruby>も<br>いけるんちゃう？…いけへんか。",
-  "やった〜{name}！<br>レッドな、<ruby>勝<rt>か</rt></ruby>った<ruby>日<rt>ひ</rt></ruby>は<br>ごはん おかわり3<ruby>杯<rt>ばい</rt></ruby>するねん〜！",
+  "やった〜{name}！<br>レッドな、<ruby>勝<rt>か</rt></ruby>った<ruby>日<rt>ひ</rt></ruby>は<br>ごはん おかわり3ばいするねん〜！",
   "<ruby>勝<rt>か</rt></ruby>ったで{name}〜！<br>でもな、<ruby>次<rt>つぎ</rt></ruby>は {name}が<ruby>勝<rt>か</rt></ruby>つかもな〜<br>…いや、レッドが<ruby>勝<rt>か</rt></ruby>つけどな！",
   "イエ〜イ{name}！<br>レッド、<ruby>勝<rt>か</rt></ruby>った<ruby>記念<rt>きねん</rt></ruby>に<br><ruby>今日<rt>きょう</rt></ruby>を「レッド<ruby>記念日<rt>きねんび</rt></ruby>」にするわ〜！"
 ];
@@ -128,9 +128,9 @@ const RED_LOSE = [
   "あちゃ〜{name}に<ruby>負<rt>ま</rt></ruby>けた！<br>レッド、<ruby>今<rt>いま</rt></ruby> <ruby>地面<rt>じめん</rt></ruby>に<br>「の」の<ruby>字<rt>じ</rt></ruby> <ruby>書<rt>か</rt></ruby>いとるわ〜くるくる",
   "{name}、やるやん〜！<br>レッド もう<ruby>白旗<rt>しろはた</rt></ruby>や〜<br>…いや、<ruby>次<rt>つぎ</rt></ruby>は<ruby>負<rt>ま</rt></ruby>けへんで！",
   "まけた〜！{name}、<br><ruby>今<rt>いま</rt></ruby>のレッド<ruby>見<rt>み</rt></ruby>た？<br>めっちゃ ええ<ruby>顔<rt>かお</rt></ruby>で<ruby>負<rt>ま</rt></ruby>けたやろ〜",
-  "ぐぬぬ{name}〜！<br>レッドの<ruby>作戦<rt>さくせん</rt></ruby>、<br>ぜんぶ はずれたわ〜ポンコツや〜",
+  "ぐぬぬ{name}〜！<br>レッドの<ruby>作戦<rt>さくせん</rt></ruby>、<br><ruby>全部<rt>ぜんぶ</rt></ruby> はずれたわ〜ポンコツや〜",
   "あ〜<ruby>負<rt>ま</rt></ruby>けてもうた！<br>{name}、つぎ<ruby>勝<rt>か</rt></ruby>ったら<br>おごってな〜。なにをやろ〜",
-  "まけた〜{name}！<br>でもな、レッドは<br><ruby>負<rt>ま</rt></ruby>けても{name}と あそべて<ruby>楽<rt>たの</rt></ruby>しいねん！"
+  "まけた〜{name}！<br>でもな、レッドは<br><ruby>負<rt>ま</rt></ruby>けても{name}と <ruby>遊<rt>あそ</rt></ruby>べて<ruby>楽<rt>たの</rt></ruby>しいねん！"
 ];
 const DRAW = [
   "お〜っと あいこや〜！<br>{name}、レッドと<br><ruby>気<rt>き</rt></ruby>ぃ <ruby>合<rt>あ</rt></ruby>うやん〜ふふふ！",
@@ -156,26 +156,26 @@ const DRAW = [
 ];
 
 const BYE = [
-  "{name}、<ruby>今日<rt>きょう</rt></ruby>は あそんでくれて<br>おおきに〜！<br>また いつでも <ruby>来<rt>き</rt></ruby>てな〜！",
+  "{name}、<ruby>今日<rt>きょう</rt></ruby>は <ruby>遊<rt>あそ</rt></ruby>んでくれて<br>おおきに〜！<br>また いつでも <ruby>来<rt>き</rt></ruby>てな〜！",
   "たのしかった〜{name}！<br>レッド、いつでも ここで<br><ruby>待<rt>ま</rt></ruby>っとるからな〜！",
-  "{name}、ありがとな〜！<br>さみしなるけど、<br>また あそぼな〜！",
+  "{name}、ありがとな〜！<br>さみしなるけど、<br>また <ruby>遊<rt>あそ</rt></ruby>ぼな〜！",
   "バイバイ{name}！<br>レッド、{name}が<ruby>来<rt>く</rt></ruby>るの<br>いつも たのしみにしてるで〜！",
-  "{name}〜！おつかれさま！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに あそべて<br>レッド、しあわせやったわ〜",
+  "{name}〜！おつかれさま！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに <ruby>遊<rt>あそ</rt></ruby>べて<br>レッド、しあわせやったわ〜",
   "またな〜{name}！<br>レッド、いつでも<br>スタンバイOKやで〜！",
   "{name}、おおきに！<br>いつ <ruby>来<rt>き</rt></ruby>ても ええからな〜<br>レッドは ずっと ここにおるで！",
   "じゃあね{name}！<br>レッド、{name}のこと<br><ruby>忘<rt>わす</rt></ruby>れへんで〜、ぜったいな！",
   "バイバイ〜！<br>{name}が また <ruby>来<rt>き</rt></ruby>てくれる<ruby>日<rt>ひ</rt></ruby>を<br>レッド、<ruby>指折<rt>ゆびお</rt></ruby>り<ruby>数<rt>かぞ</rt></ruby>えて<ruby>待<rt>ま</rt></ruby>っとくわ〜",
-  "{name}！<ruby>今日<rt>きょう</rt></ruby>は ほんまに<br>たのしかった〜！<br>また いつでも あそびにおいで〜",
+  "{name}！<ruby>今日<rt>きょう</rt></ruby>は ほんまに<br>たのしかった〜！<br>また いつでも <ruby>遊<rt>あそ</rt></ruby>びにおいで〜",
   "おつかれ{name}！<br>しんどい<ruby>日<rt>ひ</rt></ruby>も、<ruby>元気<rt>げんき</rt></ruby>な<ruby>日<rt>ひ</rt></ruby>も、<br>いつ <ruby>来<rt>き</rt></ruby>ても ええからな〜",
-  "{name}〜ありがとう！<br>レッド、{name}と あそぶ<ruby>時間<rt>じかん</rt></ruby>が<br>いっちばん <ruby>好<rt>す</rt></ruby>きやねん〜",
+  "{name}〜ありがとう！<br>レッド、{name}と <ruby>遊<rt>あそ</rt></ruby>ぶ<ruby>時間<rt>じかん</rt></ruby>が<br>いっちばん <ruby>好<rt>す</rt></ruby>きやねん〜",
   "またおいで〜{name}！<br>ちょっとだけでも、<br>ながーくでも、だいかんげいやで！",
   "バイバイ{name}！<br>むりせんと、<br>マイペースで また <ruby>来<rt>き</rt></ruby>てな〜！",
   "{name}、おおきに！<br>ええ<ruby>日<rt>ひ</rt></ruby>も、そうでもない<ruby>日<rt>ひ</rt></ruby>も、<br>レッドは いつでも ここにおるで",
-  "じゃあね〜{name}！<br>レッドな、<ruby>今日<rt>きょう</rt></ruby> {name}と<br>あそべて めっちゃ うれしかってん！",
+  "じゃあね〜{name}！<br>レッドな、<ruby>今日<rt>きょう</rt></ruby> {name}と<br><ruby>遊<rt>あそ</rt></ruby>べて めっちゃ うれしかってん！",
   "またな{name}〜！<br>レッド、{name}のこと<br>いつも おうえんしてるで〜！",
   "{name}、バイバイ〜！<br>つぎ <ruby>来<rt>き</rt></ruby>たときは<br>もっと おもしろいこと しよな〜！",
   "おおきに{name}！<br>レッドの<ruby>前<rt>まえ</rt></ruby>では、<br>いつでも そのままで おってな〜",
-  "{name}！またあそぼ〜！<br>レッド、ここで<br>ず〜っと <ruby>待<rt>ま</rt></ruby>っとるからな〜！"
+  "{name}！また<ruby>遊<rt>あそ</rt></ruby>ぼ〜！<br>レッド、ここで<br>ず〜っと <ruby>待<rt>ま</rt></ruby>っとるからな〜！"
 ];
 
 function fillName(str, name, h) { return str.replace(/\{name\}/g, name + (h || "")); }

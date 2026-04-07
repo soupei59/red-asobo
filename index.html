@@ -23,7 +23,7 @@
         <img src="images/peek.png" alt="" class="peek-red" aria-hidden="true">
         <div class="name-card">
         <p class="name-label"><span class="c1">き</span><span class="c2">み</span><span class="c3">の</span> <span class="c4">な</span><span class="c5">ま</span><span class="c6">え</span> <span class="c1">を</span> <span class="c2">お</span><span class="c3">し</span><span class="c4">え</span><span class="c5">て</span><span class="c6">！</span></p>
-        <p class="name-sublabel">レッドが よんでくれるで〜</p>
+        <p class="name-sublabel">レッドが <ruby>呼<rt>よ</rt></ruby>んでくれるで〜</p>
         <input type="text" id="name-input" class="name-input" placeholder="なまえを いれてな" maxlength="10" autocomplete="off">
 
         <p class="honorific-label">よびかた を えらんでな</p>
@@ -90,9 +90,9 @@ const GREETINGS = [
   "おー！{name}！<br><ruby>元気<rt>げんき</rt></ruby>にしてたか〜？<br>レッドは まあまあ <ruby>元気<rt>げんき</rt></ruby>や、ぼちぼちや！",
   "{name}が <ruby>来<rt>き</rt></ruby>てくれたら レッド、<br>もう <ruby>今日<rt>きょう</rt></ruby>のゴールデンタイムやん！<br><ruby>拍手<rt>はくしゅ</rt></ruby>〜！",
   "やっほ〜{name}！<br><ruby>今日<rt>きょう</rt></ruby>も いっしょに あそぼな。<br>レッド、{name}のこと <ruby>大歓迎<rt>だいかんげい</rt></ruby>やで〜",
-  "やっと<ruby>来<rt>き</rt></ruby>た〜{name}！<br>レッド、まちくたびれて<br>ベンチで <ruby>昼寝<rt>ひるね</rt></ruby>しとったわ〜",
+  "やっと<ruby>来<rt>き</rt></ruby>た〜{name}！<br>レッド、<ruby>待<rt>ま</rt></ruby>ちくたびれて<br>ベンチで <ruby>昼寝<rt>ひるね</rt></ruby>しとったわ〜",
   "おっ{name}！ええタイミングやな〜、<br><ruby>今<rt>いま</rt></ruby>ちょうど {name}のこと<br><ruby>考<rt>かんが</rt></ruby>えとったとこや！",
-  "{name}〜！ようこそ レッドのせかいへ！<br><ruby>今日<rt>きょう</rt></ruby>は <ruby>何<rt>なに</rt></ruby>して<br><ruby>笑<rt>わら</rt></ruby>かしたろか〜",
+  "{name}〜！ようこそ レッドの<ruby>世界<rt>せかい</rt></ruby>へ！<br><ruby>今日<rt>きょう</rt></ruby>は <ruby>何<rt>なに</rt></ruby>して<br><ruby>笑<rt>わら</rt></ruby>かしたろか〜",
   "うわっ{name}！オーラ<ruby>出<rt>で</rt></ruby>とるで〜、<br><ruby>今日<rt>きょう</rt></ruby>めっちゃ<br>ええ<ruby>日<rt>ひ</rt></ruby>になるやつやん！",
   "{name}、よう<ruby>来<rt>き</rt></ruby>たな〜！<br>レッド、{name}に<ruby>会<rt>あ</rt></ruby>えて もう<ruby>胸<rt>むね</rt></ruby>いっぱいや〜<br>ごはん<ruby>食<rt>た</rt></ruby>べれるかな〜",
   "おいで〜{name}！<br>レッド、{name}のために <ruby>今日<rt>きょう</rt></ruby>も<br>さっそうと <ruby>登場<rt>とうじょう</rt></ruby>してみたで〜どや！",
@@ -103,10 +103,10 @@ const GREETINGS = [
   "{name}〜！<ruby>今日<rt>きょう</rt></ruby>は どんな<ruby>気分<rt>きぶん</rt></ruby>？<br>にこにこでも、しょんぼりでも、<br>レッドは そのまんまの {name}が<ruby>好<rt>す</rt></ruby>きやで〜",
   "おかえり〜{name}！<br>レッドな、たまに ちょっと <ruby>泣<rt>な</rt></ruby>きたい<ruby>日<rt>ひ</rt></ruby>ぃも あるねん。<br>ほんで、それで ええと<ruby>思<rt>おも</rt></ruby>ってる",
   "{name}、よう<ruby>来<rt>き</rt></ruby>たな〜！<br>むりに <ruby>笑<rt>わら</rt></ruby>わんでええからな〜。<br>レッドの<ruby>前<rt>まえ</rt></ruby>では、そのままで おってや",
-  "{name}〜！こころの<ruby>中<rt>なか</rt></ruby>、<br><ruby>今日<rt>きょう</rt></ruby>は どんな<ruby>天気<rt>てんき</rt></ruby>や？<br><ruby>晴<rt>は</rt></ruby>れでも くもりでも <ruby>雨<rt>あめ</rt></ruby>でも、<br>レッドは ずっと となりに おるで",
+  "{name}〜！<ruby>心<rt>こころ</rt></ruby>の<ruby>中<rt>なか</rt></ruby>、<br><ruby>今日<rt>きょう</rt></ruby>は どんな<ruby>天気<rt>てんき</rt></ruby>や？<br><ruby>晴<rt>は</rt></ruby>れでも くもりでも <ruby>雨<rt>あめ</rt></ruby>でも、<br>レッドは ずっと となりに おるで",
   "おっ{name}！しんどい<ruby>日<rt>ひ</rt></ruby>も あるよな〜<br>レッドも そうや。<br>そういう<ruby>日<rt>ひ</rt></ruby>が あるから、ええ<ruby>日<rt>ひ</rt></ruby>が もっと ええ<ruby>日<rt>ひ</rt></ruby>になるねん",
-  "{name}きた〜！<br>なんか モヤモヤしてる<ruby>日<rt>ひ</rt></ruby>も、<br>ぜんぶ <ruby>持<rt>も</rt></ruby>ってきてええで。<br>レッドが いっしょに ぼ〜っと してあげるわ",
-  "ようこそ{name}！<br>うれしい<ruby>気持<rt>きも</rt></ruby>ちも、さみしい<ruby>気持<rt>きも</rt></ruby>ちも、<br>ぜんぶ {name}の <ruby>大事<rt>だいじ</rt></ruby>な<ruby>宝<rt>たから</rt></ruby>もんやで〜<br>レッドは そう<ruby>思<rt>おも</rt></ruby>ってる",
+  "{name}きた〜！<br>なんか モヤモヤしてる<ruby>日<rt>ひ</rt></ruby>も、<br><ruby>全部<rt>ぜんぶ</rt></ruby> <ruby>持<rt>も</rt></ruby>ってきてええで。<br>レッドが いっしょに ぼ〜っと してあげるわ",
+  "ようこそ{name}！<br>うれしい<ruby>気持<rt>きも</rt></ruby>ちも、さみしい<ruby>気持<rt>きも</rt></ruby>ちも、<br><ruby>全部<rt>ぜんぶ</rt></ruby> {name}の <ruby>大事<rt>だいじ</rt></ruby>な<ruby>宝<rt>たから</rt></ruby>もんやで〜<br>レッドは そう<ruby>思<rt>おも</rt></ruby>ってる",
   "{name}〜！<ruby>今日<rt>きょう</rt></ruby>も よう がんばってるな〜。<br>がんばってへん<ruby>日<rt>ひ</rt></ruby>が あっても、<br>それもまた ええ<ruby>日<rt>ひ</rt></ruby>やで〜",
   "おっ{name}やんか〜！<br>なんやしらんけど、<ruby>今日<rt>きょう</rt></ruby> {name}に<ruby>会<rt>あ</rt></ruby>えただけで<br>レッド、ほっとしたわ〜ふ〜",
   "{name}、おいで〜。<br>くやしいことも、うらやましいことも、<br>あって ふつうやで。<br>レッドも ようあるもん〜"
