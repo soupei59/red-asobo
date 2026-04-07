@@ -7,84 +7,29 @@
 <link rel="stylesheet" href="style.css">
 <style>
 /* ===== テトリス固有スタイル ===== */
-/* 手書き風・あたたかみのあるデザイン */
 
 .tetris-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
   width: 100%;
-  padding-bottom: 20px;
+  padding-bottom: 16px;
+  gap: 0;
 }
 
-/* ステージ（キャラ＋吹き出し） */
-.tetris-stage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-}
-.tetris-char {
-  width: min(22vw, 100px);
-  height: min(22vw, 100px);
-  flex-shrink: 0;
-}
-.tetris-char img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.tetris-bubble {
-  background: var(--linen-soft);
-  border: 1px solid var(--border-mid);
-  border-radius: var(--r-lg);
-  padding: var(--s-3) var(--s-5);
-  font-size: var(--t-lg);
-  font-weight: 700;
-  color: var(--ink);
-  max-width: 55vw;
-  height: 5em;
-  display: flex;
-  align-items: center;
-  position: relative;
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-}
-.tetris-bubble::before {
-  content: '';
-  position: absolute;
-  left: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 6px solid transparent;
-  border-right-color: var(--border-mid);
-}
-
-/* スコア・レベル表示 */
-.tetris-info {
-  display: flex;
-  gap: 12px;
-  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: var(--t-base);
-  color: var(--ink);
-  font-weight: 700;
-}
-.tetris-info span {
-  background: var(--linen-soft);
-  border: 2px solid var(--border-mid);
-  border-radius: var(--r-full);
-  padding: 4px 16px;
-  box-shadow: var(--shadow-xs);
-}
-
-/* ゲームボード */
-.tetris-board-area {
-  position: relative;
+/* ===== メインエリア：ボード左 + サイドバー右 ===== */
+.tetris-main {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* ゲームボード（相対配置でレッドを重ねる） */
+.tetris-board-area {
+  position: relative;
+  flex-shrink: 0;
 }
 .tetris-canvas {
   border: 3px solid var(--border-strong);
@@ -94,12 +39,34 @@
   box-shadow: var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
-/* ネクスト表示 */
-.tetris-next {
+/* レッド — 盤面の下に少し被ってふわふわ */
+.tetris-red-float {
+  position: absolute;
+  bottom: -10px;
+  left: -16px;
+  width: min(26vw, 110px);
+  z-index: 8;
+  pointer-events: none;
+  animation: red-bob 3s ease-in-out infinite;
+}
+.tetris-red-float img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+@keyframes red-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* サイドバー：ネクスト + スコア + レベル */
+.tetris-sidebar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 90px;
 }
 .tetris-next-label {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
@@ -113,26 +80,64 @@
   background: var(--linen-deep);
   box-shadow: var(--shadow-xs);
 }
+.tetris-info-item {
+  background: var(--linen-soft);
+  border: 2px solid var(--border-mid);
+  border-radius: var(--r-md);
+  padding: 6px 12px;
+  font-size: var(--t-base);
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+  width: 100%;
+  white-space: nowrap;
+}
 
-/* 操作ボタン — 盤面の下にインライン配置 */
+/* ===== セリフ吹き出し（盤面下・固定高さ） ===== */
+.tetris-comment {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  justify-content: center;
+  padding: 6px 8px 2px;
+  min-height: 48px;
+}
+.tetris-bubble {
+  background: var(--linen-soft);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--r-lg);
+  padding: 6px 14px;
+  font-size: var(--t-lg);
+  font-weight: 700;
+  color: var(--ink);
+  max-width: 80vw;
+  height: 3.2em;
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+/* ===== 操作ボタン ===== */
 .tetris-controls {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  padding: 12px 0 4px;
+  gap: 12px;
+  padding: 6px 0;
   width: 100%;
-  max-width: 320px;
-  margin: 0 auto;
 }
 .ctrl-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: clamp(18px,5vw,26px);
+  font-size: clamp(18px,5vw,28px);
   font-weight: 900;
-  width: 56px;
-  height: 56px;
+  width: clamp(48px,13vw,64px);
+  height: clamp(48px,13vw,64px);
   border: 2px solid var(--border-mid);
   border-radius: var(--r-full);
   background: var(--linen-soft);
@@ -165,10 +170,10 @@
 .tetris-finish {
   display: flex;
   justify-content: center;
-  padding: 8px 0 20px;
+  padding: 4px 0 12px;
 }
 
-/* ゲームオーバー画面 */
+/* ===== ゲームオーバー ===== */
 .tetris-gameover {
   position: absolute;
   inset: 0;
@@ -201,7 +206,7 @@
   gap: 10px;
 }
 
-/* ライン消しエフェクト */
+/* ===== エフェクト ===== */
 .line-clear-fx {
   position: absolute;
   left: 3px;
@@ -218,11 +223,7 @@
   50%  { opacity:1; transform: scaleY(1.8); }
   100% { opacity:0; transform: scaleY(0); }
 }
-
-/* 画面揺れ */
-.shake {
-  animation: board-shake 0.3s ease-out;
-}
+.shake { animation: board-shake 0.3s ease-out; }
 @keyframes board-shake {
   0%   { transform: translate(0,0); }
   20%  { transform: translate(-3px,2px); }
@@ -231,12 +232,9 @@
   80%  { transform: translate(1px,-1px); }
   100% { transform: translate(0,0); }
 }
-
-/* コンボ表示 */
 .combo-popup {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%,-50%) scale(0.5);
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
   font-size: clamp(26px,7vw,44px);
@@ -244,8 +242,7 @@
   color: var(--red);
   text-shadow: 0 0 12px rgba(255,220,120,0.6), 2px 2px 0 rgba(200,90,77,0.3);
   -webkit-text-stroke: 0.5px var(--ink);
-  pointer-events: none;
-  z-index: 6;
+  pointer-events: none; z-index: 6;
   animation: combo-pop 1s ease-out forwards;
 }
 @keyframes combo-pop {
@@ -254,28 +251,19 @@
   40%  { transform: translate(-50%,-50%) scale(1); }
   100% { opacity:0; transform: translate(-50%,-80%) scale(1); }
 }
-
-/* スタートオーバーレイ */
 .tetris-start-overlay {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: rgba(45,40,35,0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  border-radius: var(--r-md);
-  z-index: 10;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 18px; border-radius: var(--r-md); z-index: 10;
 }
 .tetris-start-overlay.hidden { display: none; }
 .start-title {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
   font-size: clamp(28px,8vw,44px);
-  font-weight: 900;
-  color: #fff;
+  font-weight: 900; color: #fff;
   text-shadow: 0 2px 12px rgba(200,90,77,0.4);
 }
 </style>
@@ -286,44 +274,47 @@
   <div class="container">
     <div class="tetris-wrapper">
 
-      <!-- キャラ＋吹き出し -->
-      <div class="tetris-stage">
-        <div class="tetris-char floating" id="char-wrap">
-          <img src="images/read.png" alt="シブ・レッド" id="char-img">
-        </div>
-        <div class="tetris-bubble" id="bubble">
-          <span id="bubble-text">テトリスで あそぼ〜！</span>
-        </div>
-      </div>
+      <!-- ===== メイン：ボード左 + サイドバー右 ===== -->
+      <div class="tetris-main">
+        <!-- ゲームボード -->
+        <div class="tetris-board-area" id="board-area">
+          <canvas id="tetris-canvas" class="tetris-canvas"></canvas>
 
-      <!-- スコア表示 -->
-      <div class="tetris-info">
-        <span>スコア: <b id="score-val">0</b></span>
-        <span>レベル: <b id="level-val">1</b></span>
-      </div>
+          <!-- レッド（盤面の左下にふわふわ） -->
+          <div class="tetris-red-float" id="char-wrap">
+            <img src="images/read.png" alt="シブ・レッド" id="char-img">
+          </div>
 
-      <!-- ゲーム盤面 -->
-      <div class="tetris-board-area" id="board-area">
-        <canvas id="tetris-canvas" class="tetris-canvas"></canvas>
-        <div class="tetris-next">
+          <!-- スタート画面 -->
+          <div class="tetris-start-overlay" id="start-overlay">
+            <div class="start-title">テトリス</div>
+            <button type="button" class="btn warm" id="start-btn">スタート！</button>
+          </div>
+
+          <!-- ゲームオーバー -->
+          <div class="tetris-gameover hidden" id="gameover-overlay">
+            <div class="gameover-title">ゲームオーバー</div>
+            <div class="gameover-score" id="gameover-score">スコア: 0</div>
+            <div class="gameover-btns">
+              <button type="button" class="btn warm" id="retry-btn">もういちど</button>
+              <a href="bye.html" class="btn small" style="background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">おしまい</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- サイドバー：ネクスト + スコア + レベル -->
+        <div class="tetris-sidebar">
           <span class="tetris-next-label">つぎ</span>
           <canvas id="next-canvas"></canvas>
+          <div class="tetris-info-item">スコア<br><b id="score-val">0</b></div>
+          <div class="tetris-info-item">レベル<br><b id="level-val">1</b></div>
         </div>
+      </div>
 
-        <!-- スタート画面 -->
-        <div class="tetris-start-overlay" id="start-overlay">
-          <div class="start-title">テトリス</div>
-          <button type="button" class="btn warm" id="start-btn">スタート！</button>
-        </div>
-
-        <!-- ゲームオーバー -->
-        <div class="tetris-gameover hidden" id="gameover-overlay">
-          <div class="gameover-title">ゲームオーバー</div>
-          <div class="gameover-score" id="gameover-score">スコア: 0</div>
-          <div class="gameover-btns">
-            <button type="button" class="btn warm" id="retry-btn">もういちど</button>
-            <a href="bye.html" class="btn small" style="background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">おしまい</a>
-          </div>
+      <!-- セリフ吹き出し -->
+      <div class="tetris-comment">
+        <div class="tetris-bubble" id="bubble">
+          <span id="bubble-text">テトリスで あそぼ〜！</span>
         </div>
       </div>
 
@@ -346,7 +337,12 @@
 /* ===== 定数 ===== */
 const COLS = 10;
 const ROWS = 20;
-const CELL = Math.min(Math.floor((window.innerWidth - 100) / COLS), 28);
+/* サイドバー幅（約90px）+ gap + 余白を考慮してボード幅を算出 */
+const SIDEBAR_W = 90;
+const GAP = 8;
+const MARGIN = 32; /* container padding等 */
+const availW = Math.min(window.innerWidth - SIDEBAR_W - GAP - MARGIN, 400);
+const CELL = Math.max(Math.floor(availW / COLS), 16);
 const NEXT_CELL = Math.floor(CELL * 0.7);
 
 const canvas = document.getElementById('tetris-canvas');
