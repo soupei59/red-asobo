@@ -5,6 +5,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>レッドとあそぼう</title>
 <link rel="stylesheet" href="style.css">
+<style>
+/* ===== レッド登場演出 ===== */
+.entrance-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.7);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.entrance-overlay.active { opacity: 1; }
+.entrance-overlay.fade-out { opacity: 0; transition: opacity 0.6s; }
+
+/* 白フラッシュ */
+.entrance-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+}
+.entrance-overlay.active .entrance-flash {
+  animation: red-flash 0.8s ease-out forwards;
+}
+@keyframes red-flash {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  35%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* 放射状の光線 */
+.entrance-rays {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.entrance-overlay.active .entrance-rays {
+  animation: rays-appear 1.6s 0.3s ease-out forwards;
+}
+@keyframes rays-appear {
+  0%   { opacity: 0; transform: scale(0.5) rotate(0deg); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(2) rotate(25deg); }
+}
+.ray {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 4px;
+  height: 120vh;
+  background: linear-gradient(to bottom, rgba(255,220,120,0.9), rgba(200,90,77,0.4), transparent);
+  transform-origin: top center;
+  border-radius: 2px;
+}
+.ray:nth-child(1)  { transform: rotate(0deg); }
+.ray:nth-child(2)  { transform: rotate(30deg); }
+.ray:nth-child(3)  { transform: rotate(60deg); }
+.ray:nth-child(4)  { transform: rotate(90deg); }
+.ray:nth-child(5)  { transform: rotate(120deg); }
+.ray:nth-child(6)  { transform: rotate(150deg); }
+.ray:nth-child(7)  { transform: rotate(180deg); }
+.ray:nth-child(8)  { transform: rotate(210deg); }
+.ray:nth-child(9)  { transform: rotate(240deg); }
+.ray:nth-child(10) { transform: rotate(270deg); }
+.ray:nth-child(11) { transform: rotate(300deg); }
+.ray:nth-child(12) { transform: rotate(330deg); }
+
+/* キャラ登場 */
+.entrance-char {
+  position: relative;
+  z-index: 2;
+  width: min(60vw, 280px);
+  height: min(60vw, 280px);
+  opacity: 0;
+  transform: scale(0) rotate(-15deg);
+}
+.entrance-char img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 30px rgba(255,220,120,0.8)) drop-shadow(0 0 60px rgba(200,90,77,0.5));
+}
+.entrance-overlay.active .entrance-char {
+  animation: char-entrance 0.7s 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes char-entrance {
+  0%   { opacity: 0; transform: scale(0) rotate(-15deg); }
+  60%  { opacity: 1; transform: scale(1.2) rotate(3deg); }
+  80%  { transform: scale(0.95) rotate(-1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* シャキーンテキスト */
+.entrance-text {
+  position: absolute;
+  z-index: 3;
+  bottom: 18%;
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: clamp(28px, 8vw, 52px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(255,220,120,0.9),
+    0 0 40px rgba(200,90,77,0.7),
+    3px 3px 0 rgba(200,90,77,0.9);
+  letter-spacing: 0.15em;
+  opacity: 0;
+  transform: scale(0.3);
+}
+.entrance-overlay.active .entrance-text {
+  animation: text-pop 0.5s 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes text-pop {
+  0%   { opacity: 0; transform: scale(0.3); }
+  70%  { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+</style>
 </head>
 <body>
   <!-- もどるリンク（状態によって動作が変わる） -->
@@ -43,6 +164,20 @@
 
     <!-- 挨拶セクション -->
     <section id="greeting-section" class="hidden" style="display:flex; flex-direction:column; align-items:center; gap: 24px;">
+      <!-- レッド登場演出オーバーレイ -->
+      <div id="entrance-overlay" class="entrance-overlay hidden">
+        <div class="entrance-flash"></div>
+        <div class="entrance-rays">
+          <div class="ray"></div><div class="ray"></div><div class="ray"></div>
+          <div class="ray"></div><div class="ray"></div><div class="ray"></div>
+          <div class="ray"></div><div class="ray"></div><div class="ray"></div>
+          <div class="ray"></div><div class="ray"></div><div class="ray"></div>
+        </div>
+        <div class="entrance-char" id="entrance-char">
+          <img src="images/point.png" alt="レッド登場！">
+        </div>
+        <div class="entrance-text" id="entrance-text">シャキーン！</div>
+      </div>
       <div class="janken-stage">
         <div class="character" id="greet-char">
           <img src="images/normal.png" alt="しぶレッド">
@@ -224,17 +359,39 @@ startBtn.addEventListener('click', () => {
 
   goTo('greet');
   toMenuBtn.classList.add('hidden');
-  // 自己紹介 → 挨拶 → メニュー
-  const introLine = 'オレはしぶレンジャー・レッド！<br>レッドって<ruby>呼<rt>よ</rt></ruby>んでな〜！';
+
+  // === レッド登場演出 ===
+  const overlay = document.getElementById('entrance-overlay');
+  const greetCharEl = document.getElementById('greet-char');
+  greetCharEl.style.opacity = '0'; // 演出中は本体を隠す
+  overlay.classList.remove('hidden','fade-out');
+
+  // 少し待ってからactiveにして演出開始
+  requestAnimationFrame(() => {
+    overlay.classList.add('active');
+  });
+
+  // 演出終了後にフェードアウトして自己紹介へ
   setTimeout(() => {
-    typeWrite(greetBubble, introLine, 70, () => {
-      setTimeout(() => {
-        typeWrite(greetBubble, fullLine, 70, () => {
-          setTimeout(() => goTo('menu'), 2200);
-        });
-      }, 1200);
-    });
-  }, 400);
+    overlay.classList.add('fade-out');
+    greetCharEl.style.opacity = '1';
+    greetCharEl.style.transition = 'opacity 0.5s';
+
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('active','fade-out');
+
+      // 自己紹介 → 挨拶 → メニュー
+      const introLine = 'オレはしぶレンジャー・レッド！<br>レッドって<ruby>呼<rt>よ</rt></ruby>んでな〜！';
+      typeWrite(greetBubble, introLine, 70, () => {
+        setTimeout(() => {
+          typeWrite(greetBubble, fullLine, 70, () => {
+            setTimeout(() => goTo('menu'), 2200);
+          });
+        }, 1200);
+      });
+    }, 600);
+  }, 2200);
 });
 
 toMenuBtn.addEventListener('click', () => goTo('menu'));
