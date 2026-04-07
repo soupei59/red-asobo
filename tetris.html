@@ -65,7 +65,7 @@
 /* === メインレイアウト === */
 .tetris-wrapper { display:flex; flex-direction:column; align-items:center; width:100%; padding-bottom:8px; position:relative; z-index:1; }
 .tetris-main { display:flex; align-items:flex-start; gap:10px; justify-content:center; }
-.tetris-board-col { display:flex; flex-direction:column; align-items:center; }
+.tetris-board-col { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
 .tetris-board-area { position:relative; flex-shrink:0; }
 .tetris-canvas {
   border:3px solid var(--border-strong); border-radius:var(--r-md);
@@ -278,6 +278,8 @@ const nextCanvas=document.getElementById('next-canvas');
 const nextCtx=nextCanvas.getContext('2d');
 nextCanvas.width=NEXT_CW; nextCanvas.height=NEXT_CW;
 
+const boardColW=BOARD_W+6; /* canvas幅 + border 3px*2 */
+document.getElementById('board-col').style.width=boardColW+'px';
 document.getElementById('sidebar').style.width=SIDEBAR_W+'px';
 document.getElementById('next-wrap').style.width=SIDEBAR_W+'px';
 document.getElementById('next-wrap').style.height=SIDEBAR_W+'px';
