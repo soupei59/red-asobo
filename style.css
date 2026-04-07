@@ -268,8 +268,8 @@ body::before {
 .bubble.side {
   max-width: 80ch;
   min-width: 24ch;
-  width: clamp(200px, 50vw, 380px);
-  height: 120px;
+  width: clamp(300px, 60vw, 520px);
+  min-height: 160px;
   text-align: left;
   font-size: var(--t-xl);
   padding: var(--s-5) var(--s-6);
