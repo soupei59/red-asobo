@@ -34,17 +34,17 @@
 .tetris-canvas {
   border: 3px solid var(--border-strong);
   border-radius: var(--r-md);
-  background: var(--linen-deep);
+  background: #F5E6E2;
   display: block;
   box-shadow: var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
-/* レッド — 盤面の下に少し被ってふわふわ */
+/* レッド — 盤面の下端に頭だけ被る */
 .tetris-red-float {
   position: absolute;
-  bottom: -10px;
-  left: -16px;
-  width: min(26vw, 110px);
+  bottom: -40px;
+  left: -20px;
+  width: min(22vw, 90px);
   z-index: 8;
   pointer-events: none;
   animation: red-bob 3s ease-in-out infinite;
@@ -74,11 +74,13 @@
   color: var(--ink-soft);
   font-weight: 700;
 }
-.tetris-next canvas {
+.tetris-sidebar canvas {
   border: 2px solid var(--border-mid);
   border-radius: var(--r-sm);
-  background: var(--linen-deep);
+  background: #F5E6E2;
   box-shadow: var(--shadow-xs);
+  width: 100%;
+  height: auto;
 }
 .tetris-info-item {
   background: var(--linen-soft);
@@ -101,8 +103,9 @@
   gap: 0;
   width: 100%;
   justify-content: center;
-  padding: 6px 8px 2px;
-  min-height: 48px;
+  padding: 2px 8px 2px;
+  min-height: 44px;
+  margin-top: -2px;
 }
 .tetris-bubble {
   background: var(--linen-soft);
@@ -126,44 +129,36 @@
 .tetris-controls {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 4px 0;
   width: 100%;
 }
 .ctrl-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(18px,5vw,28px);
-  font-weight: 900;
-  width: clamp(48px,13vw,64px);
-  height: clamp(48px,13vw,64px);
-  border: 2px solid var(--border-mid);
+  width: clamp(52px,14vw,72px);
+  height: clamp(52px,14vw,72px);
+  border: none;
   border-radius: var(--r-full);
-  background: var(--linen-soft);
-  color: var(--ink);
+  background: transparent;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.12s var(--ease-spring), box-shadow 0.12s;
-  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s var(--ease-spring);
   flex-shrink: 0;
+  padding: 0;
+}
+.ctrl-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
 }
 .ctrl-btn:active {
-  transform: scale(0.9);
-  box-shadow: var(--shadow-xs);
-  background: var(--linen-deep);
-}
-.ctrl-btn.rotate-btn {
-  background: var(--red-soft);
-  color: var(--ink);
-  border-color: var(--red);
-}
-.ctrl-btn.rotate-btn:active {
-  background: var(--red);
-  color: #fff;
+  transform: scale(0.85);
 }
 
 /* おしまいボタン */
@@ -320,10 +315,10 @@
 
       <!-- 操作ボタン -->
       <div class="tetris-controls" id="controls">
-        <button type="button" class="ctrl-btn" id="btn-left">◀</button>
-        <button type="button" class="ctrl-btn" id="btn-down">▼</button>
-        <button type="button" class="ctrl-btn rotate-btn" id="btn-rotate">↻</button>
-        <button type="button" class="ctrl-btn" id="btn-right">▶</button>
+        <button type="button" class="ctrl-btn" id="btn-left"><img src="images/tetoris-btn-left.png" alt="←"></button>
+        <button type="button" class="ctrl-btn" id="btn-down"><img src="images/tetoris-btn-down.png" alt="↓"></button>
+        <button type="button" class="ctrl-btn" id="btn-rotate"><img src="images/tetoris-btn-rotation.png" alt="↻"></button>
+        <button type="button" class="ctrl-btn" id="btn-right"><img src="images/tetoris-btn-right.png" alt="→"></button>
       </div>
 
       <!-- おしまいボタン -->
@@ -341,9 +336,8 @@ const ROWS = 20;
 const SIDEBAR_W = 90;
 const GAP = 8;
 const MARGIN = 32; /* container padding等 */
-const availW = Math.min(window.innerWidth - SIDEBAR_W - GAP - MARGIN, 400);
-const CELL = Math.max(Math.floor(availW / COLS), 16);
-const NEXT_CELL = Math.floor(CELL * 0.7);
+const availW = Math.min(window.innerWidth - SIDEBAR_W - GAP - MARGIN, 260);
+const CELL = Math.max(Math.floor(availW / COLS), 14);
 
 const canvas = document.getElementById('tetris-canvas');
 const ctx = canvas.getContext('2d');
@@ -352,8 +346,11 @@ canvas.height = ROWS * CELL;
 
 const nextCanvas = document.getElementById('next-canvas');
 const nextCtx = nextCanvas.getContext('2d');
-nextCanvas.width = 4 * NEXT_CELL;
-nextCanvas.height = 4 * NEXT_CELL;
+/* サイドバー幅に合わせる（90px - padding分） */
+const NEXT_CANVAS_W = 86;
+const NEXT_CANVAS_CELL = Math.floor(NEXT_CANVAS_W / 4);
+nextCanvas.width = NEXT_CANVAS_W;
+nextCanvas.height = NEXT_CANVAS_W;
 
 /* テトリミノ定義（温かみカラー） */
 const SHAPES = {
@@ -417,7 +414,6 @@ function randomComment(key) {
 
 /* ===== DOM ===== */
 const bubbleText  = document.getElementById('bubble-text');
-const charImg     = document.getElementById('char-img');
 const scoreVal    = document.getElementById('score-val');
 const levelVal    = document.getElementById('level-val');
 const boardArea   = document.getElementById('board-area');
@@ -529,18 +525,14 @@ function clearLines(rows) {
   showLineClearFx(rows);
   if (count >= 4) {
     showComboPopup('テトリス！！');
-    setCharImage('hai2');
     sayComment('clear4');
   } else if (count === 3) {
     showComboPopup('トリプル！');
-    setCharImage('hai');
     sayComment('clear3');
   } else if (count === 2) {
     showComboPopup('ダブル！');
-    setCharImage('hai');
     sayComment('clear2');
   } else {
-    setCharImage('clap');
     sayComment('clear1');
   }
   if (combo > 1) {
@@ -566,7 +558,6 @@ function spawnNext() {
   }
   // 危険ゾーン警告
   if (getDangerLevel() > 0.6) {
-    setCharImage('oshii');
     sayComment('danger');
   }
 }
@@ -579,19 +570,7 @@ function getDangerLevel() {
   return 1 - (topRow / ROWS);
 }
 
-/* ===== レッド表情・コメント ===== */
-function setCharImage(key) {
-  const map = {
-    normal: 'normal', hai: 'hai', hai2: 'hai2',
-    oshii: 'oshii', clap: 'clap', relax: 'relax', tame: 'tame',
-  };
-  charImg.src = 'images/' + (map[key] || key) + '.png';
-  // 数秒後にnormalに戻す
-  clearTimeout(window._charTimeout);
-  window._charTimeout = setTimeout(() => {
-    charImg.src = 'images/read.png';
-  }, 3000);
-}
+/* ===== レッド（常にread.png固定） ===== */
 
 function sayComment(key) {
   bubbleText.innerHTML = randomComment(key);
@@ -657,8 +636,8 @@ function drawCell(context, x, y, color, size) {
 }
 
 function drawBoard() {
-  // 背景をリネン色でクリア
-  ctx.fillStyle = '#EFE8DC';
+  // 背景をピンク系でクリア
+  ctx.fillStyle = '#F5E6E2';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // やさしいグリッド線（ドット風）
@@ -710,11 +689,11 @@ function drawBoard() {
 }
 
 function drawNext() {
-  nextCtx.fillStyle = '#EFE8DC';
+  nextCtx.fillStyle = '#F5E6E2';
   nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
   if (!nextPiece) return;
   for (const [bx, by] of nextPiece.blocks) {
-    drawCell(nextCtx, bx, by, nextPiece.color, NEXT_CELL);
+    drawCell(nextCtx, bx, by, nextPiece.color, NEXT_CANVAS_CELL);
   }
 }
 
@@ -739,7 +718,6 @@ function gameLoop(time) {
   if (idleTimer > 12000) {
     idleTimer = 0;
     sayComment('idle');
-    setCharImage('normal');
   }
 
   drawBoard();
@@ -762,7 +740,6 @@ function startGame() {
   nextPiece = randomPiece();
   drawNext();
   sayComment('start');
-  setCharImage('tame');
 
   lastTime = performance.now();
   requestAnimationFrame(gameLoop);
@@ -773,7 +750,6 @@ function triggerGameOver() {
   gameOver = true;
   gameoverScore.textContent = 'スコア: ' + score;
   gameoverOverlay.classList.remove('hidden');
-  setCharImage('relax');
   sayComment('gameover');
 }
 
