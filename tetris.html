@@ -402,10 +402,10 @@ baseImg.onload=function(){
 baseImg.src='images/read2.png';
 
 /* 表情変更 */
-function setFace(img){
+function setFace(img, keep){
   charImg.src='images/'+img+'.png';
   clearTimeout(window._ft);
-  window._ft=setTimeout(()=>{charImg.src='images/read2.png'},3500);
+  if(!keep) window._ft=setTimeout(()=>{charImg.src='images/read2.png'},3500);
 }
 
 /* セリフ＋表情連動 */
@@ -416,7 +416,8 @@ function say(key){
     start:'ike', clear1:'yatta', clear2:'yatta', clear3:'yatta', clear4:'yatta',
     danger:'aseri', gameover:'umm2', idle:'read2', levelup:'ike', combo:'yatta',
   };
-  if(faceMap[key]) setFace(faceMap[key]);
+  /* ゲームオーバー時は表情を維持し続ける */
+  if(faceMap[key]) setFace(faceMap[key], key==='gameover');
 }
 
 /* ===== レベル別背景テーマ ===== */
