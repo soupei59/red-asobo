@@ -91,8 +91,8 @@
 .tetris-comment { display:flex; align-items:center; justify-content:center; padding:6px 0 2px; width:100%; }
 .tetris-bubble {
   background:var(--linen-soft); border:1px solid var(--border-mid); border-radius:var(--r-lg);
-  padding:8px 10px; font-size:clamp(15px,4.5vw,20px); font-weight:700; color:var(--ink);
-  width:100%; height:62px; line-height:1.4;
+  padding:10px 12px; font-size:clamp(16px,5vw,22px); font-weight:700; color:var(--ink);
+  width:100%; height:72px; line-height:1.4;
   display:flex; align-items:center; justify-content:center;
   text-align:center; box-shadow:var(--shadow-sm); overflow:hidden;
   transition:font-size 0.2s; box-sizing:border-box;
@@ -101,11 +101,11 @@
 .tetris-bubble span { display:block; width:100%; }
 /* 開始前・ゲームオーバー時：小さめフォントで2行たっぷり */
 .tetris-bubble.bubble-long {
-  font-size:clamp(12px,3.5vw,14px); line-height:1.45;
+  font-size:clamp(13px,3.8vw,15px); line-height:1.45;
 }
 
-/* 操作ボタン */
-.tetris-controls { display:flex; justify-content:center; gap:10px; padding:6px 0 2px; width:100%; }
+/* 操作ボタン（十字配置） */
+.tetris-controls { display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:auto auto; justify-items:center; gap:4px 6px; padding:6px 0 2px; width:100%; }
 .ctrl-btn {
   display:flex; align-items:center; justify-content:center;
   width:clamp(48px,12vw,68px); height:clamp(48px,12vw,68px);
@@ -116,6 +116,10 @@
 }
 .ctrl-btn img { width:100%; height:100%; object-fit:contain; pointer-events:none; }
 .ctrl-btn:active { transform:scale(0.85); }
+#btn-left   { grid-column:1; grid-row:1; }
+#btn-rotate { grid-column:2; grid-row:1; }
+#btn-right  { grid-column:3; grid-row:1; }
+#btn-down   { grid-column:2; grid-row:2; }
 
 /* 右サイドバー */
 .tetris-sidebar { display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; }
@@ -239,9 +243,9 @@
           </div>
           <div class="tetris-controls" id="controls">
             <button type="button" class="ctrl-btn" id="btn-left"><img src="images/tetoris-btn-left.png" alt="←"></button>
-            <button type="button" class="ctrl-btn" id="btn-down"><img src="images/tetoris-btn-down.png" alt="↓"></button>
             <button type="button" class="ctrl-btn" id="btn-rotate"><img src="images/tetoris-btn-rotation.png" alt="↻"></button>
             <button type="button" class="ctrl-btn" id="btn-right"><img src="images/tetoris-btn-right.png" alt="→"></button>
+            <button type="button" class="ctrl-btn" id="btn-down"><img src="images/tetoris-btn-down.png" alt="↓"></button>
           </div>
         </div>
         <div class="tetris-sidebar" id="sidebar">
