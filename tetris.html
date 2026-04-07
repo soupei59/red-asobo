@@ -431,11 +431,11 @@ function setFace(img, keep){
   if(!keep) window._ft=setTimeout(()=>{charImg.src='images/read2.png'},3500);
 }
 
-/* バブルタップで早送り */
-bubble.addEventListener('click',()=>{if(_twTyping)twComplete();});
-
 /* セリフ＋表情連動 */
 const bubble=document.getElementById('bubble');
+
+/* バブルタップで早送り */
+bubble.addEventListener('click',()=>{if(_twTyping)twComplete();});
 function setBubbleMode(long){
   if(long) bubble.classList.add('bubble-long');
   else bubble.classList.remove('bubble-long');
