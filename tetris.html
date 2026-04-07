@@ -39,12 +39,12 @@
   box-shadow: var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
-/* レッド — 盤面の下端に頭だけ被る */
+/* レッド — 頭の上半分だけテトリス枠に被る */
 .tetris-red-float {
   position: absolute;
-  bottom: -40px;
-  left: -20px;
-  width: min(22vw, 90px);
+  bottom: -80px;
+  left: -24px;
+  width: min(32vw, 130px);
   z-index: 8;
   pointer-events: none;
   animation: red-bob 3s ease-in-out infinite;
@@ -161,44 +161,12 @@
   transform: scale(0.85);
 }
 
-/* おしまいボタン */
-.tetris-finish {
+/* 下部ボタン（もういちど＋おしまい常時表示） */
+.tetris-bottom-btns {
   display: flex;
   justify-content: center;
+  gap: 12px;
   padding: 4px 0 12px;
-}
-
-/* ===== ゲームオーバー ===== */
-.tetris-gameover {
-  position: absolute;
-  inset: 0;
-  background: rgba(45,40,35,0.7);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  border-radius: var(--r-md);
-  z-index: 10;
-}
-.tetris-gameover.hidden { display: none; }
-.gameover-title {
-  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: clamp(24px,7vw,40px);
-  font-weight: 900;
-  color: #fff;
-  text-shadow: 0 2px 8px rgba(200,90,77,0.5);
-}
-.gameover-score {
-  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: var(--t-lg);
-  color: var(--cream-yellow);
-}
-.gameover-btns {
-  display: flex;
-  gap: 10px;
 }
 
 /* ===== エフェクト ===== */
@@ -248,8 +216,7 @@
 }
 .tetris-start-overlay {
   position: absolute; inset: 0;
-  background: rgba(45,40,35,0.65);
-  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  background: transparent;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 18px; border-radius: var(--r-md); z-index: 10;
@@ -258,8 +225,8 @@
 .start-title {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
   font-size: clamp(28px,8vw,44px);
-  font-weight: 900; color: #fff;
-  text-shadow: 0 2px 12px rgba(200,90,77,0.4);
+  font-weight: 900; color: var(--red);
+  text-shadow: 0 2px 8px rgba(200,90,77,0.2);
 }
 </style>
 </head>
@@ -286,15 +253,6 @@
             <button type="button" class="btn warm" id="start-btn">スタート！</button>
           </div>
 
-          <!-- ゲームオーバー -->
-          <div class="tetris-gameover hidden" id="gameover-overlay">
-            <div class="gameover-title">ゲームオーバー</div>
-            <div class="gameover-score" id="gameover-score">スコア: 0</div>
-            <div class="gameover-btns">
-              <button type="button" class="btn warm" id="retry-btn">もういちど</button>
-              <a href="bye.html" class="btn small" style="background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">おしまい</a>
-            </div>
-          </div>
         </div>
 
         <!-- サイドバー：ネクスト + スコア + レベル -->
@@ -321,8 +279,9 @@
         <button type="button" class="ctrl-btn" id="btn-right"><img src="images/tetoris-btn-right.png" alt="→"></button>
       </div>
 
-      <!-- おしまいボタン -->
-      <div class="tetris-finish">
+      <!-- もういちど＋おしまい（常時表示） -->
+      <div class="tetris-bottom-btns">
+        <button type="button" class="btn warm" id="retry-btn">もういちど</button>
         <a href="bye.html" class="btn small" style="background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">おしまい</a>
       </div>
     </div>
@@ -397,9 +356,9 @@ const COMMENTS = {
     '{name}、やばいで！がんばれ〜！', 'おちついて{name}！', 'まだいける{name}！',
   ],
   gameover: [
-    'おつかれ{name}！<ruby>楽<rt>たの</rt></ruby>しかったな〜！',
-    '{name}、ナイスプレーやったで！',
-    'またやろな{name}！レッド<ruby>待<rt>ま</rt></ruby>っとるで！',
+    'ゲームオーバーや〜！{name}おつかれ！',
+    'ゲームオーバー！{name}がんばったな〜！',
+    'ゲームオーバーや！またやろな{name}！',
   ],
   idle: [
     '{name}〜ブロック<ruby>落<rt>お</rt></ruby>ちてくるで〜', 'ここに<ruby>置<rt>お</rt></ruby>いたらええんちゃう？',
@@ -418,8 +377,6 @@ const scoreVal    = document.getElementById('score-val');
 const levelVal    = document.getElementById('level-val');
 const boardArea   = document.getElementById('board-area');
 const startOverlay  = document.getElementById('start-overlay');
-const gameoverOverlay = document.getElementById('gameover-overlay');
-const gameoverScore = document.getElementById('gameover-score');
 
 /* ===== ゲーム状態 ===== */
 let board = [];
@@ -734,7 +691,6 @@ function startGame() {
   levelVal.textContent = '1';
 
   startOverlay.classList.add('hidden');
-  gameoverOverlay.classList.add('hidden');
 
   current = randomPiece();
   nextPiece = randomPiece();
@@ -748,8 +704,6 @@ function startGame() {
 function triggerGameOver() {
   gameRunning = false;
   gameOver = true;
-  gameoverScore.textContent = 'スコア: ' + score;
-  gameoverOverlay.classList.remove('hidden');
   sayComment('gameover');
 }
 
