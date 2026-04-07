@@ -12,15 +12,20 @@
 /* char-select-title 削除済み */
 .char-select {
   display: flex;
-  gap: var(--s-3);
+  gap: clamp(4px, 2vw, 16px);
   justify-content: center;
   align-items: flex-end;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 .char-select-btn {
   background: none;
   border: 3px solid transparent;
   border-radius: 16px;
-  padding: 8px 6px 6px;
+  padding: 6px 4px 4px;
   cursor: pointer;
   transition: all 0.25s var(--ease-soft);
   -webkit-tap-highlight-color: transparent;
@@ -28,10 +33,14 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 180px;
 }
 .char-select-btn img {
-  width: min(42vw, 300px);
-  height: min(42vw, 300px);
+  width: 100%;
+  max-width: 160px;
+  aspect-ratio: 1/1;
   object-fit: contain;
   filter: drop-shadow(0 3px 6px rgba(45,40,35,0.18));
   transition: all 0.25s var(--ease-soft);
@@ -47,7 +56,7 @@
 .char-select-btn:active { transform: translateY(0) scale(0.97); }
 .char-select-label {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: var(--t-2xl);
+  font-size: clamp(14px, 3.5vw, 22px);
   font-weight: 900;
   color: var(--ink);
   text-align: center;
@@ -60,7 +69,7 @@
 }
 .char-select-level {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: var(--t-xl);
+  font-size: clamp(11px, 2.8vw, 18px);
   font-weight: 700;
   color: var(--ink-mute);
   display: block;
