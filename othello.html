@@ -15,7 +15,7 @@
   font-weight: 900;
   color: var(--ink);
   text-align: center;
-  margin-bottom: var(--s-2);
+  margin-bottom: var(--s-3);
 }
 .char-select {
   display: flex;
@@ -37,8 +37,8 @@
   gap: 4px;
 }
 .char-select-btn img {
-  width: min(28vw, 200px);
-  height: min(28vw, 200px);
+  width: min(42vw, 300px);
+  height: min(42vw, 300px);
   object-fit: contain;
   filter: drop-shadow(0 3px 6px rgba(45,40,35,0.18));
   transition: all 0.25s var(--ease-soft);
@@ -54,14 +54,15 @@
 .char-select-btn:active { transform: translateY(0) scale(0.97); }
 .char-select-label {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: var(--t-lg);
+  font-size: var(--t-2xl);
   font-weight: 900;
   color: var(--ink);
   text-align: center;
   line-height: 1.3;
 }
 .char-select-level {
-  font-size: var(--t-base);
+  font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
+  font-size: var(--t-xl);
   font-weight: 700;
   color: var(--ink-mute);
   display: block;
@@ -772,11 +773,11 @@ const OPPONENTS = {
     },
     comments: {
       intro: [
-        "しぶレンジャーブラック。<br>よろしくね、{name}。<br><ruby>覚悟<rt>かくご</rt></ruby>はいいかい？<br>…なんてね。<ruby>楽<rt>たの</rt></ruby>しくやろう！",
-        "ボクはしぶレンジャーブラック。<br>よく<ruby>来<rt>き</rt></ruby>たね{name}。<br>オセロ<ruby>勝負<rt>しょうぶ</rt></ruby>しよう。<br><ruby>手加減<rt>てかげん</rt></ruby>は…ちょっとだけね。",
-        "しぶレンジャーブラックだ。<br>{name}か。いいね。<br><ruby>本気<rt>ほんき</rt></ruby>で<ruby>相手<rt>あいて</rt></ruby>するよ。…たぶん。",
+        "シブレンジャー・ブラック。<br>よろしくね、{name}。<br><ruby>覚悟<rt>かくご</rt></ruby>はいいかい？<br>…なんてね。<ruby>楽<rt>たの</rt></ruby>しくやろう！",
+        "ボクはシブレンジャー・ブラック。<br>よく<ruby>来<rt>き</rt></ruby>たね{name}。<br>オセロ<ruby>勝負<rt>しょうぶ</rt></ruby>しよう。<br><ruby>手加減<rt>てかげん</rt></ruby>は…ちょっとだけね。",
+        "シブレンジャー・ブラックだ。<br>{name}か。いいね。<br><ruby>本気<rt>ほんき</rt></ruby>で<ruby>相手<rt>あいて</rt></ruby>するよ。…たぶん。",
         "ボクはブラック。<br>{name}とオセロ、<ruby>楽<rt>たの</rt></ruby>しみだな。<br>さあ、はじめよう。",
-        "しぶレンジャーブラック、<ruby>参上<rt>さんじょう</rt></ruby>。<br>{name}、<ruby>準備<rt>じゅんび</rt></ruby>はいいかい？",
+        "シブレンジャー・ブラック、<ruby>参上<rt>さんじょう</rt></ruby>。<br>{name}、<ruby>準備<rt>じゅんび</rt></ruby>はいいかい？",
         "ブラックだよ。<br>{name}と<ruby>対決<rt>たいけつ</rt></ruby>できてうれしいな。<br>さあ、<ruby>勝負<rt>しょうぶ</rt></ruby>しよう。"
       ],
       colorExplain: [
@@ -909,12 +910,12 @@ const OPPONENTS = {
     },
     comments: {
       intro: [
-        "オレはしぶ・スパルタン。<br>フッ…{name}か。<br>オレに<ruby>挑<rt>いど</rt></ruby>むとはいい<ruby>度胸<rt>どきょう</rt></ruby>だぜ。<br>…<ruby>泣<rt>な</rt></ruby>いても<ruby>知<rt>し</rt></ruby>らねえからな？",
-        "しぶ・スパルタンだ。<ruby>覚<rt>おぼ</rt></ruby>えときな。<br>へえ、{name}がオレの<ruby>相手<rt>あいて</rt></ruby>？<br>ちょっとは<ruby>楽<rt>たの</rt></ruby>しませてくれよ？",
-        "しぶ・スパルタン<ruby>参上<rt>さんじょう</rt></ruby>！<br>おっと{name}、<ruby>勇気<rt>ゆうき</rt></ruby>あるじゃねえか。<br>レベル10000の<ruby>実力<rt>じつりょく</rt></ruby>、<br><ruby>見<rt>み</rt></ruby>せてやるぜ。",
-        "オレがしぶ・スパルタンだ。<br>{name}…ほう、いい<ruby>目<rt>め</rt></ruby>してるじゃねえか。<br><ruby>期待<rt>きたい</rt></ruby>してるぜ？",
-        "しぶ・スパルタン、<ruby>降臨<rt>こうりん</rt></ruby>。<br>フフ…{name}、<ruby>震<rt>ふる</rt></ruby>えてるか？<br>…冗談だぜ。<br>さあ、<ruby>勝負<rt>しょうぶ</rt></ruby>といこうか。",
-        "オレの<ruby>名<rt>な</rt></ruby>はしぶ・スパルタン。<br>{name}か…おもしろい。<br><ruby>本気<rt>ほんき</rt></ruby>でかかってこいよ。"
+        "オレはシブ・スパルタン。<br>フッ…{name}か。<br>オレに<ruby>挑<rt>いど</rt></ruby>むとはいい<ruby>度胸<rt>どきょう</rt></ruby>だぜ。<br>…<ruby>泣<rt>な</rt></ruby>いても<ruby>知<rt>し</rt></ruby>らねえからな？",
+        "シブ・スパルタンだ。<ruby>覚<rt>おぼ</rt></ruby>えときな。<br>へえ、{name}がオレの<ruby>相手<rt>あいて</rt></ruby>？<br>ちょっとは<ruby>楽<rt>たの</rt></ruby>しませてくれよ？",
+        "シブ・スパルタン<ruby>参上<rt>さんじょう</rt></ruby>！<br>おっと{name}、<ruby>勇気<rt>ゆうき</rt></ruby>あるじゃねえか。<br>レベル10000の<ruby>実力<rt>じつりょく</rt></ruby>、<br><ruby>見<rt>み</rt></ruby>せてやるぜ。",
+        "オレがシブ・スパルタンだ。<br>{name}…ほう、いい<ruby>目<rt>め</rt></ruby>してるじゃねえか。<br><ruby>期待<rt>きたい</rt></ruby>してるぜ？",
+        "シブ・スパルタン、<ruby>降臨<rt>こうりん</rt></ruby>。<br>フフ…{name}、<ruby>震<rt>ふる</rt></ruby>えてるか？<br>…冗談だぜ。<br>さあ、<ruby>勝負<rt>しょうぶ</rt></ruby>といこうか。",
+        "オレの<ruby>名<rt>な</rt></ruby>はシブ・スパルタン。<br>{name}か…おもしろい。<br><ruby>本気<rt>ほんき</rt></ruby>でかかってこいよ。"
       ],
       colorExplain: [
         "{name}が<ruby>黒<rt>くろ</rt></ruby>、オレが<ruby>白<rt>しろ</rt></ruby>だ。<br><ruby>黒<rt>くろ</rt></ruby>が<ruby>先手<rt>せんて</rt></ruby>だぜ。<br>さあ、かかってきな！"
@@ -1286,7 +1287,7 @@ function playEntrance(opponent, cb) {
         <div class="ray"></div><div class="ray"></div><div class="ray"></div>
         <div class="ray"></div><div class="ray"></div><div class="ray"></div>
       </div>
-      <img class="entrance-char-img" src="images/point.png" alt="レッド登場！">
+      <img class="entrance-char-img" src="images/choki.png" alt="レッド登場！">
       <span class="entrance-name">シャキーン！</span>
     `;
     entranceOverlay.classList.remove('hidden');
@@ -1312,7 +1313,7 @@ function playEntrance(opponent, cb) {
       <img class="afterimage" src="images/${opp.images.normal}.png" alt="">
       <img class="entrance-char-img" src="images/${opp.images.normal}.png" alt="ブラック登場！">
       <div class="slash"></div><div class="slash"></div><div class="slash"></div>
-      <span class="entrance-name">しぶレンジャー・ブラック</span>
+      <span class="entrance-name">シブレンジャー・ブラック</span>
     `;
     entranceOverlay.classList.remove('hidden');
     requestAnimationFrame(() => entranceOverlay.classList.add('active'));
@@ -1334,7 +1335,7 @@ function playEntrance(opponent, cb) {
       <img class="entrance-char-img" src="images/${opp.images.normal}.png" alt="？？？登場！">
       <div class="shockwave"></div>
       <div class="reveal-flash"></div>
-      <span class="entrance-name">しぶ・スパルタン</span>
+      <span class="entrance-name">シブ・スパルタン</span>
     `;
     entranceOverlay.classList.remove('hidden');
     requestAnimationFrame(() => entranceOverlay.classList.add('active'));
@@ -1366,6 +1367,8 @@ function startGame(opponent, skipEntrance){
   quitEndButtons.classList.add('hidden');
 
   function beginGame() {
+    charWrap.style.width = '';
+    charWrap.style.height = '';
     boardEl.classList.remove('hidden');
     scoreBar.classList.remove('hidden');
     quitArea.classList.remove('hidden');
@@ -1531,6 +1534,8 @@ function goToSelect(){
   currentOpponent = 'red';
   charImg.src = 'images/relax.png';
   charWrap.className = 'character floating';
+  charWrap.style.width = 'min(35vw, 175px)';
+  charWrap.style.height = 'min(35vw, 175px)';
   typeWrite('だれと<ruby>対決<rt>たいけつ</rt></ruby>する？<br>あいてを<ruby>選<rt>えら</rt></ruby>んでね！',70);
 }
 
@@ -1587,6 +1592,8 @@ backLink.addEventListener('click',(e)=>{
 /* ===== 初期表示 ===== */
 charImg.src = 'images/relax.png';
 charWrap.className = 'character floating';
+charWrap.style.width = 'min(35vw, 175px)';
+charWrap.style.height = 'min(35vw, 175px)';
 typeWrite('だれと<ruby>対決<rt>たいけつ</rt></ruby>する？<br>あいてを<ruby>選<rt>えら</rt></ruby>んでね！',70);
 </script>
 </body>

@@ -138,13 +138,11 @@
       <h1 class="title-main" id="title">
         <span class="char">レ</span><span class="char">ッ</span><span class="char">ド</span><span class="char">と</span><span class="char">あ</span><span class="char">そ</span><span class="char">ぼ</span><span class="char">う</span>
       </h1>
-      <p class="title-sub" style="margin-top: 10px; margin-bottom: 20px;">〜 しぶレッドと ゆかいな じかん 〜</p>
 
       <div class="name-card-wrap">
         <img src="images/peek.png" alt="" class="peek-red" aria-hidden="true">
         <div class="name-card">
         <p class="name-label"><span class="c1">き</span><span class="c2">み</span><span class="c3">の</span> <span class="c4">な</span><span class="c5">ま</span><span class="c6">え</span> <span class="c1">を</span> <span class="c2">お</span><span class="c3">し</span><span class="c4">え</span><span class="c5">て</span><span class="c6">！</span></p>
-        <p class="name-sublabel">レッドが <ruby>呼<rt>よ</rt></ruby>んでくれるで〜</p>
         <input type="text" id="name-input" class="name-input" placeholder="なまえを いれてな" maxlength="10" autocomplete="off">
 
         <p class="honorific-label">よびかた を えらんでな</p>
@@ -174,13 +172,13 @@
           <div class="ray"></div><div class="ray"></div><div class="ray"></div>
         </div>
         <div class="entrance-char" id="entrance-char">
-          <img src="images/point.png" alt="レッド登場！">
+          <img src="images/choki.png" alt="レッド登場！">
         </div>
         <div class="entrance-text" id="entrance-text">シャキーン！</div>
       </div>
       <div class="janken-stage">
         <div class="character" id="greet-char">
-          <img src="images/normal.png" alt="しぶレッド">
+          <img src="images/normal.png" alt="シブ・レッド">
         </div>
         <div class="bubble side" id="greeting-bubble"></div>
       </div>
@@ -192,7 +190,7 @@
       <div class="character floating" style="width: min(52vw, 260px); height: min(52vw, 260px);">
         <img src="images/point.png" alt="これにしよか！のレッド">
       </div>
-      <p class="title-sub" style="font-size: var(--t-xl); color: var(--ink); font-weight: 900;">なにして あそぶ？</p>
+      <p style="font-family: 'Yomogi', 'Zen Maru Gothic', cursive; font-size: var(--t-xl); color: var(--ink); font-weight: 900;">なにして あそぶ？</p>
       <div class="menu-grid">
         <a class="menu-img-item" href="janken.html">
           <img src="images/btn-janken.png" alt="じゃんけん">
@@ -382,7 +380,7 @@ startBtn.addEventListener('click', () => {
       overlay.classList.remove('active','fade-out');
 
       // 自己紹介 → 挨拶 → メニュー
-      const introLine = 'オレはしぶレンジャー・レッド！<br>レッドって<ruby>呼<rt>よ</rt></ruby>んでな〜！';
+      const introLine = 'オレはシブレンジャー・レッド！<br>レッドって<ruby>呼<rt>よ</rt></ruby>んでな〜！';
       typeWrite(greetBubble, introLine, 70, () => {
         setTimeout(() => {
           typeWrite(greetBubble, fullLine, 70, () => {

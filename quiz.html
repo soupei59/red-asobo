@@ -14,7 +14,7 @@
     <!-- キャラクター＋横の吹き出し -->
     <div class="janken-stage" id="stage">
       <div class="character floating" id="char-wrap">
-        <img src="images/normal.png" alt="しぶレッド" id="char-img">
+        <img src="images/normal.png" alt="シブ・レッド" id="char-img">
       </div>
       <div class="bubble side" id="bubble">
         <span id="bubble-text"></span>
@@ -24,7 +24,7 @@
     <!-- ボタンエリア -->
     <div class="quiz-buttons hidden" id="quiz-buttons">
       <button type="button" class="btn small" id="hint-btn" style="background:var(--mustard); color:#fff;">ヒント</button>
-      <button type="button" class="btn small" id="answer-btn" style="background:var(--sage-deep); color:#fff;"><ruby>答<rt>こた</rt></ruby>え</button>
+      <button type="button" class="btn small" id="answer-btn" style="background:var(--sage-deep); color:#fff;">こたえ</button>
     </div>
 
     <!-- 感想ボタン -->
@@ -36,13 +36,13 @@
 
     <!-- つぎへ / おしまい -->
     <div class="quiz-buttons hidden" id="next-buttons">
-      <button type="button" class="btn small" id="next-btn">つぎの<ruby>問題<rt>もんだい</rt></ruby></button>
+      <button type="button" class="btn small" id="next-btn">つぎの問題</button>
       <button type="button" class="btn small" id="end-btn" style="background:var(--sage); color:#fff;">おしまい</button>
     </div>
 
     <!-- スコア -->
     <div class="score" id="score-bar">
-      <ruby>問題<rt>もんだい</rt></ruby> <span class="num" id="score-current">0</span> / <span id="score-total">10</span>
+      問題 <span class="num" id="score-current">0</span> / <span id="score-total">10</span>
     </div>
 
   </div>
@@ -607,7 +607,7 @@ function showQuestion() {
   hintBtn.style.display = '';
   answerBtn.style.display = '';
 
-  const qText = "<ruby>問題<rt>もんだい</rt></ruby>！<br><br>" + riddle.q;
+  const qText = "問題！<br><br>" + riddle.q;
   typeWrite(qText, 70);
 }
 
