@@ -227,7 +227,7 @@
           <div class="tetris-board-area" id="board-area">
             <canvas id="tetris-canvas" class="tetris-canvas"></canvas>
             <div class="tetris-red-float" id="char-wrap">
-              <img src="images/read2.png" alt="シブ・レッド" id="char-img">
+              <img src="images/hi.png" alt="シブ・レッド" id="char-img">
             </div>
             <div class="tetris-start-overlay" id="start-overlay">
               <div class="start-title">テトリス</div>
@@ -366,13 +366,13 @@ const COMMENTS={
     '頑張れ！','大丈夫！','ここからや！',
   ],
   idle:[
-    '応援してるで！','どこに置く？','頑張れ〜！',
-    'ファイト！','いいペース！','行ける行ける！',
-    'こっちかな？','ブロック来るで！','見てるで〜！',
-    'ぷっ…おなら出た','お腹すいてきた…','あ、眠くなってきた…',
-    '今何時？','あ、よだれ出た',
-    'おしりかゆい…','ちょっとトイレ…','くしゃみ出そう…ふぇ…',
-    'ブロックおいしそう','あっ足つった！',
+    {t:'応援してるで！',f:'hi'},{t:'どこに置く？',f:'hi'},{t:'頑張れ〜！',f:'ike'},
+    {t:'ファイト！',f:'ike'},{t:'いいペース！',f:'clap'},{t:'行ける行ける！',f:'hi'},
+    {t:'こっちかな？',f:'hi'},{t:'ブロック来るで！',f:'ike'},{t:'見てるで〜！',f:'hi'},
+    {t:'ぷっ…おなら出た',f:'aseri'},{t:'お腹すいてきた…',f:'umm2'},{t:'あ、眠くなってきた…',f:'umm2'},
+    {t:'今何時？',f:'umm2'},{t:'あ、よだれ出た',f:'aseri'},
+    {t:'おしりかゆい…',f:'aseri'},{t:'ちょっとトイレ…',f:'aseri'},{t:'くしゃみ出そう…ふぇ…',f:'umm2'},
+    {t:'ブロックおいしそう',f:'umm2'},{t:'あっ足つった！',f:'aseri'},
   ],
   levelup:[
     'レベルアップ！','速くなるで！','すごい！',
@@ -381,39 +381,43 @@ const COMMENTS={
     'コンボ！','繋がった！','ノリノリ！',
   ],
 };
-function rc(key){const a=COMMENTS[key];return fn(a[Math.floor(Math.random()*a.length)])}
+function rc(key){
+  const a=COMMENTS[key];const item=a[Math.floor(Math.random()*a.length)];
+  if(typeof item==='object') return {text:fn(item.t), face:item.f};
+  return {text:fn(item), face:null};
+}
 
-/* 開始前の説明セリフ（2行・長め） */
+/* 開始前の説明セリフ（2行・長め）+ 表情 */
 const INTRO_SEQ=[
-  'テトリスで遊ぼ〜！<br>レッドが応援するで！',
-  'ブロックが上から落ちてくるから<br>横に動かして並べてな！',
-  '横一列揃えたら消えるで！<br>たくさん消すとすごい点が入るで！',
-  '←と→ で動かす、↓ で落とす<br>グルグルで回転や！',
-  '準備はええか？<br>スタートボタンを押してな！',
+  {text:'テトリスで遊ぼ〜！<br>レッドが応援するで！', face:'hi'},
+  {text:'ブロックが上から落ちてくるから<br>横に動かして並べてな！', face:'normal'},
+  {text:'横一列揃えたら消えるで！<br>たくさん消すとすごい点が入るで！', face:'clap'},
+  {text:'←と→ で動かす、↓ で落とす<br>グルグルで回転や！', face:'ike'},
+  {text:'準備はええか？<br>スタートボタンを押してな！', face:'hi'},
 ];
 
-/* ゲームオーバー時のセリフ（2行・長め・動的） */
+/* ゲームオーバー時のセリフ（2行・長め・動的） + 表情 */
 function buildGameOverSeq(sc,lv,ln){
   const s=[];
-  s.push('ゲームオーバーや〜！<br>{name}お疲れさま！');
-  if(sc===0) s.push('0点…！？<br>次は頑張ろな！');
-  else if(sc<500) s.push(sc+'点や！<br>これからやで{name}！');
-  else if(sc<1500) s.push(sc+'点！<br>ええ感じや{name}！');
-  else if(sc<3000) s.push(sc+'点！<br>やるな〜{name}！');
-  else if(sc<5000) s.push(sc+'点！<br>すごいやん{name}！');
-  else s.push(sc+'点！？<br>{name}天才ちゃう！？');
-  if(lv<=1) s.push('レベル1か〜<br>次は上目指そ{name}！');
-  else if(lv<=3) s.push('レベル'+lv+'まで行った！<br>ええ感じや{name}！');
-  else if(lv<=5) s.push('レベル'+lv+'！<br>うまいな〜{name}！');
-  else if(lv<=7) s.push('レベル'+lv+'！<br>上級者やん{name}！');
-  else s.push('レベル'+lv+'！？<br>{name}もう達人や！');
-  if(ln===0) s.push('1列も消せんかった…<br>次こそ行けるで！');
-  else if(ln<5) s.push(ln+'列消したで！<br>次はもっと消そな！');
-  else if(ln<15) s.push(ln+'列も消した！<br>ナイスやで{name}！');
-  else if(ln<30) s.push(ln+'列も消した！<br>すごすぎ{name}！');
-  else s.push(ln+'列！！<br>感動で涙出そうや…！');
-  s.push('めっちゃ楽しかった〜！<br>{name}ありがとな！');
-  s.push('また一緒に遊ぼな！<br>{name}待ってるで〜！');
+  s.push({text:'ゲームオーバーや〜！<br>{name}お疲れさま！', face:'umm2'});
+  if(sc===0) s.push({text:'0点…！？<br>次は頑張ろな！', face:'aseri'});
+  else if(sc<500) s.push({text:sc+'点や！<br>これからやで{name}！', face:'hi'});
+  else if(sc<1500) s.push({text:sc+'点！<br>ええ感じや{name}！', face:'clap'});
+  else if(sc<3000) s.push({text:sc+'点！<br>やるな〜{name}！', face:'yatta'});
+  else if(sc<5000) s.push({text:sc+'点！<br>すごいやん{name}！', face:'yatta'});
+  else s.push({text:sc+'点！？<br>{name}天才ちゃう！？', face:'clap'});
+  if(lv<=1) s.push({text:'レベル1か〜<br>次は上目指そ{name}！', face:'hi'});
+  else if(lv<=3) s.push({text:'レベル'+lv+'まで行った！<br>ええ感じや{name}！', face:'clap'});
+  else if(lv<=5) s.push({text:'レベル'+lv+'！<br>うまいな〜{name}！', face:'yatta'});
+  else if(lv<=7) s.push({text:'レベル'+lv+'！<br>上級者やん{name}！', face:'ike'});
+  else s.push({text:'レベル'+lv+'！？<br>{name}もう達人や！', face:'clap'});
+  if(ln===0) s.push({text:'1列も消せんかった…<br>次こそ行けるで！', face:'aseri'});
+  else if(ln<5) s.push({text:ln+'列消したで！<br>次はもっと消そな！', face:'hi'});
+  else if(ln<15) s.push({text:ln+'列も消した！<br>ナイスやで{name}！', face:'yatta'});
+  else if(ln<30) s.push({text:ln+'列も消した！<br>すごすぎ{name}！', face:'clap'});
+  else s.push({text:ln+'列！！<br>感動で涙出そうや…！', face:'clap'});
+  s.push({text:'めっちゃ楽しかった〜！<br>{name}ありがとな！', face:'yatta'});
+  s.push({text:'また一緒に遊ぼな！<br>{name}待ってるで〜！', face:'hi'});
   return s;
 }
 
@@ -434,7 +438,7 @@ const celebLayer=document.getElementById('celebrate-layer');
 function setFace(img, keep){
   charImg.src='images/'+img+'.png';
   clearTimeout(window._ft);
-  if(!keep) window._ft=setTimeout(()=>{charImg.src='images/read2.png'},3500);
+  if(!keep) window._ft=setTimeout(()=>{charImg.src='images/hi.png'},3500);
 }
 
 /* セリフ＋表情連動 */
@@ -449,18 +453,22 @@ function setBubbleMode(long){
 function say(key){
   /* プレイ中は大きいフォント */
   setBubbleMode(false);
-  bubbleText.innerHTML=rc(key);
+  const c=rc(key);
+  bubbleText.innerHTML=c.text;
   idleTimer=0;
   const faceMap={
-    start:'ike', clear1:'yatta', clear2:'yatta', clear3:'yatta', clear4:'yatta',
-    danger:'aseri', gameover:'umm2', idle:'read2', levelup:'ike', combo:'yatta',
+    start:'ike', clear1:'yatta', clear2:'yatta', clear3:'clap', clear4:'clap',
+    danger:'aseri', gameover:'umm2', levelup:'ike', combo:'clap',
   };
-  if(faceMap[key]) setFace(faceMap[key], key==='gameover');
+  /* idleはセリフごとの表情を使用、それ以外はfaceMap */
+  const face = c.face || faceMap[key];
+  if(face) setFace(face, key==='gameover');
 }
 /* 長文セリフ（開始前・ゲームオーバー用）— タイプライター */
-function sayLong(text){
+function sayLong(text, face){
   setBubbleMode(true);
   typeWrite(fn(text),50);
+  if(face) setFace(face, true);
 }
 
 /* ===== レベル別背景テーマ ===== */
@@ -819,11 +827,11 @@ function triggerGameOver(){
   if(goSeqTimer)clearInterval(goSeqTimer);
   const seq=buildGameOverSeq(score,level,lines);
   let si=0;
-  sayLong(seq[0]);
+  sayLong(seq[0].text, seq[0].face);
   goSeqTimer=setInterval(()=>{
     si++;
     if(si>=seq.length){clearInterval(goSeqTimer);goSeqTimer=null;return}
-    sayLong(seq[si]);
+    sayLong(seq[si].text, seq[si].face);
   },3500);
 }
 
@@ -868,11 +876,11 @@ createBoard();drawBoard();drawNext();
 let introTimer=null;
 (function runIntro(){
   let ii=0;
-  sayLong(INTRO_SEQ[0]);
+  sayLong(INTRO_SEQ[0].text, INTRO_SEQ[0].face);
   introTimer=setInterval(()=>{
     ii++;
     if(ii>=INTRO_SEQ.length){ii=0;}
-    sayLong(INTRO_SEQ[ii]);
+    sayLong(INTRO_SEQ[ii].text, INTRO_SEQ[ii].face);
   },4000);
 })();
 </script>
