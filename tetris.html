@@ -46,12 +46,12 @@
   box-shadow: var(--shadow-md), inset 0 2px 8px rgba(45,40,35,0.08);
 }
 
-/* レッド — 頭の上半分だけテトリス枠に被る */
+/* レッド — 頭の上半分だけテトリス枠に被る、セリフと被らないよう左端に */
 .tetris-red-float {
   position: absolute;
-  bottom: -70px;
-  left: -20px;
-  width: min(28vw, 120px);
+  bottom: -60px;
+  left: -50px;
+  width: min(26vw, 110px);
   z-index: 8;
   pointer-events: none;
   animation: red-bob 3s ease-in-out infinite;
@@ -131,13 +131,41 @@
   transform: scale(0.85);
 }
 
-/* 下部ボタン（ボード幅に揃う） */
+/* 下部ボタン（操作ボタンから十分離す） */
 .tetris-bottom-btns {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  padding: 2px 0 8px;
+  gap: 14px;
+  padding: 0;
+  margin-top: 20px;
   width: 100%;
+}
+.tetris-bottom-btns .bottom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 28px;
+  border: none;
+  border-radius: var(--r-full);
+  font-size: var(--t-base);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.12s var(--ease-spring), box-shadow 0.12s;
+  box-shadow: var(--shadow-sm);
+}
+.tetris-bottom-btns .bottom-btn:active {
+  transform: scale(0.95);
+}
+.tetris-bottom-btns .btn-retry {
+  background: var(--linen-soft);
+  color: var(--ink);
+  border: 2px solid var(--border-mid);
+}
+.tetris-bottom-btns .btn-finish {
+  background: var(--red);
+  color: #fff;
+  border: 2px solid var(--red);
 }
 
 /* ===== サイドバー ===== */
@@ -287,8 +315,8 @@
 
           <!-- もういちど＋おしまい -->
           <div class="tetris-bottom-btns">
-            <button type="button" class="btn warm" id="retry-btn">もういちど</button>
-            <a href="bye.html" class="btn small" style="background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">おしまい</a>
+            <button type="button" class="bottom-btn btn-retry" id="retry-btn">もういちど</button>
+            <a href="bye.html" class="bottom-btn btn-finish">おしまい</a>
           </div>
         </div>
 
