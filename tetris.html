@@ -91,10 +91,15 @@
 .tetris-comment { display:flex; align-items:center; justify-content:center; padding:6px 0 2px; min-height:44px; width:100%; }
 .tetris-bubble {
   background:var(--linen-soft); border:1px solid var(--border-mid); border-radius:var(--r-lg);
-  padding:6px 14px; font-size:clamp(12px,3.5vw,16px); font-weight:700; color:var(--ink);
+  padding:6px 14px; font-size:clamp(15px,4.5vw,20px); font-weight:700; color:var(--ink);
   width:100%; height:2.8em; line-height:1.4;
   display:flex; align-items:center; justify-content:center;
   text-align:center; box-shadow:var(--shadow-sm); overflow:hidden;
+  transition:font-size 0.2s;
+}
+/* 開始前・ゲームオーバー時：小さめフォントで2行たっぷり */
+.tetris-bubble.bubble-long {
+  font-size:clamp(11px,3.2vw,15px);
 }
 
 /* 操作ボタン */
@@ -291,83 +296,82 @@ const dName=pName+honor;
 function fn(s){return s.replace(/\{name\}/g,dName)}
 
 /* ===== セリフ（ルビなし・小2までの漢字のみ） ===== */
+/* プレイ中：大きいフォントで短いセリフ */
 const COMMENTS={
   start:[
-    'テトリスやるで〜！','いくで{name}！',
-    'ブロックつんでいこ〜！','いくで！いくで！',
-    'テトリスタイムや！','いっしょにテトリス！うれしいわ〜！',
-    'レッドがおうえんするで！','今日は何てんとれるかな？',
-    '{name}、スタートや！','気あいいれてこ！',
+    '{name}、いくで！','テトリスタイムや！',
+    'がんばろ{name}！','スタートや！',
   ],
   clear1:[
-    'ナイス！','おお〜いいやん！','ええかんじ〜！',
-    'やるな〜！','そのちょうし〜！','1れつけし！いいぞ！',
-    'うまいやん〜！','ナイスナイス〜！',
-    'パチパチ〜！','スムーズやな〜！',
-    'さすがやな〜！','ノッてきたな！',
-    'キレイにけしたな！','お〜スッキリ！',
-    'センスあるで！','いいね！',
-    'どんどんいこ！','ナイスプレー！',
-    'レッドもうれしい！','ピカーン！',
-    'はい1れつけし〜！','ええぞ！このちょうし！',
-    'がんばれ〜！','{name}いいかんじ！',
+    'ナイス！','いいやん！','ええかんじ！',
+    'やるな〜！','そのちょうし！','いいぞ！',
+    'うまい！','パチパチ！','スッキリ！',
+    'センスある！','いいね！','ナイス！',
+    'さすが！','ピカーン！','ええぞ！',
   ],
   clear2:[
-    'ダブルや！すごい！','2れつけし！やるやん！',
-    'かっこええ〜！','おおダブル！すご！',
-    '2れついっきに！やるなぁ！','ダブルきた〜！',
-    'ダブル！テンション上がる！','気もちええな〜！',
-    'ダブルきまった！','やったーダブルや！',
+    'ダブル！すごい！','2れつけし！','やるやん！',
+    'ダブルきた！','かっこええ！','サイコー！',
   ],
   clear3:[
-    'トリプル！！すごすぎ！','3れつけし！天才ちゃう？',
-    'うおお！すごい！！','トリプル！かみってるで！',
-    '3れつ！マジですごい！','トリプルきまった！',
-    'レッド大こうふんや！','トリプルやー！',
-    'かんどうや！トリプル！','プロやん！',
-    'きゃー！トリプル！','たつじんやな！',
+    'トリプル！！','すごすぎ！！','天才！？',
+    'うおおお！','3れつ！！','きゃー！',
   ],
   clear4:[
-    'テトリス！！さいこうや！！','4れつけし！かんどうや〜！',
-    'かみか！？すごすぎ！！','テトリスきたあ！でんせつや！',
-    '4れついっきに！サイコー！','なきそうやわ…すごい！',
-    'テトリス！れきしにのこる！','うわあテトリス！天才！',
-    '4れつけし！おうじゃやな！','テトリス！さいきょうや！',
+    'テトリス！！','かみ！！','でんせつ！！',
+    'さいきょう！','天才や！！','サイコー！！',
   ],
   danger:[
-    'やばいで！がんばれ〜！','おちついて！','まだいける！',
-    'ピンチやけど大じょうぶ！','あわわ…おちついてな！',
-    'ここがしょうぶどころや！','あきらめんといてな！',
-    'ここからや！ぎゃくてんできる！','大きくいきすって…いける！',
-    'レッドがねんをおくるで！','やばい！でも大じょうぶ！',
-  ],
-  gameover:[
-    '{name}、ゲームオーバーや〜！',
+    'やばいで！','おちついて！','まだいける！',
+    'がんばれ！','大じょうぶ！','ここからや！',
   ],
   idle:[
-    'ブロックおちてくるで〜','ここにおいたら？',
-    'おうえんしとるで！','しゅうちゅうやで！',
-    'どこにおく？','わくわくしてるで！',
-    'いいかんじやで〜！','ブロックくるで！',
-    'かんがえ中？','いっしょにかんがえてるで！',
-    'こっちかな〜？','ファイト！',
-    'テトリスたのしいな〜！','がんばれ〜！',
-    '見まもっとるで〜！','まだまだいけるで！',
-    'リラックスしてな〜','つぎのブロック何かな？',
-    'いいペースやで！',
+    'おうえんしてるで！','どこにおく？','がんばれ〜！',
+    'ファイト！','いいペース！','いけるいける！',
+    'こっちかな？','ブロックくるで！','見てるで〜！',
   ],
   levelup:[
-    'レベルアップ！すごい！','レベルが上がったで！',
-    'レベルアップ！はやくなるで！','気をつけてな！',
-    'どんどんつよくなってる！',
+    'レベルアップ！','はやくなるで！','すごい！',
   ],
   combo:[
-    'コンボや！すごい！','コンボつづく！ノリノリ！',
-    'つながった！いいぞ！','コンボ！とまらんな！',
-    'レッドもこうふんや！コンボ！',
+    'コンボ！','つながった！','ノリノリ！',
   ],
 };
 function rc(key){const a=COMMENTS[key];return fn(a[Math.floor(Math.random()*a.length)])}
+
+/* 開始前の説明セリフ（2行・長め） */
+const INTRO_SEQ=[
+  '{name}、テトリスであそぼ〜！レッドがおうえんするで！',
+  'ブロックが上からおちてくるから、よこにうごかしてならべてな！',
+  'よこ一れつそろえたらけせるで！たくさんけすとすごいてんが入るで！',
+  'ボタンは ←→ でうごかす、↓ でおとす、まん中でまわすやで！',
+  'じゅんびはええか？スタートボタンをおしてな！',
+];
+
+/* ゲームオーバー時のセリフ（2行・長め・動的） */
+function buildGameOverSeq(sc,lv,ln){
+  const s=[];
+  s.push('{name}、ゲームオーバーや〜！おつかれさま！');
+  if(sc===0) s.push('0てん…！？ まあ気にせんとこ！つぎがんばろな！');
+  else if(sc<500) s.push(sc+'てんや！まだまだこれからやで{name}！');
+  else if(sc<1500) s.push(sc+'てん！ええかんじやったで{name}！');
+  else if(sc<3000) s.push(sc+'てん！なかなかやるな〜{name}！');
+  else if(sc<5000) s.push(sc+'てん！すごいやん{name}！レッドびっくりや！');
+  else s.push(sc+'てん！？{name}、天才ちゃう！？レッドかんどうや！');
+  if(lv<=1) s.push('レベル1か〜、つぎはもっと上いけるで{name}！');
+  else if(lv<=3) s.push('レベル'+lv+'までいった！ええかんじやで{name}！');
+  else if(lv<=5) s.push('レベル'+lv+'！{name}なかなかうまいな〜！');
+  else if(lv<=7) s.push('レベル'+lv+'！{name}、じょうきゅうしゃやん！すごいわ！');
+  else s.push('レベル'+lv+'！？{name}、もうたつじんやで！');
+  if(ln===0) s.push('1れつもけせんかった…でもつぎはいけるで{name}！');
+  else if(ln<5) s.push(ln+'れつけしたで！つぎはもっとけせるはずや{name}！');
+  else if(ln<15) s.push(ln+'れつもけした！ナイスやで{name}！');
+  else if(ln<30) s.push(ln+'れつもけしたんか！{name}すごすぎるわ！');
+  else s.push(ln+'れつ！！レッドかんどうでなみだ出そうや{name}…！');
+  s.push('レッドめっちゃたのしかったわ〜！{name}ありがとな！');
+  s.push('またいっしょにテトリスやろな{name}！まってるで〜！');
+  return s;
+}
 
 /* DOM */
 const bubbleText=document.getElementById('bubble-text');
@@ -390,15 +394,26 @@ function setFace(img, keep){
 }
 
 /* セリフ＋表情連動 */
+const bubble=document.getElementById('bubble');
+function setBubbleMode(long){
+  if(long) bubble.classList.add('bubble-long');
+  else bubble.classList.remove('bubble-long');
+}
 function say(key){
+  /* プレイ中は大きいフォント */
+  setBubbleMode(false);
   bubbleText.innerHTML=rc(key);
   idleTimer=0;
   const faceMap={
     start:'ike', clear1:'yatta', clear2:'yatta', clear3:'yatta', clear4:'yatta',
     danger:'aseri', gameover:'umm2', idle:'read2', levelup:'ike', combo:'yatta',
   };
-  /* ゲームオーバー時は表情を維持し続ける */
   if(faceMap[key]) setFace(faceMap[key], key==='gameover');
+}
+/* 長文セリフ（開始前・ゲームオーバー用） */
+function sayLong(text){
+  setBubbleMode(true);
+  bubbleText.innerHTML=fn(text);
 }
 
 /* ===== レベル別背景テーマ ===== */
@@ -727,6 +742,7 @@ function gameLoop(t){
 
 function startGame(){
   if(goSeqTimer){clearInterval(goSeqTimer);goSeqTimer=null}
+  if(introTimer){clearInterval(introTimer);introTimer=null}
   createBoard();score=0;level=1;lines=0;combo=0;prevLevel=1;
   dropInterval=800;dropTimer=0;idleTimer=0;gameOver=false;gameRunning=true;
   scoreVal.textContent='0';levelVal.textContent='1';
@@ -736,30 +752,32 @@ function startGame(){
   /* テーマリセット */
   currentTheme='';document.body.style.background='';sceneLayer.innerHTML='';
   if(weatherInterval){clearInterval(weatherInterval);weatherInterval=null}
-  current=rp();nextPiece=rp();drawNext();say('start');
+  current=rp();nextPiece=rp();drawNext();
+  setBubbleMode(false);
+  say('start');
   lastTime=performance.now();requestAnimationFrame(gameLoop);
 }
 
 let goSeqTimer=null;
 function triggerGameOver(){
   gameRunning=false;gameOver=true;
-  say('gameover');
+  setFace('umm2',true);
   goScore.textContent='スコア: '+score;
   goOverlay.classList.add('active');
-  /* レッドを前面に */
   charWrap.classList.add('go-front');
   boardArea.classList.remove('shake-sm','shake-md','shake-lg');
   boardArea.classList.add('shake-lg');
   setTimeout(()=>boardArea.classList.remove('shake-lg'),600);
-  /* スコア・レベル・ライン数に応じた動的セリフを生成 */
+  /* 長文モードでスコア連動セリフを順番に */
   if(goSeqTimer)clearInterval(goSeqTimer);
   const seq=buildGameOverSeq(score,level,lines);
   let si=0;
+  sayLong(seq[0]);
   goSeqTimer=setInterval(()=>{
-    if(si>=seq.length){clearInterval(goSeqTimer);goSeqTimer=null;return}
-    bubbleText.innerHTML=fn(seq[si]);
     si++;
-  },3000);
+    if(si>=seq.length){clearInterval(goSeqTimer);goSeqTimer=null;return}
+    sayLong(seq[si]);
+  },3500);
 }
 
 function buildGameOverSeq(sc,lv,ln){
@@ -823,7 +841,18 @@ document.getElementById('start-btn').addEventListener('click',startGame);
 document.getElementById('retry-btn').addEventListener('click',startGame);
 
 createBoard();drawBoard();drawNext();
-bubbleText.innerHTML=fn('テトリスで あそぼ〜！');
+
+/* 開始前：あそびかた説明を順番に表示 */
+let introTimer=null;
+(function runIntro(){
+  let ii=0;
+  sayLong(INTRO_SEQ[0]);
+  introTimer=setInterval(()=>{
+    ii++;
+    if(ii>=INTRO_SEQ.length){ii=0;}
+    sayLong(INTRO_SEQ[ii]);
+  },4000);
+})();
 </script>
 </body>
 </html>
