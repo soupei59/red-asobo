@@ -15,7 +15,7 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding-bottom: 180px;
+  padding-bottom: 20px;
 }
 
 /* ステージ（キャラ＋吹き出し） */
@@ -111,28 +111,25 @@
   box-shadow: var(--shadow-xs);
 }
 
-/* 操作ボタン — まるっこく温かみのある手触り */
+/* 操作ボタン — 盤面の下にインライン配置 */
 .tetris-controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 8px;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: linear-gradient(to top, var(--linen) 60%, rgba(247,242,234,0.9));
-  border-top: 2px solid var(--border-soft);
-  z-index: 100;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 0 4px;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
 }
 .ctrl-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
-  font-size: clamp(20px,5.5vw,32px);
+  font-size: clamp(18px,5vw,26px);
   font-weight: 900;
-  padding: 14px 0;
+  width: 56px;
+  height: 56px;
   border: 2px solid var(--border-mid);
   border-radius: var(--r-full);
   background: var(--linen-soft);
@@ -144,6 +141,7 @@
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.12s var(--ease-spring), box-shadow 0.12s;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 .ctrl-btn:active {
   transform: scale(0.9);
@@ -158,6 +156,13 @@
 .ctrl-btn.rotate-btn:active {
   background: var(--red);
   color: #fff;
+}
+
+/* おしまいボタン */
+.tetris-finish {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 20px;
 }
 
 /* ゲームオーバー画面 */
@@ -281,7 +286,7 @@
       <!-- キャラ＋吹き出し -->
       <div class="tetris-stage">
         <div class="tetris-char floating" id="char-wrap">
-          <img src="images/normal.png" alt="シブ・レッド" id="char-img">
+          <img src="images/read.png" alt="シブ・レッド" id="char-img">
         </div>
         <div class="tetris-bubble" id="bubble">
           <span id="bubble-text">テトリスで あそぼ〜！</span>
@@ -318,15 +323,20 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 操作ボタン -->
-  <div class="tetris-controls" id="controls">
-    <button type="button" class="ctrl-btn" id="btn-left">◀</button>
-    <button type="button" class="ctrl-btn" id="btn-down">▼</button>
-    <button type="button" class="ctrl-btn rotate-btn" id="btn-rotate">↻</button>
-    <button type="button" class="ctrl-btn" id="btn-right">▶</button>
+      <!-- 操作ボタン -->
+      <div class="tetris-controls" id="controls">
+        <button type="button" class="ctrl-btn" id="btn-left">◀</button>
+        <button type="button" class="ctrl-btn" id="btn-down">▼</button>
+        <button type="button" class="ctrl-btn rotate-btn" id="btn-rotate">↻</button>
+        <button type="button" class="ctrl-btn" id="btn-right">▶</button>
+      </div>
+
+      <!-- おしまいボタン -->
+      <div class="tetris-finish">
+        <a href="bye.html" class="btn small" style="background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">おしまい</a>
+      </div>
+    </div>
   </div>
 
 <script>
@@ -580,7 +590,7 @@ function setCharImage(key) {
   // 数秒後にnormalに戻す
   clearTimeout(window._charTimeout);
   window._charTimeout = setTimeout(() => {
-    charImg.src = 'images/normal.png';
+    charImg.src = 'images/read.png';
   }, 3000);
 }
 
