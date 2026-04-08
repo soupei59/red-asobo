@@ -193,8 +193,8 @@
 #btn-down   { grid-column:2; grid-row:2; }
 
 /* 右サイドバー */
-.tetris-sidebar { display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; }
-.tetris-next-label { font-size:var(--t-sm); color:var(--ink-soft); font-weight:700; margin-bottom:-4px; }
+.tetris-sidebar { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
+.tetris-next-label { font-size:clamp(10px,2.5vw,13px); color:var(--ink-soft); font-weight:700; margin-bottom:-2px; }
 .tetris-next-wrap {
   background:var(--linen-soft); border:2px solid var(--border-mid); border-radius:var(--r-sm);
   box-shadow:var(--shadow-xs); display:flex; align-items:center; justify-content:center; overflow:hidden;
@@ -202,15 +202,15 @@
 .tetris-next-wrap canvas { display:block; }
 .tetris-info-item {
   background:var(--linen-soft); border:2px solid var(--border-mid); border-radius:var(--r-md);
-  padding:6px 10px; font-size:var(--t-sm); font-weight:700; color:var(--ink);
-  text-align:center; box-shadow:var(--shadow-xs); width:100%; white-space:nowrap;
+  padding:3px 8px; font-size:clamp(10px,2.5vw,13px); font-weight:700; color:var(--ink);
+  text-align:center; box-shadow:var(--shadow-xs); width:100%; white-space:nowrap; line-height:1.2;
 }
 
-.sidebar-btns { display:flex; flex-direction:column; gap:8px; width:100%; margin-top:4px; }
+.sidebar-btns { display:flex; flex-direction:column; gap:4px; width:100%; margin-top:2px; }
 .sidebar-btns .sb-btn {
   display:flex; align-items:center; justify-content:center;
-  padding:8px 0; border:2px solid var(--border-mid); border-radius:var(--r-md);
-  font-size:var(--t-sm); font-weight:700; cursor:pointer; text-decoration:none;
+  padding:5px 0; border:2px solid var(--border-mid); border-radius:var(--r-md);
+  font-size:clamp(10px,2.5vw,13px); font-weight:700; cursor:pointer; text-decoration:none;
   transition:transform 0.12s var(--ease-spring); box-shadow:var(--shadow-xs);
 }
 .sidebar-btns .sb-btn:active { transform:scale(0.95); }
