@@ -196,7 +196,7 @@
 .tetris-sidebar { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; }
 .tetris-next-label { font-size:clamp(10px,2.5vw,13px); color:var(--ink-soft); font-weight:700; margin-bottom:-2px; }
 .tetris-next-wrap {
-  background:var(--linen-soft); border:2px solid var(--border-mid); border-radius:var(--r-sm);
+  background:var(--linen-soft); border:2px solid var(--border-mid); border-radius:var(--r-md);
   box-shadow:var(--shadow-xs); display:flex; align-items:center; justify-content:center; overflow:hidden;
 }
 .tetris-next-wrap canvas { display:block; }
@@ -216,6 +216,12 @@
 .sidebar-btns .sb-btn:active { transform:scale(0.95); }
 .sidebar-btns .sb-retry { background:#E8D4C8; color:var(--ink); border-color:#D4B8A8; }
 .sidebar-btns .sb-finish { background:var(--red); color:#fff; border-color:var(--red); }
+
+/* スタートボタン — テトリス枠と角丸を統一＆縮小 */
+#start-btn {
+  border-radius:var(--r-md); font-size:var(--t-base);
+  padding:12px 36px; min-height:auto; letter-spacing:0.1em;
+}
 
 /* スタートオーバーレイ */
 .tetris-start-overlay {
