@@ -245,6 +245,16 @@
   opacity:0; transition:opacity 0.5s 0.3s;
 }
 .tetris-gameover-overlay.active .gameover-score { opacity:1; }
+.gameover-ranking {
+  background:rgba(255,255,255,0.12); border-radius:8px; padding:6px 10px;
+  font-size:clamp(11px,3vw,14px); color:#fff; text-align:left; line-height:1.6;
+  max-width:90%; opacity:0; transition:opacity 0.5s 0.6s;
+  font-family:'Yomogi','Zen Maru Gothic',cursive; font-weight:700;
+}
+.tetris-gameover-overlay.active .gameover-ranking { opacity:1; }
+.rank-new { color:#FFD700; }
+.rank-row { display:flex; justify-content:space-between; gap:6px; }
+.rank-num { min-width:2em; }
 
 /* ボード内エフェクト */
 .line-clear-fx {
@@ -305,6 +315,7 @@
             <div class="tetris-gameover-overlay" id="gameover-overlay">
               <div class="gameover-title">ゲームオーバー</div>
               <div class="gameover-score" id="gameover-score">スコア: 0</div>
+              <div class="gameover-ranking" id="gameover-ranking"></div>
             </div>
           </div>
         </div>
@@ -313,6 +324,7 @@
           <div class="tetris-next-wrap" id="next-wrap"><canvas id="next-canvas"></canvas></div>
           <div class="tetris-info-item">スコア<br><b id="score-val">0</b></div>
           <div class="tetris-info-item">レベル<br><b id="level-val">1</b></div>
+          <div class="tetris-info-item" style="color:var(--red)">ベスト<br><b id="best-val">0</b></div>
           <div class="sidebar-btns">
             <button type="button" class="sb-btn sb-retry" id="retry-btn">もういちど</button>
             <a href="bye.html" class="sb-btn sb-finish">おしまい</a>
@@ -494,12 +506,51 @@ function buildGameOverSeq(sc,lv,ln){
   return s;
 }
 
+/* ===== スコアランキング (TOP10) ===== */
+const RANK_KEY='red_tetris_ranking';
+function loadRanking(){
+  try{return JSON.parse(localStorage.getItem(RANK_KEY))||[]}catch(e){return[]}
+}
+function saveScore(sc,lv,ln){
+  const ranking=loadRanking();
+  ranking.push({score:sc,level:lv,lines:ln,date:Date.now()});
+  ranking.sort((a,b)=>b.score-a.score);
+  if(ranking.length>10)ranking.length=10;
+  localStorage.setItem(RANK_KEY,JSON.stringify(ranking));
+  return ranking;
+}
+function getRank(sc){
+  const ranking=loadRanking();
+  let pos=ranking.findIndex(r=>sc>r.score);
+  if(pos===-1)pos=ranking.length;
+  return pos<10?pos+1:0; /* 0=ランク外 */
+}
+function getBest(){
+  const ranking=loadRanking();
+  return ranking.length>0?ranking[0].score:0;
+}
+function renderRanking(ranking,newScore){
+  const el=document.getElementById('gameover-ranking');
+  if(!el)return;
+  if(ranking.length===0){el.innerHTML='';return}
+  let html='<div style="text-align:center;margin-bottom:4px">🏆 ランキング</div>';
+  ranking.forEach((r,i)=>{
+    const isNew=r.score===newScore&&r.date===ranking.filter(x=>x.score===newScore).slice(-1)[0]?.date;
+    const cls=isNew?'rank-row rank-new':'rank-row';
+    const medal=['🥇','🥈','🥉'][i]||'';
+    html+=`<div class="${cls}"><span class="rank-num">${medal||((i+1)+'.')}</span><span>${r.score}<ruby>点<rt>てん</rt></ruby></span><span>Lv${r.level}</span></div>`;
+  });
+  el.innerHTML=html;
+}
+
 /* DOM */
 const bubbleText=document.getElementById('bubble-text');
 const charImg=document.getElementById('char-img');
 const charWrap=document.getElementById('char-wrap');
 const scoreVal=document.getElementById('score-val');
 const levelVal=document.getElementById('level-val');
+const bestVal=document.getElementById('best-val');
+bestVal.textContent=getBest();
 const boardArea=document.getElementById('board-area');
 const startOverlay=document.getElementById('start-overlay');
 const goOverlay=document.getElementById('gameover-overlay');
@@ -1298,6 +1349,10 @@ function triggerGameOver(){
   gameRunning=false;gameOver=true;
   setFace('umm2',true);
   goScore.textContent='スコア: '+score;
+  /* ランキング保存・表示 */
+  const ranking=saveScore(score,level,lines);
+  renderRanking(ranking,score);
+  bestVal.textContent=getBest();
   goOverlay.classList.add('active');
   charWrap.classList.add('go-front');
   boardArea.classList.remove('shake-sm','shake-md','shake-lg');
