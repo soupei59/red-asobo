@@ -1177,7 +1177,7 @@ function clearLines(rows){
   else if(cnt===2){showPopup('ダブル！');say('clear2')}
   else say('clear1');
   if(combo>1){setTimeout(()=>{showPopup(combo+' コンボ！');say('combo')},500)}
-  setTimeout(()=>{for(const r of rows.sort((a,b)=>b-a)){board.splice(r,1);board.unshift(new Array(COLS).fill(null))}spawnNext()},400);
+  setTimeout(()=>{const sorted=rows.slice().sort((a,b)=>b-a);for(const r of sorted)board.splice(r,1);for(let i=0;i<sorted.length;i++)board.unshift(new Array(COLS).fill(null));spawnNext()},400);
 }
 function spawnNext(){
   current=nextPiece; nextPiece=rp(); drawNext();
