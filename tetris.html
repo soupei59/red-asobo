@@ -1148,17 +1148,19 @@ function rotate(p){
   for(const[kx,ky]of kicks){const tp={...p,x:p.x+kx,y:p.y+ky};if(valid(tp,0,0,adj)){p.blocks=adj;p.x+=kx;p.y+=ky;return}}
 }
 function lockPiece(){
+  if(!current)return;
   for(const[bx,by]of current.blocks){
     const rx=current.x+bx,ry=current.y+by;
     if(ry<0){triggerGameOver();return}
     board[ry][rx]=current.color;
   }
+  current=null; /* 二重ロック防止 */
   const fr=[];for(let r=0;r<ROWS;r++)if(board[r].every(c=>c!==null))fr.push(r);
   if(fr.length>0)clearLines(fr);else{combo=0;spawnNext()}
 }
 function clearLines(rows){
   const cnt=rows.length; combo++;
-  const ls=[0,100,300,500,800][cnt]*level;
+  const ls=([0,100,300,500,800][Math.min(cnt,4)]||0)*level;
   const cb=combo>1?50*(combo-1)*level:0;
   score+=ls+cb; lines+=cnt;
   const newLv=Math.floor(lines/10)+1;
@@ -1267,7 +1269,7 @@ function drawNext(){
 function gameLoop(t){
   if(!gameRunning)return;
   const dt=t-lastTime;lastTime=t;dropTimer+=dt;idleTimer+=dt;
-  if(dropTimer>=dropInterval){dropTimer=0;if(valid(current,0,1))current.y++;else lockPiece()}
+  if(current&&dropTimer>=dropInterval){dropTimer=0;if(valid(current,0,1))current.y++;else lockPiece()}
   if(idleTimer>12000){idleTimer=0;say('idle')}
   drawBoard();requestAnimationFrame(gameLoop);
 }
