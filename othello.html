@@ -27,7 +27,7 @@
   border-radius: 16px;
   padding: 6px 4px 4px;
   cursor: pointer;
-  transition: all 0.25s var(--ease-soft);
+  transition: border 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
   -webkit-tap-highlight-color: transparent;
   display: flex;
   flex-direction: column;
@@ -36,6 +36,14 @@
   flex: 1 1 0;
   min-width: 0;
   max-width: 180px;
+  animation: char-float 3s ease-in-out infinite;
+}
+.char-select-btn:nth-child(1) { animation-delay: 0s; }
+.char-select-btn:nth-child(2) { animation-delay: -1s; }
+.char-select-btn:nth-child(3) { animation-delay: -2s; }
+@keyframes char-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 .char-select-btn img {
   width: 100%;
@@ -46,14 +54,18 @@
   transition: all 0.25s var(--ease-soft);
 }
 .char-select-btn:hover {
-  transform: translateY(-4px) scale(1.05);
+  animation: char-float-hover 3s ease-in-out infinite;
   border-color: var(--border-mid);
   background: rgba(255,255,255,0.4);
 }
 .char-select-btn:hover img {
   filter: drop-shadow(0 6px 12px rgba(45,40,35,0.25));
 }
-.char-select-btn:active { transform: translateY(0) scale(0.97); }
+.char-select-btn:active { animation: none; transform: translateY(0) scale(0.97); }
+@keyframes char-float-hover {
+  0%, 100% { transform: translateY(0) scale(1.05); }
+  50% { transform: translateY(-12px) scale(1.05); }
+}
 .char-select-label {
   font-family: 'Yomogi', 'Zen Maru Gothic', cursive;
   font-size: clamp(14px, 3.5vw, 22px);
