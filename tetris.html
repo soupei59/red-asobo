@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>テトリス｜レッドとあそぼう</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap">
 <style>
 /* === 背景レイヤー === */
 .tetris-page { transition:background 2s ease; }
@@ -230,7 +231,11 @@
   gap:16px; border-radius:var(--r-md); z-index:10;
 }
 .tetris-start-overlay.hidden { display:none; }
-.start-title { font-family:'Yomogi','Zen Maru Gothic',cursive; font-size:clamp(24px,7vw,38px); font-weight:900; color:var(--red); text-shadow:0 2px 8px rgba(200,90,77,0.15); }
+.start-title {
+  font-family:'DotGothic16',monospace; font-size:clamp(26px,8vw,42px); font-weight:400;
+  color:#fff; letter-spacing:0.12em;
+  text-shadow:3px 3px 0 var(--red), -1px -1px 0 var(--red), 1px -1px 0 var(--red), -1px 1px 0 var(--red), 0 4px 12px rgba(200,90,77,0.5);
+}
 
 /* ゲームオーバーオーバーレイ */
 .tetris-gameover-overlay {
@@ -241,8 +246,9 @@
 }
 .tetris-gameover-overlay.active { background:rgba(45,40,35,0.55); opacity:1; pointer-events:auto; }
 .gameover-title {
-  font-family:'Yomogi','Zen Maru Gothic',cursive; font-size:clamp(22px,6vw,36px);
-  font-weight:900; color:#fff; text-shadow:0 2px 12px rgba(200,90,77,0.6);
+  font-family:'DotGothic16',monospace; font-size:clamp(22px,6vw,36px); font-weight:400;
+  color:#fff; letter-spacing:0.1em;
+  text-shadow:3px 3px 0 rgba(45,40,35,0.7), -1px -1px 0 rgba(45,40,35,0.5), 0 0 20px rgba(255,80,60,0.6);
   transform:scale(0); transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
 }
 .tetris-gameover-overlay.active .gameover-title { transform:scale(1); }
@@ -252,15 +258,16 @@
 }
 .tetris-gameover-overlay.active .gameover-score { opacity:1; }
 .gameover-ranking {
-  background:rgba(255,255,255,0.12); border-radius:8px; padding:6px 10px;
-  font-size:clamp(11px,3vw,14px); color:#fff; text-align:left; line-height:1.6;
+  background:rgba(0,0,0,0.35); border-radius:var(--r-md); padding:10px 14px;
+  font-size:clamp(12px,3.2vw,15px); color:#fff; text-align:left; line-height:1.8;
   max-width:90%; opacity:0; transition:opacity 0.5s 0.6s;
-  font-family:'Yomogi','Zen Maru Gothic',cursive; font-weight:700;
+  font-family:'Zen Maru Gothic',sans-serif; font-weight:700;
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
 }
 .tetris-gameover-overlay.active .gameover-ranking { opacity:1; }
-.rank-new { color:#FFD700; }
-.rank-row { display:flex; justify-content:space-between; gap:6px; }
-.rank-num { min-width:2em; }
+.rank-new { color:#FFD700; font-weight:900; }
+.rank-row { display:flex; justify-content:space-between; gap:8px; }
+.rank-num { min-width:2em; text-align:right; }
 
 /* ボード内エフェクト */
 .line-clear-fx {
@@ -539,12 +546,11 @@ function renderRanking(ranking,newScore){
   const el=document.getElementById('gameover-ranking');
   if(!el)return;
   if(ranking.length===0){el.innerHTML='';return}
-  let html='<div style="text-align:center;margin-bottom:4px">🏆 ランキング</div>';
+  let html='<div style="text-align:center;margin-bottom:6px;font-size:clamp(12px,3.2vw,15px)">ランキング</div>';
   ranking.forEach((r,i)=>{
     const isNew=r.score===newScore&&r.date===ranking.filter(x=>x.score===newScore).slice(-1)[0]?.date;
     const cls=isNew?'rank-row rank-new':'rank-row';
-    const medal=['🥇','🥈','🥉'][i]||'';
-    html+=`<div class="${cls}"><span class="rank-num">${medal||((i+1)+'.')}</span><span>${r.score}<ruby>点<rt>てん</rt></ruby></span><span>Lv${r.level}</span></div>`;
+    html+=`<div class="${cls}"><span class="rank-num">${i+1}.</span><span>${r.score}<ruby>点<rt>てん</rt></ruby></span><span>Lv${r.level}</span></div>`;
   });
   el.innerHTML=html;
 }
