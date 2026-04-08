@@ -1322,9 +1322,6 @@ function md(){if(!gameRunning||!current)return;if(valid(current,0,1)){current.y+
 function hd(){if(!gameRunning||!current)return;while(valid(current,0,1)){current.y++;score+=2}scoreVal.textContent=score;lockPiece();drawBoard()}
 function rr(){if(!gameRunning||!current)return;rotate(current);drawBoard()}
 
-document.getElementById('btn-left').addEventListener('click',ml);
-document.getElementById('btn-right').addEventListener('click',mr);
-document.getElementById('btn-down').addEventListener('click',md);
 document.getElementById('btn-rotate').addEventListener('click',rr);
 
 function setupRepeat(id,fn){
