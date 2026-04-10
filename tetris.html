@@ -587,10 +587,12 @@ function setBubbleMode(long){
   else bubble.classList.remove('bubble-long');
 }
 function say(key){
-  /* プレイ中は大きいフォント */
-  setBubbleMode(false);
+  /* 進行中のタイプライター（長文セリフ）を止めて上書き防止 */
+  if(_twTimer){clearInterval(_twTimer);_twTimer=null;_twTyping=false;}
   const c=rc(key);
+  /* 先にテキストをゲーム用に差し替えてから大きなフォントに切替 */
   bubbleText.innerHTML=c.text;
+  setBubbleMode(false);
   idleTimer=0;
   const faceMap={
     start:'ike', clear1:'yatta', clear2:'yatta', clear3:'yatta', clear4:'yatta',
@@ -1340,6 +1342,8 @@ function gameLoop(t){
 function startGame(){
   if(goSeqTimer){clearInterval(goSeqTimer);goSeqTimer=null}
   if(introTimer){clearInterval(introTimer);introTimer=null}
+  /* 説明セリフのタイプライターを停止（残ったまま大きく表示されるバグ対策） */
+  if(_twTimer){clearInterval(_twTimer);_twTimer=null;_twTyping=false;}
   createBoard();score=0;level=1;lines=0;combo=0;prevLevel=1;
   dropInterval=800;dropTimer=0;idleTimer=0;gameOver=false;gameRunning=true;
   scoreVal.textContent='0';levelVal.textContent='1';
