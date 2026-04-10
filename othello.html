@@ -1554,25 +1554,32 @@ function startGame(opponent, skipEntrance){
   aiLevel = opp.aiLevel;
   gameOver = false;
   initBoard();
-  turn = B;
+  turn = W; /* イントロ中はプレイヤー入力をブロック（yourTurnでBに切替） */
   levelSelect.classList.add('hidden');
   endButtons.classList.add('hidden');
   quitEndButtons.classList.add('hidden');
 
   function beginGame() {
+    if(gameOver)return; /* 登場演出中にキャンセルされた場合 */
     charWrap.style.width = '';
     charWrap.style.height = '';
     boardEl.classList.remove('hidden');
     scoreBar.classList.remove('hidden');
     quitArea.classList.remove('hidden');
     boardEl.className = 'othello-board ' + opp.boardTheme;
-    renderBoard();
+    renderBoard(); /* turn=W なのでヒント非表示 */
     setChar('normal','floating');
     oppSay('intro',70,()=>{
+      if(gameOver)return;
       setTimeout(()=>{
+        if(gameOver)return;
         oppSay('colorExplain',70,()=>{
+          if(gameOver)return;
           setTimeout(()=>{
+            if(gameOver)return;
             setChar('normal','floating');
+            turn = B; /* プレイヤーのターン開始 */
+            renderBoard();
             oppSay('yourTurn',70);
           },2000);
         });
@@ -1598,15 +1605,17 @@ function playerMove(r,c){
   for(const[fr,fc]of flips)board[fr][fc]=B;
   renderBoard();
   animatePlace(r,c,()=>{
+    if(gameOver)return;
     animateFlips(flips,B,()=>{
+      if(gameOver)return;
       renderBoard();
       const{b,w}=countStones();
       if(flips.length>=3||corners.some(([cr,cc])=>cr===r&&cc===c)){
         setChar('sad','slumping');
-        oppSay('playerGood',70,()=>afterPlayerMove());
+        oppSay('playerGood',70,()=>{if(gameOver)return;afterPlayerMove();});
       } else if(flips.length===1&&Math.random()<0.4){
         setChar(Math.random()<0.5?'point':'cheer','floating');
-        oppSay('playerBad',70,()=>afterPlayerMove());
+        oppSay('playerBad',70,()=>{if(gameOver)return;afterPlayerMove();});
       } else {
         afterPlayerMove();
       }
@@ -1615,27 +1624,31 @@ function playerMove(r,c){
 }
 
 function afterPlayerMove(){
+  if(gameOver)return;
   if(checkGameEnd())return;
   turn=W;
   const aiMoves=getMoves(W);
   if(aiMoves.length===0){
     setChar('sad','slumping');
     oppSay('aiPass',70,()=>{
+      if(gameOver)return;
       turn=B;
       const pMoves=getMoves(B);
       if(pMoves.length===0){endGame();return;}
       renderBoard();
-      setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);},800);
+      setTimeout(()=>{if(gameOver)return;setChar('normal','floating');oppSay('yourTurn',70);},800);
     });
     return;
   }
   setChar(Math.random()<0.6?'think':'normal','tilting');
   oppSay('aiTurn',70,()=>{
+    if(gameOver)return;
     setTimeout(()=>doAiMove(),600);
   });
 }
 
 function doAiMove(){
+  if(gameOver)return; /* 中断後の遅延発火を無視 */
   const move=aiChoose();
   if(!move){endGame();return;}
   const[r,c]=move;
@@ -1644,7 +1657,9 @@ function doAiMove(){
   for(const[fr,fc]of flips)board[fr][fc]=W;
   renderBoard();
   animatePlace(r,c,()=>{
+    if(gameOver)return;
     animateFlips(flips,W,()=>{
+      if(gameOver)return;
       renderBoard();
       if(checkGameEnd())return;
       turn=B;
@@ -1652,6 +1667,7 @@ function doAiMove(){
       if(pMoves.length===0){
         setChar('normal','floating');
         oppSay('pass',70,()=>{
+          if(gameOver)return;
           turn=W;
           const am=getMoves(W);
           if(am.length===0){endGame();return;}
@@ -1664,17 +1680,20 @@ function doAiMove(){
         const poses=['happy','happy2','point','cheer'];
         setChar(pick(poses),'joyful');
         oppSay('aiGood',70,()=>{
-          setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
+          if(gameOver)return;
+          setTimeout(()=>{if(gameOver)return;setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
         });
       }else if(b>w+3){
         setChar(Math.random()<0.5?'sad':'think','slumping');
         oppSay('playerLeading',70,()=>{
-          setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
+          if(gameOver)return;
+          setTimeout(()=>{if(gameOver)return;setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
         });
       }else if(w>b+3){
         setChar(pick(['happy','happy2','point']),'joyful');
         oppSay('aiLeading',70,()=>{
-          setTimeout(()=>{setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
+          if(gameOver)return;
+          setTimeout(()=>{if(gameOver)return;setChar('normal','floating');oppSay('yourTurn',70);renderBoard();},800);
         });
       }else{
         setChar(pick(['normal','point','cheer']),'floating');
