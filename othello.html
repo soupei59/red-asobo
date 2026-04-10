@@ -1412,6 +1412,15 @@ function renderBoard(){
 }
 
 function animateFlips(flips,color,cb){
+  const oldCls='othello-stone '+(color===B?'white':'black');
+  const newCls='othello-stone '+(color===B?'black':'white');
+  /* まず全部を「めくる前の色」に戻す */
+  for(const[r,c]of flips){
+    const idx=r*SZ+c;
+    const cell=boardEl.children[idx];
+    const stone=cell.querySelector('.othello-stone');
+    if(stone)stone.className=oldCls;
+  }
   let delay=0;
   for(const[r,c]of flips){
     const idx=r*SZ+c;
@@ -1421,8 +1430,7 @@ function animateFlips(flips,color,cb){
       setTimeout(()=>{
         stone.classList.add('flipping');
         setTimeout(()=>{
-          stone.className='othello-stone '+(color===B?'black':'white');
-          stone.classList.remove('flipping');
+          stone.className=newCls;
         },200);
       },delay);
       delay+=80;
@@ -1585,6 +1593,7 @@ function playerMove(r,c){
   const flips=getFlips(r,c,B);
   if(flips.length===0)return;
 
+  turn=W; /* 即座にターン移行 — アニメーション中の多重クリック防止 */
   board[r][c]=B;
   for(const[fr,fc]of flips)board[fr][fc]=B;
   renderBoard();
